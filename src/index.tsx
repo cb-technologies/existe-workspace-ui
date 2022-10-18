@@ -1,13 +1,15 @@
 import React from 'react';
-import ReactDOM from 'react-dom';
 import CssBaseline from '@material-ui/core/CssBaseline';
 
 import App from './App.tsx';
+import {createRoot} from "react-dom/client";
 
-ReactDOM.render(
+const rootElement = document.getElementById("root");
+const root = createRoot(rootElement);
+
+root.render(
     <React.StrictMode>
         <CssBaseline />
         <App />
     </React.StrictMode>,
-    document.getElementById("root")
 );
