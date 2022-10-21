@@ -1,76 +1,32 @@
-import {
-  makeStyles,
-  Container,
-  Typography,
-  TextField,
-  Button,
-} from "@material-ui/core";
-import { useState } from "react";
+import * as React from 'react';
+import Container from '@mui/material/Container';
+import Typography from '@mui/material/Typography';
+import Box from '@mui/material/Box';
+import Link from '@mui/material/Link';
+import ProTip from './ProTip';
 
-const useStyles = makeStyles((theme) => ({
-  heading: {
-    textAlign: "center",
-    margin: theme.spacing(1, 0, 4),
-  },
-  submitButton: {
-    marginTop: theme.spacing(4),
-  },
-}));
-
-function App() {
-  const { heading, submitButton } = useStyles();
-
-  const [json, setJson] = useState<string>();
-
+function Copyright() {
   return (
-      <Container maxWidth="xs">
-        <Typography className={heading} variant="h3">
-          Sign Up Form
-        </Typography>
-        <form>
-          <TextField
-              variant="outlined"
-              margin="normal"
-              label="Email"
-              fullWidth
-              required
-          />
-          <TextField
-              variant="outlined"
-              margin="normal"
-              label="First Name"
-              fullWidth
-              required
-          />
-          <TextField
-              variant="outlined"
-              margin="normal"
-              label="Password"
-              type="password"
-              fullWidth
-              required
-          />
-          <Button
-              type="submit"
-              fullWidth
-              variant="contained"
-              color="primary"
-              className={submitButton}
-          >
-            Sign Up
-          </Button>
-          {json && (
-              <>
-                <Typography variant="body1">
-                  Below is the JSON that would normally get passed to the server
-                  when a form gets submitted
-                </Typography>
-                <Typography variant="body2">{json}</Typography>
-              </>
-          )}
-        </form>
-      </Container>
+      <Typography variant="body2" color="text.secondary" align="center">
+        {'Copyright © '}
+        <Link color="inherit" href="https://mui.com/">
+          Your Website
+        </Link>{' '}
+        {new Date().getFullYear()}.
+      </Typography>
   );
 }
 
-export default App;
+export default function App() {
+  return (
+      <Container maxWidth="sm">
+        <Box sx={{ my: 4 }}>
+          <Typography variant="h4" component="h1" gutterBottom>
+            Create React App example with TypeScript
+          </Typography>
+          <ProTip />
+          <Copyright />
+        </Box>
+      </Container>
+  );
+}
