@@ -2,17 +2,12 @@ import * as React from 'react';
 import { useState } from "react";
 import Container from '@mui/material/Container';
 import Typography from '@mui/material/Typography';
-import Box from '@mui/material/Box';
 import * as yup from "yup"; // to validate the form input
 import { useForm } from "react-hook-form"; // to handle the form's submission and error states
-import Link from '@mui/material/Link';
 import { yupResolver } from "@hookform/resolvers/yup";
-import ProTip from './ProTip';
 import {
   makeStyles,TextField,Button
 } from "@material-ui/core"; // for user interface
-
-
 
 const useStyles = makeStyles((theme) => ({ // Material UI to create CSS classes and rules
   submitButton: {
@@ -32,9 +27,9 @@ interface IFormInput {
 }
 
 const schema = yup.object().shape({ //requirement for the inputs
-  email: yup.string().required().email(),
-  Prenom: yup.string().required().min(2).max(15),
   Nom: yup.string().required().min(2).max(15),
+  Prenom: yup.string().required().min(2).max(15),
+  email: yup.string().required().email(),
   password: yup.string().required().min(8).max(100),
 });
 
