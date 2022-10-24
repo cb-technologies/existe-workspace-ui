@@ -8,7 +8,7 @@
 // versions:
 // 	protoc-gen-grpc-web v1.4.1
 // 	protoc              v3.19.1
-// source: exist_crud.proto
+// source: message_and_service.proto
 
 
 /* eslint-disable */
@@ -17,11 +17,10 @@
 
 import * as grpcWeb from 'grpc-web';
 
-import * as exist_crud_msg_pb from './exist_crud_msg_pb';
-import * as person_info_msg_pb from './person_info_msg_pb';
+import * as message_and_service_pb from './message_and_service_pb';
 
 
-export class ExistCRUDServiceClient {
+export class ExistCRUDClient {
   client_: grpcWeb.AbstractClientBase;
   hostname_: string;
   credentials_: null | { [index: string]: string; };
@@ -32,7 +31,7 @@ export class ExistCRUDServiceClient {
                options?: null | { [index: string]: any; }) {
     if (!options) options = {};
     if (!credentials) credentials = {};
-    options['format'] = 'binary';
+    options['format'] = 'text';
 
     this.client_ = new grpcWeb.GrpcWebClientBase(options);
     this.hostname_ = hostname.replace(/\/+$/, '');
@@ -40,79 +39,79 @@ export class ExistCRUDServiceClient {
     this.options_ = options;
   }
 
-  methodDescriptorAddNewPerson = new grpcWeb.MethodDescriptor(
-    '/pb.ExistCRUDService/AddNewPerson',
+  methodDescriptorAddNewPersonInfo = new grpcWeb.MethodDescriptor(
+    '/pb.ExistCRUD/AddNewPersonInfo',
     grpcWeb.MethodType.UNARY,
-    person_info_msg_pb.PersonInfoRequest,
-    exist_crud_msg_pb.Response,
-    (request: person_info_msg_pb.PersonInfoRequest) => {
+    message_and_service_pb.PersonInfoRequest,
+    message_and_service_pb.Response,
+    (request: message_and_service_pb.PersonInfoRequest) => {
       return request.serializeBinary();
     },
-    exist_crud_msg_pb.Response.deserializeBinary
+    message_and_service_pb.Response.deserializeBinary
   );
 
-  addNewPerson(
-    request: person_info_msg_pb.PersonInfoRequest,
-    metadata: grpcWeb.Metadata | null): Promise<exist_crud_msg_pb.Response>;
+  addNewPersonInfo(
+    request: message_and_service_pb.PersonInfoRequest,
+    metadata: grpcWeb.Metadata | null): Promise<message_and_service_pb.Response>;
 
-  addNewPerson(
-    request: person_info_msg_pb.PersonInfoRequest,
+  addNewPersonInfo(
+    request: message_and_service_pb.PersonInfoRequest,
     metadata: grpcWeb.Metadata | null,
     callback: (err: grpcWeb.RpcError,
-               response: exist_crud_msg_pb.Response) => void): grpcWeb.ClientReadableStream<exist_crud_msg_pb.Response>;
+               response: message_and_service_pb.Response) => void): grpcWeb.ClientReadableStream<message_and_service_pb.Response>;
 
-  addNewPerson(
-    request: person_info_msg_pb.PersonInfoRequest,
+  addNewPersonInfo(
+    request: message_and_service_pb.PersonInfoRequest,
     metadata: grpcWeb.Metadata | null,
     callback?: (err: grpcWeb.RpcError,
-               response: exist_crud_msg_pb.Response) => void) {
+               response: message_and_service_pb.Response) => void) {
     if (callback !== undefined) {
       return this.client_.rpcCall(
         this.hostname_ +
-          '/pb.ExistCRUDService/AddNewPerson',
+          '/pb.ExistCRUD/AddNewPersonInfo',
         request,
         metadata || {},
-        this.methodDescriptorAddNewPerson,
+        this.methodDescriptorAddNewPersonInfo,
         callback);
     }
     return this.client_.unaryCall(
     this.hostname_ +
-      '/pb.ExistCRUDService/AddNewPerson',
+      '/pb.ExistCRUD/AddNewPersonInfo',
     request,
     metadata || {},
-    this.methodDescriptorAddNewPerson);
+    this.methodDescriptorAddNewPersonInfo);
   }
 
   methodDescriptorUpdatePersonInfo = new grpcWeb.MethodDescriptor(
-    '/pb.ExistCRUDService/UpdatePersonInfo',
+    '/pb.ExistCRUD/UpdatePersonInfo',
     grpcWeb.MethodType.UNARY,
-    person_info_msg_pb.EditPersonInfoParameters,
-    exist_crud_msg_pb.Response,
-    (request: person_info_msg_pb.EditPersonInfoParameters) => {
+    message_and_service_pb.EditPersonInfoParameters,
+    message_and_service_pb.Response,
+    (request: message_and_service_pb.EditPersonInfoParameters) => {
       return request.serializeBinary();
     },
-    exist_crud_msg_pb.Response.deserializeBinary
+    message_and_service_pb.Response.deserializeBinary
   );
 
   updatePersonInfo(
-    request: person_info_msg_pb.EditPersonInfoParameters,
-    metadata: grpcWeb.Metadata | null): Promise<exist_crud_msg_pb.Response>;
+    request: message_and_service_pb.EditPersonInfoParameters,
+    metadata: grpcWeb.Metadata | null): Promise<message_and_service_pb.Response>;
 
   updatePersonInfo(
-    request: person_info_msg_pb.EditPersonInfoParameters,
+    request: message_and_service_pb.EditPersonInfoParameters,
     metadata: grpcWeb.Metadata | null,
     callback: (err: grpcWeb.RpcError,
-               response: exist_crud_msg_pb.Response) => void): grpcWeb.ClientReadableStream<exist_crud_msg_pb.Response>;
+               response: message_and_service_pb.Response) => void): grpcWeb.ClientReadableStream<message_and_service_pb.Response>;
 
   updatePersonInfo(
-    request: person_info_msg_pb.EditPersonInfoParameters,
+    request: message_and_service_pb.EditPersonInfoParameters,
     metadata: grpcWeb.Metadata | null,
     callback?: (err: grpcWeb.RpcError,
-               response: exist_crud_msg_pb.Response) => void) {
+               response: message_and_service_pb.Response) => void) {
     if (callback !== undefined) {
       return this.client_.rpcCall(
         this.hostname_ +
-          '/pb.ExistCRUDService/UpdatePersonInfo',
+          '/pb.ExistCRUD/UpdatePersonInfo',
         request,
         metadata || {},
         this.methodDescriptorUpdatePersonInfo,
@@ -120,42 +119,42 @@ export class ExistCRUDServiceClient {
     }
     return this.client_.unaryCall(
     this.hostname_ +
-      '/pb.ExistCRUDService/UpdatePersonInfo',
+      '/pb.ExistCRUD/UpdatePersonInfo',
     request,
     metadata || {},
     this.methodDescriptorUpdatePersonInfo);
   }
 
   methodDescriptorFindPersonInfo = new grpcWeb.MethodDescriptor(
-    '/pb.ExistCRUDService/FindPersonInfo',
+    '/pb.ExistCRUD/FindPersonInfo',
     grpcWeb.MethodType.UNARY,
-    person_info_msg_pb.NationalIDNumber,
-    person_info_msg_pb.PersonInfoResponse,
-    (request: person_info_msg_pb.NationalIDNumber) => {
+    message_and_service_pb.NationalIDNumber,
+    message_and_service_pb.PersonInfoResponse,
+    (request: message_and_service_pb.NationalIDNumber) => {
       return request.serializeBinary();
     },
-    person_info_msg_pb.PersonInfoResponse.deserializeBinary
+    message_and_service_pb.PersonInfoResponse.deserializeBinary
   );
 
   findPersonInfo(
-    request: person_info_msg_pb.NationalIDNumber,
-    metadata: grpcWeb.Metadata | null): Promise<person_info_msg_pb.PersonInfoResponse>;
+    request: message_and_service_pb.NationalIDNumber,
+    metadata: grpcWeb.Metadata | null): Promise<message_and_service_pb.PersonInfoResponse>;
 
   findPersonInfo(
-    request: person_info_msg_pb.NationalIDNumber,
+    request: message_and_service_pb.NationalIDNumber,
     metadata: grpcWeb.Metadata | null,
     callback: (err: grpcWeb.RpcError,
-               response: person_info_msg_pb.PersonInfoResponse) => void): grpcWeb.ClientReadableStream<person_info_msg_pb.PersonInfoResponse>;
+               response: message_and_service_pb.PersonInfoResponse) => void): grpcWeb.ClientReadableStream<message_and_service_pb.PersonInfoResponse>;
 
   findPersonInfo(
-    request: person_info_msg_pb.NationalIDNumber,
+    request: message_and_service_pb.NationalIDNumber,
     metadata: grpcWeb.Metadata | null,
     callback?: (err: grpcWeb.RpcError,
-               response: person_info_msg_pb.PersonInfoResponse) => void) {
+               response: message_and_service_pb.PersonInfoResponse) => void) {
     if (callback !== undefined) {
       return this.client_.rpcCall(
         this.hostname_ +
-          '/pb.ExistCRUDService/FindPersonInfo',
+          '/pb.ExistCRUD/FindPersonInfo',
         request,
         metadata || {},
         this.methodDescriptorFindPersonInfo,
@@ -163,7 +162,7 @@ export class ExistCRUDServiceClient {
     }
     return this.client_.unaryCall(
     this.hostname_ +
-      '/pb.ExistCRUDService/FindPersonInfo',
+      '/pb.ExistCRUD/FindPersonInfo',
     request,
     metadata || {},
     this.methodDescriptorFindPersonInfo);
