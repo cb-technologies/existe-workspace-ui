@@ -5,11 +5,14 @@ import Typography from '@mui/material/Typography';
 import * as yup from "yup"; // to validate the form input
 import { useForm } from "react-hook-form"; // to handle the form's submission and error states
 import { yupResolver } from "@hookform/resolvers/yup";
+import TextField from "@material-ui/core/TextField";
+import Button from '@mui/material/Button';
 import {
-  makeStyles,TextField,Button
-} from "@material-ui/core"; // for user interface
+  makeStyles
+} from "@mui/styles"; // for user interface
 
-const useStyles = makeStyles((theme) => ({ // Material UI to create CSS classes and rules
+
+const useStyles = makeStyles((theme: any) => ({ // Material UI to create CSS classes and rules
   submitButton: {
     marginTop: theme.spacing(4),
   },

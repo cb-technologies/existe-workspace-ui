@@ -1,6 +1,9 @@
 import * as React from 'react';
 import "tachyons";
-import { Provider, Heading, Subhead } from "react-redux";
+import {H} from 'react-headings';
+import { Subheading } from 'react-native-paper';
+import { Provider } from "react-redux";
+
 import {
   Hero,
   Flex,
@@ -18,8 +21,8 @@ function Landing_page() {
       bg="black"
       bgOpacity={0.1}
     >
-      <Heading fontSize={150}>DiagNUS</Heading>
-      <Subhead fontSize={[2, 3]}>Be the Change from Within</Subhead>
+      <H fontSize={150}>DiagNUS</H>
+      <Subheading fontSize={[2, 3]}>Be the Change from Within</Subheading>
       <Flex mt={3}>
         <CallToAction bg="grey" mr={3}>
           Start Petition
