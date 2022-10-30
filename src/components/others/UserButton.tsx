@@ -12,7 +12,6 @@ const settings = ['Profile', 'Compte', 'Dashboard', 'Se déconnecter'];
 const User = () => {
     const [anchorElUser, setAnchorElUser] = React.useState<null | HTMLElement>(null);
 
-
     const handleOpenUserMenu = (event: React.MouseEvent<HTMLElement>) => {
         setAnchorElUser(event.currentTarget);
     };
