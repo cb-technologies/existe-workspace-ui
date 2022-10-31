@@ -7,14 +7,17 @@ import {CssBaseline} from "@material-ui/core";
 import {makeStyles} from "@mui/styles";
 import Header from "./components/others/Header";
 
-const useStyles = makeStyles(() => ({
-    root: {
-        minHeight: '100vh',
-        backgroundImage: `url(${process.env.PUBLIC_URL + '/assets/bg.jpg'})`,
-        backgroundRepeat: 'no-repeat',
-        backgroundSize: 'cover'
-    }
-}));
+function Copyright() {
+  return (
+      <Typography variant="body2" color="text.secondary" align="center">
+        {'Copyright © '}
+        <Link color="inherit" href="https://mui.com/">
+          Your Website
+        </Link>{' '}
+        {new Date().getFullYear()}.
+      </Typography>
+  );
+}
 
 export default function App() {
   var findPersonRequest = new NationalIDNumber().setId("5f805fefd00002e");
