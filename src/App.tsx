@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { CssBaseline} from "@material-ui/core";
 import { ExistCRUDClient } from './grpc/pb/Message_and_serviceServiceClientPb';
 import { NationalIDNumber, PersonInfoResponse } from './grpc/pb/message_and_service_pb';
 import * as grpcWeb from 'grpc-web';
@@ -6,8 +7,8 @@ import {CssBaseline} from "@material-ui/core";
 import {makeStyles} from "@mui/styles";
 import Header from "./components/others/Header";
 
-const useStyles = makeStyles((theme) => ({
-     root: {
+const useStyles = makeStyles(() => ({
+    root: {
         minHeight: '100vh',
         backgroundImage: `url(${process.env.PUBLIC_URL + '/assets/bg.jpg'})`,
         backgroundRepeat: 'no-repeat',
