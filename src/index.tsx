@@ -4,8 +4,7 @@ import CssBaseline from '@mui/material/CssBaseline';
 import { ThemeProvider } from '@mui/material/styles';
 // import App from './App';
 import theme from './Theme';
-// import Login from './components/pages/Login';
-import SignIn from './components/pages/Login2';
+import SignIn from './components/pages/Login';
 
 const rootElement = document.getElementById('root');
 const root = createRoot(rootElement!);
