@@ -3,12 +3,9 @@ import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
 import CssBaseline from '@mui/material/CssBaseline';
 import TextField from '@mui/material/TextField';
-import FormControlLabel from '@mui/material/FormControlLabel';
-import Checkbox from '@mui/material/Checkbox';
 import Link from '@mui/material/Link';
 import Grid from '@mui/material/Grid';
 import Box from '@mui/material/Box';
-import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import PeopleAltIcon from '@mui/icons-material/PeopleAlt';
 import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
@@ -20,15 +17,11 @@ import { useState } from "react";
 
 
 interface IFormInput {
-    Prenom: string;
-    Nom: string;
     email: string;
     password: string;
   }
 
 const schema = yup.object().shape({ //requirement for the inputs
-Nom: yup.string().required().min(2).max(15),
-Prenom: yup.string().required().min(2).max(15),
 email: yup.string().required().email(),
 password: yup.string().required().min(8).max(100),
 });
@@ -71,27 +64,6 @@ export default function SignIn() {
             Exist-Id Login
           </Typography>
           <Box component="form" onSubmit={handleSubmit(onSubmit)} noValidate sx={{ mt: 1 }}>
-          <TextField
-              {...register("Nom")}
-              variant="outlined"
-              margin="normal"
-              label="Nom"
-              helperText={errors.Nom?.message}
-              error={!!errors.Nom?.message}
-              fullWidth
-              autoFocus
-              required
-            />
-            <TextField
-              {...register("Prenom")}
-              variant="outlined"
-              margin="normal"
-              label="Prenom"
-              helperText={errors.Prenom?.message}
-              error={!!errors.Prenom?.message}
-              fullWidth
-              required
-            />
             <TextField
               {...register("email")}
               variant="outlined"
@@ -112,10 +84,6 @@ export default function SignIn() {
               type="password"
               fullWidth
             />
-            {/* <FormControlLabel
-              control={<Checkbox value="remember" color="primary" />}
-              label="Remember me"
-            /> */}
             <Button
               type="submit"
               fullWidth
@@ -147,7 +115,7 @@ function Copyright(props: any) {
     return (
       <Typography variant="body2" color="text.secondary" align="center" {...props}>
         {'Copyright © '}
-        <Link color="inherit" href="https://mui.com/">
+        <Link color="inherit" href="https://www.google.com/">
           Exist
         </Link>{' '}
         {new Date().getFullYear()}
