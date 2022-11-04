@@ -22,8 +22,8 @@ interface IFormInput {
   }
 
 const schema = yup.object().shape({ //requirement for the inputs
-email: yup.string().required().email(),
-password: yup.string().required().min(8).max(100),
+email: yup.string().required("L'email addresse ne peut pas etre vide").email(),
+password: yup.string().required("Le mot de passe ne peut pas etre vide").min(8).max(100),
 });
 
 const theme = createTheme();
