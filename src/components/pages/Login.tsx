@@ -20,15 +20,11 @@ import { useState } from "react";
 
 
 interface IFormInput {
-    Prenom: string;
-    Nom: string;
     email: string;
     password: string;
   }
 
 const schema = yup.object().shape({ //requirement for the inputs
-Nom: yup.string().required().min(2).max(15),
-Prenom: yup.string().required().min(2).max(15),
 email: yup.string().required().email(),
 password: yup.string().required().min(8).max(100),
 });
@@ -71,27 +67,6 @@ export default function SignIn() {
             Exist-Id Login
           </Typography>
           <Box component="form" onSubmit={handleSubmit(onSubmit)} noValidate sx={{ mt: 1 }}>
-          <TextField
-              {...register("Nom")}
-              variant="outlined"
-              margin="normal"
-              label="Nom"
-              helperText={errors.Nom?.message}
-              error={!!errors.Nom?.message}
-              fullWidth
-              autoFocus
-              required
-            />
-            <TextField
-              {...register("Prenom")}
-              variant="outlined"
-              margin="normal"
-              label="Prenom"
-              helperText={errors.Prenom?.message}
-              error={!!errors.Prenom?.message}
-              fullWidth
-              required
-            />
             <TextField
               {...register("email")}
               variant="outlined"
