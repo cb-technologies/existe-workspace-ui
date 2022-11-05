@@ -168,5 +168,91 @@ export class ExistCRUDClient {
     this.methodDescriptorFindPersonInfo);
   }
 
+  methodDescriptorSignInAgent = new grpcWeb.MethodDescriptor(
+    '/pb.ExistCRUD/SignInAgent',
+    grpcWeb.MethodType.UNARY,
+    message_and_service_pb.AgentSignInInfo,
+    message_and_service_pb.Response,
+    (request: message_and_service_pb.AgentSignInInfo) => {
+      return request.serializeBinary();
+    },
+    message_and_service_pb.Response.deserializeBinary
+  );
+
+  signInAgent(
+    request: message_and_service_pb.AgentSignInInfo,
+    metadata: grpcWeb.Metadata | null): Promise<message_and_service_pb.Response>;
+
+  signInAgent(
+    request: message_and_service_pb.AgentSignInInfo,
+    metadata: grpcWeb.Metadata | null,
+    callback: (err: grpcWeb.RpcError,
+               response: message_and_service_pb.Response) => void): grpcWeb.ClientReadableStream<message_and_service_pb.Response>;
+
+  signInAgent(
+    request: message_and_service_pb.AgentSignInInfo,
+    metadata: grpcWeb.Metadata | null,
+    callback?: (err: grpcWeb.RpcError,
+               response: message_and_service_pb.Response) => void) {
+    if (callback !== undefined) {
+      return this.client_.rpcCall(
+        this.hostname_ +
+          '/pb.ExistCRUD/SignInAgent',
+        request,
+        metadata || {},
+        this.methodDescriptorSignInAgent,
+        callback);
+    }
+    return this.client_.unaryCall(
+    this.hostname_ +
+      '/pb.ExistCRUD/SignInAgent',
+    request,
+    metadata || {},
+    this.methodDescriptorSignInAgent);
+  }
+
+  methodDescriptorSignUpAgent = new grpcWeb.MethodDescriptor(
+    '/pb.ExistCRUD/SignUpAgent',
+    grpcWeb.MethodType.UNARY,
+    message_and_service_pb.AgentInfo,
+    message_and_service_pb.Response,
+    (request: message_and_service_pb.AgentInfo) => {
+      return request.serializeBinary();
+    },
+    message_and_service_pb.Response.deserializeBinary
+  );
+
+  signUpAgent(
+    request: message_and_service_pb.AgentInfo,
+    metadata: grpcWeb.Metadata | null): Promise<message_and_service_pb.Response>;
+
+  signUpAgent(
+    request: message_and_service_pb.AgentInfo,
+    metadata: grpcWeb.Metadata | null,
+    callback: (err: grpcWeb.RpcError,
+               response: message_and_service_pb.Response) => void): grpcWeb.ClientReadableStream<message_and_service_pb.Response>;
+
+  signUpAgent(
+    request: message_and_service_pb.AgentInfo,
+    metadata: grpcWeb.Metadata | null,
+    callback?: (err: grpcWeb.RpcError,
+               response: message_and_service_pb.Response) => void) {
+    if (callback !== undefined) {
+      return this.client_.rpcCall(
+        this.hostname_ +
+          '/pb.ExistCRUD/SignUpAgent',
+        request,
+        metadata || {},
+        this.methodDescriptorSignUpAgent,
+        callback);
+    }
+    return this.client_.unaryCall(
+    this.hostname_ +
+      '/pb.ExistCRUD/SignUpAgent',
+    request,
+    metadata || {},
+    this.methodDescriptorSignUpAgent);
+  }
+
 }
 
