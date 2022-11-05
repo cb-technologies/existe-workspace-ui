@@ -1,6 +1,6 @@
 import * as React from 'react';
 import Box from '@mui/material/Box';
-import { useState } from "react";
+import { useState , useEffect } from "react";
 import { Dayjs } from 'dayjs';
 import TextField from '@mui/material/TextField';
 import Typography from "@mui/material/Typography";
@@ -15,11 +15,11 @@ import * as yup from "yup"; // to validate the form input
 import { useForm } from "react-hook-form"; // to handle the form's submission and error states
 import { yupResolver } from "@hookform/resolvers/yup";
 import Button from '@mui/material/Button';
-import { Biometric, DateOfBirth, Names, Origin, PersonInfoRequest, Phenotype, Address } from '../../grpc/pb/message_and_service_pb';
+import { Biometric, DateOfBirth, Names, Origin, PersonInfoRequest, Phenotype, Address, EditPersonInfoParameters, NationalIDNumber, PersonInfoResponse } from '../../grpc/pb/message_and_service_pb';
 import * as grpcWeb from 'grpc-web';
 import { ExistCRUDClient } from '../../grpc/pb/Message_and_serviceServiceClientPb'; 
 
-interface RegisterFormInput {
+interface UpdateUserFormInput {
     Prenom: string
     Nom: string
     PostNom: string
@@ -31,12 +31,6 @@ interface RegisterFormInput {
     Numero: number
     CodePostal: number
     Reference: string
-
-    Province: string
-    ChefLieu: string
-    Territoire: string
-    Secteur: string
-    Village: string
 
     Day:string
     Month:string
@@ -62,12 +56,6 @@ const schema = yup.object().shape({ //requirement for the inputs
     CodePostal: yup.number().required("Code Postal cannot be empty"),
     Reference: yup.string().required().min(2).max(30),
 
-    Province: yup.string().required().min(2).max(30),
-    ChefLieu: yup.string().required().min(2).max(30),
-    Territoire: yup.string().required().min(2).max(30),
-    Secteur: yup.string().required().min(2).max(30),
-    Village: yup.string().required().min(2).max(30),
-
     Taille: yup.number().required("Taille cannot be empty"),
     Poids: yup.number().required("Poids cannot be empty"),
     EyeColor: yup.string().required().min(2).max(30),
@@ -77,8 +65,27 @@ const schema = yup.object().shape({ //requirement for the inputs
 });
 
 // @ts-ignore
-function NameForm({register, errors}) {
+function NameForm({register, errors, defaultFirstName, defaultLastName , defaultMiddleName}) {
+    console.log(defaultFirstName)
+    const [firstName, setFirstName] = useState<string>(defaultFirstName);
+    console.log(defaultFirstName)
+    console.log(firstName)
 
+
+    useEffect(() => {
+        const data = window.localStorage.getItem("first_name");
+        if (data !== null){
+            setFirstName(JSON.parse(data));
+        }
+    }, [])
+    
+    useEffect(() => {
+        setFirstName(defaultFirstName);
+        window.localStorage.setItem("first_name", JSON.stringify(firstName))
+    
+    }, [firstName, defaultFirstName]);
+
+    console.log(firstName)
     return <div >
         <TextField
             {...register("Prenom")}
@@ -86,7 +93,8 @@ function NameForm({register, errors}) {
             label="Prenom"
             helperText={errors.Prenom?.message}
             error={!!errors.Prenom}
-            required
+            defaultValue={firstName}
+            
         />
         <TextField
             {...register("Nom")}
@@ -94,7 +102,7 @@ function NameForm({register, errors}) {
             label="Nom"
             helperText={errors.Nom?.message}
             error={!!errors.Nom}
-            required
+            defaultValue = {defaultLastName}
         />
         <TextField
             {...register("PostNom")}
@@ -102,7 +110,54 @@ function NameForm({register, errors}) {
             label="Post-Nom"
             helperText={errors.PostNom?.message}
             error={!!errors.PostNom}
-            required
+            defaultValue = {defaultMiddleName}
+        />
+    </div>
+}
+
+// @ts-ignore
+function OriginForm({register, errors}) {
+
+    return <div>
+        <TextField
+            {...register("Province")}
+            id="outlined-province-input"
+            label="Province"
+            helperText={errors.Province?.message}
+            error={!!errors.Province}
+            disabled
+        />
+        <TextField
+            {...register("ChefLieu")}
+            id="outlined-cheflieu-input"
+            label="Chef-Lieu"
+            helperText={errors.ChefLieu?.message}
+            error={!!errors.ChefLieu}
+            disabled
+        />
+        <TextField
+            {...register("Territoire")}
+            id="outlined-territoire-input"
+            label="Territoire"
+            helperText={errors.Territoire?.message}
+            error={!!errors.Territoire}
+            disabled
+        />
+        <TextField
+            {...register("Secteur")}
+            id="outlined-secteur-input"
+            label="Secteur"
+            helperText={errors.Secteur?.message}
+            error={!!errors.Secteur}
+            disabled
+        />
+        <TextField
+            {...register("Village")}
+            id="outlined-village-input"
+            label="Village"
+            helperText={errors.Village?.message}
+            error={!!errors.Village}
+            disabled
         />
     </div>
 }
@@ -182,52 +237,7 @@ function AddressForm({register, errors}) {
     </div>
 }
 
-// @ts-ignore
-function OriginForm({register, errors}) {
 
-    return <div>
-        <TextField
-            {...register("Province")}
-            id="outlined-province-input"
-            label="Province"
-            helperText={errors.Province?.message}
-            error={!!errors.Province}
-            required
-        />
-        <TextField
-            {...register("ChefLieu")}
-            id="outlined-cheflieu-input"
-            label="Chef-Lieu"
-            helperText={errors.ChefLieu?.message}
-            error={!!errors.ChefLieu}
-            required
-        />
-        <TextField
-            {...register("Territoire")}
-            id="outlined-territoire-input"
-            label="Territoire"
-            helperText={errors.Territoire?.message}
-            error={!!errors.Territoire}
-            required
-        />
-        <TextField
-            {...register("Secteur")}
-            id="outlined-secteur-input"
-            label="Secteur"
-            helperText={errors.Secteur?.message}
-            error={!!errors.Secteur}
-            required
-        />
-        <TextField
-            {...register("Village")}
-            id="outlined-village-input"
-            label="Village"
-            helperText={errors.Village?.message}
-            error={!!errors.Village}
-            required
-        />
-    </div>
-}
 
 // @ts-ignore
 function PhenotypeForm({register, errors}) {
@@ -280,19 +290,17 @@ function DateOfBirthForm({register, errors}) {
 
 // @ts-ignore
 function mapdata (data) {
+    var personId = new NationalIDNumber().setId("5ff51101300002e")
+
     var names = new Names().setNom(data.Nom)
     names.setPrenom(data.Prenom)
     names.setMiddleNamesList([data.PostNom])
-
-    var origins = new Origin().setChefLieu(data.ChefLieu)
-    origins.setProvinceList([data.Province])
 
     var phenotype = new Phenotype().setEyeColor(data.EyeColor)
     phenotype.setHeight(data.Height)
     phenotype.setWeight(data.Poids)
 
-    var biometric = new Biometric().setFingerPrint("bbbbbbbbbbb")
-    biometric.setPhotos("bbbbbbbbbb")
+    var biometric = new Biometric().setPhotos("bbbbbbbbbb")
 
     var dob = new DateOfBirth().setDay("23")
     dob.setMonth("march")
@@ -310,42 +318,117 @@ function mapdata (data) {
     personInfoRequest.setAddress(address)
     personInfoRequest.setBiometrics(biometric)
     personInfoRequest.setDateOfBirth(dob)
-    personInfoRequest.setOrigins(origins)
     personInfoRequest.setPhenotypes(phenotype)
 
-    return personInfoRequest
+    var editPersonInfoParameters = new EditPersonInfoParameters().setEditedpersoninfo(personInfoRequest)
+    editPersonInfoParameters.setPersonid(personId)
+
+    return editPersonInfoParameters
 
 
 
 }
+
 // @ts-ignore
-function createUser(data) {
+function updateUserInformation(data) {
 
 
     var client = new ExistCRUDClient("http://localhost:4551/", null, null);
-    var personInfoRequest = mapdata(data)
-    client.addNewPersonInfo(personInfoRequest, null, (err: grpcWeb.RpcError) => {})
+
+    var EditPersonInfoParameters = mapdata(data)
+    client.updatePersonInfo(EditPersonInfoParameters, null, (err: grpcWeb.RpcError) => {
+        if (err) {
+            console.log(err.code);
+            console.log(err.message);
+          }
+    })
+
 }
 
 // @ts-ignore
-export default function RegisterForm() {
+function PersonInfoResponseToMap(personInfoRespose:PersonInfoResponse) {
 
+    var jsonObject = {
+        "Names":{
+            "Nom":personInfoRespose.getNames()?.getNom().toString()!,
+            "Prenom":personInfoRespose.getNames()?.getPrenom().toString()!,
+            "MiddleNames": personInfoRespose.getNames()?.getMiddleNamesList().toString()!
+        }
+    }
+    return jsonObject
+
+}
+// @ts-ignore
+export default function UpdateUserForm() {
+
+
+    const [userInfo, setUserInformation] = useState<PersonInfoResponse>();  
+    const [userInfoJSON, setUserInfoJSON] = useState<any>([])  
+
+    useEffect(() => {
+
+        async function getUserInformation() {
+            try {
+                const client = new ExistCRUDClient("http://localhost:4551/", null, null);
+                var nationalIDNumber =  new NationalIDNumber().setId("5ff51101300002e");
+                const response = await client.findPersonInfo(nationalIDNumber, null);
+                console.log(response)
+                setUserInformation(response);
+                var responseJSON = PersonInfoResponseToMap(response)
+                console.log(responseJSON)
+                window.localStorage.setItem('userInfoJSON', JSON.stringify(responseJSON));
+                
+            } catch (err) {
+                console.log(err)
+            }
+        }
+        getUserInformation();
+
+    }, []);
+
+    useEffect(() => {
+        const localStorageValue = window.localStorage.getItem('userInfoJSON');   
+        if (localStorageValue !== null) {
+            const userInfoJSON = JSON.parse(localStorageValue!);
+            console.log(userInfoJSON)
+            setUserInfoJSON(userInfoJSON);
+        }
+      }, []);
+    
+
+
+
+    var defaultFirstName = userInfo?.getNames()?.getPrenom().toString()
+    var defaultMiddleName = userInfo?.getNames()?.getMiddleNamesList().toString()
+    var defaultLastName = userInfo?.getNames()?.getNom().toString()
+
+
+    // console.log(userInfoJSON)
+    // if (userInfoJSON !== null) {
+    //     defaultFirstName = userInfoJSON!.Names!.Prenom 
+    //     defaultMiddleName = userInfoJSON!.Names!.MiddleNames
+    //     defaultLastName = userInfoJSON!.Names!.Nom
+    // }
+    
+   
+
+    
 
     const {
         register,
         handleSubmit,
         formState: { errors },
-    } = useForm<RegisterFormInput>({
+    } = useForm<UpdateUserFormInput>({
         resolver: yupResolver(schema),
     });
 
     const [json, setJson] = useState<string>();
 
     // @ts-ignore
-    const onSubmit = (data: RegisterFormInput) => {
+    const onSubmit = (data: UpdateUserFormInput) => {
         setJson(JSON.stringify(data));
         console.log(data)
-        createUser(data)
+        updateUserInformation(data)
 
     };
 
@@ -359,27 +442,31 @@ export default function RegisterForm() {
              autoComplete={"off"}
         >
             <Typography variant="h6" component="h6" gutterBottom>
-                1. Entrez les Noms de l'individu
+                1.Modifiez les Noms de l'individu
             </Typography>
-          <NameForm register={register} errors={errors}></NameForm>
+          <NameForm register={register}  errors={errors} 
+          defaultFirstName={defaultFirstName!} 
+          defaultMiddleName = {defaultMiddleName!}
+          defaultLastName = {defaultLastName!}
+          ></NameForm>
             <Typography variant="h6" component="h6" gutterBottom>
-                2. Entrez le Sexe l'individu
+                2.Modifiez le Sexe l'individu
             </Typography>
             <SexForm ></SexForm>
             <Typography variant="h6" component="h6" gutterBottom>
-                3. Entrez la Date de Naissance de l'individu
+                3.Modifiez la Date de Naissance de l'individu
             </Typography>
             <DateOfBirthForm register={register} errors={errors}></DateOfBirthForm>
             <Typography variant="h6" component="h6" gutterBottom>
-                4. Entrez l'Adresse de l'individu
+                4.Modifiez l'Adresse de l'individu
             </Typography>
             <AddressForm register={register} errors={errors}></AddressForm>
             <Typography variant="h6" component="h6" gutterBottom>
-                5. Entrez les Origines de l'individu
+                5.Modifiez les Origines de l'individu
             </Typography>
             <OriginForm register={register} errors={errors}></OriginForm>
             <Typography variant="h6" component="h6" gutterBottom>
-                6. Entrez les Phénotypes de l'individu
+                6.Modifiez les Phénotypes de l'individu
             </Typography>
             <PhenotypeForm register={register} errors={errors}></PhenotypeForm>
 
