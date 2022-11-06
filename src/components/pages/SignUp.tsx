@@ -145,6 +145,8 @@ export default function SignUp() {
     </ThemeProvider>
   );
 }
+
+
 function Copyright(props: any) {
   return (
     <Typography
