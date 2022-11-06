@@ -14,6 +14,12 @@ import * as yup from "yup"; // to validate the form input
 import { useForm } from "react-hook-form"; // to handle the form's submission and error states
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useState } from "react";
+import {
+  AgentSignUpFormInput,
+} from "../../utils/exist_form";
+import { ExistService } from "../../store/exist_api_call";
+import { AgentSignInInfo } from "../../grpc/pb/message_and_service_pb";
+import useHistoryState from "../../hooks/useHistoryState";
 
 
 interface IFormInput {
@@ -38,9 +44,19 @@ export default function SignIn() {
       });
 
     const [json, setJson] = useState<string>();
+    const [Email, setEmail] = useHistoryState("Email", "");
+    const [Password, setPassword] = useHistoryState("Password", "");
+
+
 
     const onSubmit = (data: IFormInput) => {
     setJson(JSON.stringify(data));
+    const agentSignInInfo: AgentSignInInfo = new AgentSignInInfo()
+      .setEmail(data.email)
+      .setPassword(data.password);
+    ExistService.signInAgent(agentSignInInfo, null).then((value) => {
+      console.log("The respone was ", value);
+    });
     };
 
  
