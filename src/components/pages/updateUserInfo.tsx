@@ -70,19 +70,29 @@ type UpdateUserFormProps = {
 export default function UpdateUserForm({nationalID} : UpdateUserFormProps) {
   const [userInfo, setUserInformation] = useState<PersonInfoResponse>();
 
+  const {
+    register,
+    handleSubmit,
+    reset,
+    formState: { errors },
+  } = useForm<UpdateUserFormInput>({
+    resolver: yupResolver(schema),
+  });
+
   useEffect(() => {
     ExistService.findPersonInfo(nationalID, null).then((value) => {
       setUserInformation(value);
     });
   }, []);
 
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-  } = useForm<UpdateUserFormInput>({
-    resolver: yupResolver(schema),
-  });
+  useEffect(() => {
+    reset({
+      Nom: userInfo?.getNames()?.getNom(),
+      Prenom: userInfo?.getNames()?.getPrenom(),
+      PostNom: userInfo?.getNames()?.getMiddleNamesList().toString()
+    })
+  }, [userInfo])
+
 
   const [json, setJson] = useState<string>();
 
