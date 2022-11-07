@@ -86,11 +86,7 @@ export default function UpdateUserForm({nationalID} : UpdateUserFormProps) {
   }, []);
 
   useEffect(() => {
-    reset({
-      Nom: userInfo?.getNames()?.getNom(),
-      Prenom: userInfo?.getNames()?.getPrenom(),
-      PostNom: userInfo?.getNames()?.getMiddleNamesList().toString()
-    })
+    reset()
   }, [userInfo])
 
 

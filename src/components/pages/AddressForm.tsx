@@ -18,7 +18,7 @@ export default function AddressForm({ register, errors, formVal }: UpdateFormPro
       setDVille(formVal!.getVille());
       setDQuartier(formVal!.getQuartier())
       setDAvenue(formVal!.getAvenue())
-      setDCommune(formVal!.getCommune)
+      setDCommune(formVal!.getCommune())
       setDNumero(formVal!.getNumber().toString())
       setDCodePostal(formVal!.getZipCode())
       setDReference(formVal!.getReference())

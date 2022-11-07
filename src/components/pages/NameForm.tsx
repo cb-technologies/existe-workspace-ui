@@ -17,6 +17,7 @@ export default function NameForm({
       setDFirstName(formVal!.getPrenom());
       setDLastName(formVal!.getNom())
       setDMiddleNames(formVal!.getMiddleNamesList().toString())
+      
     }
   }, [formVal]);
 
