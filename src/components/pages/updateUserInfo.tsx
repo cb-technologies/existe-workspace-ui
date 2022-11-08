@@ -95,7 +95,7 @@ export default function UpdateUserForm({nationalID} : UpdateUserFormProps) {
   const onSubmit = (data: UpdateUserFormInput) => {
     setJson(JSON.stringify(data));
     console.log(data);
-    updateUserInformation(data);
+    updateUserInformation(data, userInfo!);
   };
 
   return (

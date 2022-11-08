@@ -1,9 +1,11 @@
 import { UpdateUserFormInput } from "../components/pages/updateUserInfo";
-import {Address, Biometric, DateOfBirth, EditPersonInfoParameters, Names, NationalIDNumber, PersonInfoRequest, Phenotype } from "../grpc/pb/message_and_service_pb";
+import {Address, Biometric, DateOfBirth, EditPersonInfoParameters, Names, NationalIDNumber, PersonInfoResponse,PersonInfoRequest, Phenotype, Origin } from "../grpc/pb/message_and_service_pb";
 import { ExistService } from "../store/exist_api_call";
 
-function mapdata(data: UpdateUserFormInput) {
-  var personId = new NationalIDNumber().setId("5ff51101300002e");
+
+
+function mapdata(data: UpdateUserFormInput, response: PersonInfoResponse) {
+  var personId = new NationalIDNumber().setId("6035223a0000181");
 
   var names = new Names().setNom(data.Nom);
   names.setPrenom(data.Prenom);
@@ -12,6 +14,9 @@ function mapdata(data: UpdateUserFormInput) {
   var phenotype = new Phenotype().setEyeColor(data.EyeColor);
   phenotype.setHeight(data.Taille);
   phenotype.setWeight(data.Poids);
+
+  var origins = new Origin().setChefLieu(response.getOrigins()!.getChefLieu())
+  origins.setProvinceList(response.getOrigins()!.getProvinceList())
 
   var biometric = new Biometric().setPhotos("bbbbbbbbbb");
 
@@ -32,6 +37,7 @@ function mapdata(data: UpdateUserFormInput) {
   personInfoRequest.setBiometrics(biometric);
   personInfoRequest.setDateOfBirth(dob);
   personInfoRequest.setPhenotypes(phenotype);
+  personInfoRequest.setOrigins(origins);
 
   var editPersonInfoParameters =
     new EditPersonInfoParameters().setEditedpersoninfo(personInfoRequest);
@@ -40,8 +46,8 @@ function mapdata(data: UpdateUserFormInput) {
   return editPersonInfoParameters;
 }
 
-export function updateUserInformation(formData: UpdateUserFormInput) {
-  var EditPersonInfoParameters = mapdata(formData);
+export function updateUserInformation(formData: UpdateUserFormInput, userInfo: PersonInfoResponse) {
+  var EditPersonInfoParameters = mapdata(formData, userInfo);
   ExistService.updatePersonInfo(
     EditPersonInfoParameters,
       null).then((value) => {
