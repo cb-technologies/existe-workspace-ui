@@ -8,6 +8,7 @@
     "@hookform/resolvers": "^2.9.9",
     "@improbable-eng/grpc-web": "^0.15.0",
     "@mui/icons-material": "^5.10.9",
+    "@mui/lab": "^5.0.0-alpha.107",
     "@mui/material": "^5.10.10",
     "@mui/x-date-pickers": "^5.0.5",
     "@testing-library/jest-dom": "^5.16.5",
