@@ -22,9 +22,7 @@ export default function App() {
   return (
       <Container maxWidth="sm">
         <Box sx={{ my: 4 }}>
-          <Button>
-            Hello Nathan
-          </Button>
+  
           <Typography variant="h4" component="h1" gutterBottom>
             Create React App example with TypeScript
           </Typography>
