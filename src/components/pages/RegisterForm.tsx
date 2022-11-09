@@ -1,4 +1,5 @@
 import * as React from 'react';
+import * as grpcWeb from 'grpc-web';
 import Box from '@mui/material/Box';
 import { useState } from "react";
 import { Dayjs } from 'dayjs';
@@ -15,6 +16,9 @@ import * as yup from "yup"; // to validate the form input
 import { useForm } from "react-hook-form"; // to handle the form's submission and error states
 import { yupResolver } from "@hookform/resolvers/yup";
 import Button from '@mui/material/Button';
+import {Address, Biometric, DateOfBirth, EditPersonInfoParameters, Origin,Names, NationalIDNumber, PersonInfoRequest, Phenotype } from "../../grpc/pb/message_and_service_pb";
+import { ExistService } from "../../store/exist_api_call";
+import useHistoryState from "../../hooks/useHistoryState";
 
 
 
@@ -73,33 +77,41 @@ const schema = yup.object().shape({ //requirement for the inputs
 
 // @ts-ignore
 function NameForm({register, errors}) {
+    const [dfirstName, setDFirstName] = useHistoryState("FirstName", "");
+    const [dLastName, setDLastName] = useHistoryState("LastName", "");
+    const [dMiddleNames, setDMiddleNames] = useHistoryState("MiddleName", "")
 
-    return <div >
-        <TextField
+    return (
+        <div>
+          <TextField
             {...register("Prenom")}
             id="outlined-prenom-input"
             label="Prenom"
             helperText={errors.Prenom?.message}
             error={!!errors.Prenom}
-            required
-        />
-        <TextField
+            value={dfirstName}
+            onChange={(e) => setDFirstName(e.target.value)}
+          />
+          <TextField
             {...register("Nom")}
             id="outlined-nom-input"
             label="Nom"
             helperText={errors.Nom?.message}
             error={!!errors.Nom}
-            required
-        />
-        <TextField
+            value={dLastName}
+            onChange={(e) => setDLastName(e.target.value)}
+          />
+          <TextField
             {...register("PostNom")}
             id="outlined-postnom-input"
             label="Post-Nom"
             helperText={errors.PostNom?.message}
             error={!!errors.PostNom}
-            required
-        />
-    </div>
+            value={dMiddleNames}
+            onChange={(e) => setDMiddleNames(e.target.value)}
+          />
+        </div>
+      );
 }
 
 function SexForm() {
@@ -115,70 +127,100 @@ function SexForm() {
 // @ts-ignore
 function AddressForm({register, errors}) {
 
-    return <div>
-        <TextField
+    const [dVille, setDVille] = useState("");
+    const [dQuartier, setDQuartier] = useState("");
+    const [dAvenue, setDAvenue] = useState("")
+    const [dCommune, setDCommune] = useState("")
+    const [dNumero, setDNumero] = useState("")
+    const [dCodePostal, setDCodePostal] = useState("")
+    const [dReference, setDReference] = useState("")
+
+    return (
+        <div>
+          <TextField
             {...register("Ville")}
             id="outlined-ville-input"
             label="Ville"
             helperText={errors.Ville?.message}
             error={!!errors.Ville}
             required
-        />
-        <TextField
+            value={dVille}
+            onChange={(e) => setDVille(e.target.value)}
+          />
+          <TextField
             {...register("Quartier")}
             id="outlined-quartier-input"
             label="Quartier"
             helperText={errors.Quartier?.message}
             error={!!errors.Quartier}
             required
-        />
-        <TextField
+            value={dQuartier}
+            onChange={(e) => setDQuartier(e.target.value)}
+          />
+          <TextField
             {...register("Avenue")}
             id="outlined-avenue-input"
             label="Avenue"
             helperText={errors.Avenue?.message}
             error={!!errors.Avenue}
             required
-        />
-        <TextField
+            value={dAvenue}
+            onChange={(e) => setDAvenue(e.target.value)}
+          />
+          <TextField
             {...register("Commune")}
             id="outlined-commune-input"
             label="Commune"
             helperText={errors.Commune?.message}
             error={!!errors.Commune}
             required
-        />
-
-        <TextField
+            value={dCommune}
+            onChange={(e) => setDCommune(e.target.value)}
+          />
+    
+          <TextField
             {...register("Numero")}
             id="outlined-numero-input"
             label="Numero"
             helperText={errors.Numero?.message}
             error={!!errors.Numero}
             required
-        />
-        <TextField
+            value={dNumero}
+            onChange={(e) => setDNumero(e.target.value)}
+          />
+          <TextField
             {...register("CodePostal")}
             id="outlined-codepostal-input"
             label="Code Postal"
             helperText={errors.CodePostal?.message}
             error={!!errors.CodePostal}
             required
-        />
-        <TextField
+            value={dCodePostal}
+            onChange={(e) => setDCodePostal(e.target.value)}
+          />
+          <TextField
             {...register("Reference")}
             id="outlined-reference-input"
             label="Reference"
             helperText={errors.Reference?.message}
             error={!!errors.Reference}
             required
-        />
-
-    </div>
+            value={dReference}
+            onChange={(e) => setDReference(e.target.value)}
+          />
+        </div>
+      );
 }
 
 // @ts-ignore
 function OriginForm({register, errors}) {
+
+    const [dProvince, setDProvince] = useHistoryState("Province","");
+    const [dChefLieu, setDChefLieu] = useHistoryState("ChefLieu","");
+    const [dTerritoire, setDTerritoire] = useHistoryState("Territoire","")
+    const [dSecteur, setDSecteur] = useHistoryState("Secteur","")
+    const [dVillage, setDVillage] = useHistoryState("Village","")
+
 
     return <div>
         <TextField
@@ -188,6 +230,8 @@ function OriginForm({register, errors}) {
             helperText={errors.Province?.message}
             error={!!errors.Province}
             required
+            value={dProvince}
+            onChange={(e) => setDProvince(e.target.value)}
         />
         <TextField
             {...register("ChefLieu")}
@@ -196,6 +240,8 @@ function OriginForm({register, errors}) {
             helperText={errors.ChefLieu?.message}
             error={!!errors.ChefLieu}
             required
+            value={dChefLieu}
+            onChange={(e) => setDChefLieu(e.target.value)}
         />
         <TextField
             {...register("Territoire")}
@@ -204,6 +250,8 @@ function OriginForm({register, errors}) {
             helperText={errors.Territoire?.message}
             error={!!errors.Territoire}
             required
+            value={dTerritoire}
+            onChange={(e) => setDTerritoire(e.target.value)}
         />
         <TextField
             {...register("Secteur")}
@@ -212,6 +260,8 @@ function OriginForm({register, errors}) {
             helperText={errors.Secteur?.message}
             error={!!errors.Secteur}
             required
+            value={dSecteur}
+            onChange={(e) => setDSecteur(e.target.value)}
         />
         <TextField
             {...register("Village")}
@@ -220,6 +270,8 @@ function OriginForm({register, errors}) {
             helperText={errors.Village?.message}
             error={!!errors.Village}
             required
+            value={dVillage}
+            onChange={(e) => setDVillage(e.target.value)}
         />
     </div>
 }
@@ -227,32 +279,44 @@ function OriginForm({register, errors}) {
 // @ts-ignore
 function PhenotypeForm({register, errors}) {
 
-    return <div>
-        <TextField
+    const [dTaille, setDTaille] = useHistoryState("Taille","");
+    const [dPoids, setDPoids] = useHistoryState("Poids","");
+    const [dEyeColor, setDEyeColor] = useHistoryState("EyeColor","")
+
+    return (
+        <div>
+          <TextField
             {...register("Taille")}
             id="outlined-taille-input"
             label="Taille (cm)"
             helperText={errors.Taille?.message}
             error={!!errors.Taille}
             required
-        />
-        <TextField
+            value={dTaille}
+            onChange={(e) => setDTaille(e.target.value)}
+          />
+          <TextField
             {...register("Poids")}
             id="outlined-poids-input"
             label="Poids (Kg)"
             helperText={errors.Poids?.message}
             error={!!errors.Poids}
             required
-        />
-        <TextField
+            value={dPoids}
+            onChange={(e) => setDPoids(e.target.value)}
+          />
+          <TextField
             {...register("EyeColor")}
             id="outlined-eyecolor-input"
             label="Couleur des yeux"
             helperText={errors.EyeColor?.message}
             error={!!errors.EyeColor}
             required
-        />
-    </div>
+            value={dEyeColor}
+            onChange={(e) => setDEyeColor(e.target.value)}
+          />
+        </div>
+      );
 }
 
 function DateOfBirthForm() {
@@ -272,6 +336,53 @@ function DateOfBirthForm() {
     </LocalizationProvider>
 }
 
+// @ts-ignore
+function mapdata (data) {
+    var names = new Names().setNom(data.Nom)
+    names.setPrenom(data.Prenom)
+    names.setMiddleNamesList([data.PostNom])
+
+    var origins = new Origin().setChefLieu(data.ChefLieu)
+    origins.setProvinceList([data.Province])
+
+    var phenotype = new Phenotype().setEyeColor(data.EyeColor)
+    phenotype.setHeight(data.Height)
+    phenotype.setWeight(data.Poids)
+
+    var biometric = new Biometric().setFingerPrint("bbbbbbbbbbb")
+    biometric.setPhotos("bbbbbbbbbb")
+
+    var dob = new DateOfBirth().setDay("23")
+    dob.setMonth("march")
+    dob.setYear("1998")
+
+    var address = new Address().setAvenue(data.Avenue)
+    address.setCommune(data.Commune)
+    address.setQuartier(data.Quartier)
+    address.setNumber(data.Numero)
+    address.setVille(data.Ville)
+    address.setZipCode(data.CodePostal)
+    address.setReference(data.Reference)
+
+    var personInfoRequest = new PersonInfoRequest().setNames(names)
+    personInfoRequest.setAddress(address)
+    personInfoRequest.setBiometrics(biometric)
+    personInfoRequest.setDateOfBirth(dob)
+    personInfoRequest.setOrigins(origins)
+    personInfoRequest.setPhenotypes(phenotype)
+
+    return personInfoRequest
+
+
+
+}
+// @ts-ignore
+function createUser(data) {
+
+    var personInfoRequest = mapdata(data)
+    ExistService.addNewPersonInfo(personInfoRequest, null, (err: grpcWeb.RpcError) => {})
+}
+
 export default function RegisterForm() {
 
     const {
@@ -287,6 +398,7 @@ export default function RegisterForm() {
     const onSubmit = (data: RegisterFormInput) => {
         setJson(JSON.stringify(data));
         console.log(data)
+        createUser(data)
     };
 
     return (
