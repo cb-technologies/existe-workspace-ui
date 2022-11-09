@@ -21,6 +21,7 @@ import PhenotypeForm from "./PhenotypeForm";
 import SexForm from "./SexForm";
 import { useRadioGroup } from "@mui/material";
 import { ExistService } from "../../store/exist_api_call";
+import Container from '@mui/material/Container';
 
 export interface UpdateUserFormInput {
   Prenom: string;
@@ -99,7 +100,8 @@ export default function UpdateUserForm({nationalID} : UpdateUserFormProps) {
   };
 
   return (
-    <Box
+    <Container maxWidth="sm">
+      <Box
       component={"form"}
       sx={{
         "& .MuiTextField-root": { m: 1, width: "25ch" },
@@ -145,5 +147,7 @@ export default function UpdateUserForm({nationalID} : UpdateUserFormProps) {
         </>
       )}
     </Box>
+    </Container>
+    
   );
 }
