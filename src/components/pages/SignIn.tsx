@@ -14,12 +14,19 @@ import * as yup from "yup"; // to validate the form input
 import { useForm } from "react-hook-form"; // to handle the form's submission and error states
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useState } from "react";
+import { BrowserRouter, Route, Link as RouterLink , Routes } from "react-router-dom"; //import the package
+import SignUp from './SignUp';
+import MainRouter from './MainRouter';
+
+
+
 import {
   AgentSignUpFormInput,
 } from "../../utils/exist_form";
 import { ExistService } from "../../store/exist_api_call";
 import { AgentSignInInfo } from "../../grpc/pb/message_and_service_pb";
 import useHistoryState from "../../hooks/useHistoryState";
+
 
 
 interface IFormInput {
@@ -115,9 +122,9 @@ export default function SignIn() {
                 </Link>
               </Grid>
               <Grid item>
-                <Link href="#" variant="body2">
+                <RouterLink to="/signUp">
                   {"Pas encore enregistré? Veuillez vous inscrire"}
-                </Link>
+                </RouterLink>
               </Grid>
             </Grid>
           </Box>
@@ -125,6 +132,7 @@ export default function SignIn() {
         <Copyright sx={{ mt: 8, mb: 4 }} />
       </Container>
     </ThemeProvider>
+    
   );
 }
 function Copyright(props: any) {

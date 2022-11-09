@@ -2,18 +2,25 @@ import * as React from 'react';
 import { createRoot } from 'react-dom/client';
 import CssBaseline from '@mui/material/CssBaseline';
 import { ThemeProvider } from '@mui/material/styles';
-// import App from './App';
+import App from './App';
 import theme from './Theme';
-import SignIn from './components/pages/Login';
+import SignIn from './components/pages/SignIn';
 import Home from './components/pages/Landing_page';
 import SignUp from './components/pages/SignUp';
+import MainRouter from './components/pages/MainRouter';
+import RegisterForm from './components/pages/RegisterForm';
+import { BrowserRouter } from "react-router-dom"
+
 
 const rootElement = document.getElementById('root');
 const root = createRoot(rootElement!);
 
 root.render(
+    <BrowserRouter>
     <ThemeProvider theme={theme}>
         <CssBaseline />
-        <SignIn />
+        <App />
     </ThemeProvider>,
+    </BrowserRouter>
+
 );
