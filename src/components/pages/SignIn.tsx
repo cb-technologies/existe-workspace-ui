@@ -5,8 +5,8 @@ import CssBaseline from '@mui/material/CssBaseline';
 import TextField from '@mui/material/TextField';
 import Link from '@mui/material/Link';
 import Grid from '@mui/material/Grid';
-import PeopleAltIcon from '@mui/icons-material/PeopleAlt';
 import Box from '@mui/material/Box';
+import PeopleAltIcon from '@mui/icons-material/PeopleAlt';
 import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
@@ -14,6 +14,19 @@ import * as yup from "yup"; // to validate the form input
 import { useForm } from "react-hook-form"; // to handle the form's submission and error states
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useState } from "react";
+import { BrowserRouter, Route, Link as RouterLink , Routes } from "react-router-dom"; //import the package
+import SignUp from './SignUp';
+import MainRouter from './MainRouter';
+
+
+
+import {
+  AgentSignUpFormInput,
+} from "../../utils/exist_form";
+import { ExistService } from "../../store/exist_api_call";
+import { AgentSignInInfo } from "../../grpc/pb/message_and_service_pb";
+import useHistoryState from "../../hooks/useHistoryState";
+
 
 
 interface IFormInput {
@@ -22,8 +35,8 @@ interface IFormInput {
   }
 
 const schema = yup.object().shape({ //requirement for the inputs
-email: yup.string().required().email(),
-password: yup.string().required().min(8).max(100),
+email: yup.string().required("L'email addresse ne peut pas etre vide").email(),
+password: yup.string().required("Le mot de passe ne peut pas etre vide").min(8).max(100),
 });
 
 const theme = createTheme();
@@ -38,9 +51,19 @@ export default function SignIn() {
       });
 
     const [json, setJson] = useState<string>();
+    const [Email, setEmail] = useHistoryState("Email", "");
+    const [Password, setPassword] = useHistoryState("Password", "");
+
+
 
     const onSubmit = (data: IFormInput) => {
     setJson(JSON.stringify(data));
+    const agentSignInInfo: AgentSignInInfo = new AgentSignInInfo()
+      .setEmail(data.email)
+      .setPassword(data.password);
+    ExistService.signInAgent(agentSignInInfo, null).then((value) => {
+      console.log("The respone was ", value);
+    });
     };
 
  
@@ -99,9 +122,9 @@ export default function SignIn() {
                 </Link>
               </Grid>
               <Grid item>
-                <Link href="#" variant="body2">
+                <RouterLink to="/signUp">
                   {"Pas encore enregistré? Veuillez vous inscrire"}
-                </Link>
+                </RouterLink>
               </Grid>
             </Grid>
           </Box>
@@ -109,6 +132,7 @@ export default function SignIn() {
         <Copyright sx={{ mt: 8, mb: 4 }} />
       </Container>
     </ThemeProvider>
+    
   );
 }
 function Copyright(props: any) {
