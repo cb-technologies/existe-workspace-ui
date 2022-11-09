@@ -1,27 +1,18 @@
 import * as React from 'react';
-import {makeStyles} from "@mui/styles";
-import {CssBaseline} from "@material-ui/core";
+import { styled} from "@mui/styles";
 import Header from "../others/Header";
 
-const useStyles = makeStyles(() => ({
-    root: {
-        minHeight: '100vh',
-        backgroundImage: `url(${process.env.PUBLIC_URL + '/assets/bg.jpg'})`,
-        backgroundRepeat: 'no-repeat',
-        backgroundSize: 'cover'
-    },
-    header: {
-        background: 'none'
-    }
+const LandingDiv = styled('div')(({}) => ({
+    minHeight: '100vh',
+    backgroundImage: `url(${process.env.PUBLIC_URL + '/assets/bg.jpg'})`,
+    backgroundRepeat: 'no-repeat',
+    backgroundSize: 'cover'
 }));
 
-const LandingPage = (props:any) => {
-    const classes = useStyles();
+const LandingPage = () => {
     return (
-        <div className={classes.root}>
-            <CssBaseline />jkk
-            <Header className={classes.header}/>
-        </div>
+        <LandingDiv> <Header /> </LandingDiv>
+
     );
 }
 
