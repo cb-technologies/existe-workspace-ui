@@ -12,12 +12,15 @@ import { createTheme, ThemeProvider } from "@mui/material/styles";
 import * as yup from "yup"; // to validate the form input
 import { useForm } from "react-hook-form"; // to handle the form's submission and error states
 import { yupResolver } from "@hookform/resolvers/yup";
-import {
-  AgentSignUpFormInput,
-} from "../../utils/exist_form";
+import { AgentSignUpFormInput } from "../../utils/exist_form";
 import { ExistService } from "../../store/exist_api_call";
 import { AgentInfo } from "../../grpc/pb/message_and_service_pb";
 import useHistoryState from "../../hooks/useHistoryState";
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { Grid } from "@mui/material";
+import LoadingButton from "@mui/lab/LoadingButton";
+import SaveIcon from "@mui/icons-material/Save";
 
 const schema = yup.object().shape({
   //requirement for the inputs
@@ -43,14 +46,23 @@ export default function SignUp() {
   const [Email, setEmail] = useHistoryState("Email", "");
   const [Password, setPassword] = useHistoryState("Password", "");
 
+  const [spinRegister, setSpinRegister] = useState(false);
+  const navigate = useNavigate();
+
   const onSubmit = (data: AgentSignUpFormInput) => {
     const agentInfo: AgentInfo = new AgentInfo()
       .setNom(data.Nom)
       .setPrenom(data.Prenom)
       .setEmail(data.Email)
       .setPassword(data.Password);
+    setSpinRegister(true);
     ExistService.signUpAgent(agentInfo, null).then((value) => {
-      console.log("The respone was ", value);
+      setSpinRegister(false);
+      if (value.getStatus() == 1) {
+        navigate("/signIn");
+      } else {
+        console.log("could not register user");
+      }
     });
   };
 
@@ -130,14 +142,31 @@ export default function SignUp() {
               required
               fullWidth
             />
-            <Button
-              type="submit"
-              fullWidth
-              variant="contained"
-              sx={{ mt: 3, mb: 2 }}
-            >
-              S'enregister
-            </Button>
+            {!spinRegister ? (
+              <Button
+                type="submit"
+                fullWidth
+                variant="contained"
+                sx={{ mt: 3, mb: 2 }}
+              >
+                S'enregister
+              </Button>
+            ) : (
+              <LoadingButton
+                loading
+                loadingPosition="start"
+                startIcon={<SaveIcon />}
+                variant="contained"
+                sx={{ mt: 3, mb: 2 }}
+                >
+                  S'enregister
+              </LoadingButton>
+            )}
+            <Grid item>
+              <Link href="/signIn" variant="body2">
+                {"Deja enregistré? Connecter vous"}
+              </Link>
+            </Grid>
           </Box>
         </Box>
         <Copyright sx={{ mt: 8, mb: 4 }} />
@@ -145,7 +174,6 @@ export default function SignUp() {
     </ThemeProvider>
   );
 }
-
 
 function Copyright(props: any) {
   return (
