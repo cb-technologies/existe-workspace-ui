@@ -26,8 +26,8 @@ const schema = yup.object().shape({
   //requirement for the inputs
   Email: yup.string().required().email(),
   Password: yup.string().required().min(8).max(100),
-  Prenom: yup.string().required().min(1).max(100),
-  Nom: yup.string().required().min(5).max(100),
+  Prenom: yup.string().required().min(3).max(100),
+  Nom: yup.string().required().min(3).max(100),
 });
 
 const theme = createTheme();
@@ -154,6 +154,7 @@ export default function SignUp() {
             ) : (
               <LoadingButton
                 loading
+                fullWidth
                 loadingPosition="start"
                 startIcon={<SaveIcon />}
                 variant="contained"
