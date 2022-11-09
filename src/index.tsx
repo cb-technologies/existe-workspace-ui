@@ -5,7 +5,6 @@ import { ThemeProvider } from '@mui/material/styles';
 import App from './App';
 import theme from './Theme';
 import SignIn from './components/pages/SignIn';
-import Home from './components/pages/Landing_page';
 import SignUp from './components/pages/SignUp';
 import MainRouter from './components/pages/MainRouter';
 import RegisterForm from './components/pages/RegisterForm';

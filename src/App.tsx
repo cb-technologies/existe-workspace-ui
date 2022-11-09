@@ -10,21 +10,7 @@ import MainRouter from './components/pages/MainRouter';
 
 
 export default function App() {
-  return (
-    // <Container maxWidth="sm">
-
-      
+  return (    
       <MainRouter />
-      // </Box>
-    // </Container>
   );
 }
-
-// export default function App() {
-//   return (
-//    <BrowserRouter>
-//          <Route path = "/"><SignIn/></Route>
-//          <Route path = "/SignUp"><SignUp/></Route>
-//    </BrowserRouter>
-//   );
-// }
