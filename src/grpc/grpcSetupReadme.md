@@ -17,6 +17,10 @@ After dowloading the **protoc-gen-grpc-web**, make sure to make it executable by
 ```sh
 protoc -I=pathToProtoDependency proto_file_used_to_generate--js_out=commonjs:pathMessages --grpc-web_out=import_style=typescript,mode=grpcweb:pathStub
 ```
+Example when in the proto folder: 
+```sh
+protoc -I=. message_and_service.proto --js_out=import_style=commonjs:../pb --grpc-web_out=import_style=typescript,mode=grpcwebtext:../pb
+```
 
 - **pathToProtoDependency**: This is where the proto compiler will look into if it needs to resolve any dependency while using the proto file to generate javascript/typescript code
 - **proto_file_used_to_generate**: The path to the proto file that will be used to generate the code

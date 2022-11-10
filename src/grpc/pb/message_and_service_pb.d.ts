@@ -386,3 +386,73 @@ export namespace EditPersonInfoParameters {
   }
 }
 
+export class Response extends jspb.Message {
+  getStatus(): number;
+  setStatus(value: number): Response;
+
+  serializeBinary(): Uint8Array;
+  toObject(includeInstance?: boolean): Response.AsObject;
+  static toObject(includeInstance: boolean, msg: Response): Response.AsObject;
+  static serializeBinaryToWriter(message: Response, writer: jspb.BinaryWriter): void;
+  static deserializeBinary(bytes: Uint8Array): Response;
+  static deserializeBinaryFromReader(message: Response, reader: jspb.BinaryReader): Response;
+}
+
+export namespace Response {
+  export type AsObject = {
+    status: number,
+  }
+}
+
+export class AgentInfo extends jspb.Message {
+  getNom(): string;
+  setNom(value: string): AgentInfo;
+
+  getPrenom(): string;
+  setPrenom(value: string): AgentInfo;
+
+  getEmail(): string;
+  setEmail(value: string): AgentInfo;
+
+  getPassword(): string;
+  setPassword(value: string): AgentInfo;
+
+  serializeBinary(): Uint8Array;
+  toObject(includeInstance?: boolean): AgentInfo.AsObject;
+  static toObject(includeInstance: boolean, msg: AgentInfo): AgentInfo.AsObject;
+  static serializeBinaryToWriter(message: AgentInfo, writer: jspb.BinaryWriter): void;
+  static deserializeBinary(bytes: Uint8Array): AgentInfo;
+  static deserializeBinaryFromReader(message: AgentInfo, reader: jspb.BinaryReader): AgentInfo;
+}
+
+export namespace AgentInfo {
+  export type AsObject = {
+    nom: string,
+    prenom: string,
+    email: string,
+    password: string,
+  }
+}
+
+export class AgentSignInInfo extends jspb.Message {
+  getEmail(): string;
+  setEmail(value: string): AgentSignInInfo;
+
+  getPassword(): string;
+  setPassword(value: string): AgentSignInInfo;
+
+  serializeBinary(): Uint8Array;
+  toObject(includeInstance?: boolean): AgentSignInInfo.AsObject;
+  static toObject(includeInstance: boolean, msg: AgentSignInInfo): AgentSignInInfo.AsObject;
+  static serializeBinaryToWriter(message: AgentSignInInfo, writer: jspb.BinaryWriter): void;
+  static deserializeBinary(bytes: Uint8Array): AgentSignInInfo;
+  static deserializeBinaryFromReader(message: AgentSignInInfo, reader: jspb.BinaryReader): AgentSignInInfo;
+}
+
+export namespace AgentSignInInfo {
+  export type AsObject = {
+    email: string,
+    password: string,
+  }
+}
+
