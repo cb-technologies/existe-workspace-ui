@@ -386,6 +386,32 @@ export namespace EditPersonInfoParameters {
   }
 }
 
+export class RetreivePersonInfoParameters extends jspb.Message {
+  getNames(): Names | undefined;
+  setNames(value?: Names): RetreivePersonInfoParameters;
+  hasNames(): boolean;
+  clearNames(): RetreivePersonInfoParameters;
+
+  getDateOfBirth(): DateOfBirth | undefined;
+  setDateOfBirth(value?: DateOfBirth): RetreivePersonInfoParameters;
+  hasDateOfBirth(): boolean;
+  clearDateOfBirth(): RetreivePersonInfoParameters;
+
+  serializeBinary(): Uint8Array;
+  toObject(includeInstance?: boolean): RetreivePersonInfoParameters.AsObject;
+  static toObject(includeInstance: boolean, msg: RetreivePersonInfoParameters): RetreivePersonInfoParameters.AsObject;
+  static serializeBinaryToWriter(message: RetreivePersonInfoParameters, writer: jspb.BinaryWriter): void;
+  static deserializeBinary(bytes: Uint8Array): RetreivePersonInfoParameters;
+  static deserializeBinaryFromReader(message: RetreivePersonInfoParameters, reader: jspb.BinaryReader): RetreivePersonInfoParameters;
+}
+
+export namespace RetreivePersonInfoParameters {
+  export type AsObject = {
+    names?: Names.AsObject,
+    dateOfBirth?: DateOfBirth.AsObject,
+  }
+}
+
 export class Response extends jspb.Message {
   getStatus(): number;
   setStatus(value: number): Response;
