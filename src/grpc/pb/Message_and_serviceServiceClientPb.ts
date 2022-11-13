@@ -168,6 +168,49 @@ export class ExistCRUDClient {
     this.methodDescriptorFindPersonInfo);
   }
 
+  methodDescriptorRetreiveUserBasedOnField = new grpcWeb.MethodDescriptor(
+    '/pb.ExistCRUD/RetreiveUserBasedOnField',
+    grpcWeb.MethodType.UNARY,
+    message_and_service_pb.RetreivePersonInfoParameters,
+    message_and_service_pb.PersonInfoResponse,
+    (request: message_and_service_pb.RetreivePersonInfoParameters) => {
+      return request.serializeBinary();
+    },
+    message_and_service_pb.PersonInfoResponse.deserializeBinary
+  );
+
+  retreiveUserBasedOnField(
+    request: message_and_service_pb.RetreivePersonInfoParameters,
+    metadata: grpcWeb.Metadata | null): Promise<message_and_service_pb.PersonInfoResponse>;
+
+  retreiveUserBasedOnField(
+    request: message_and_service_pb.RetreivePersonInfoParameters,
+    metadata: grpcWeb.Metadata | null,
+    callback: (err: grpcWeb.RpcError,
+               response: message_and_service_pb.PersonInfoResponse) => void): grpcWeb.ClientReadableStream<message_and_service_pb.PersonInfoResponse>;
+
+  retreiveUserBasedOnField(
+    request: message_and_service_pb.RetreivePersonInfoParameters,
+    metadata: grpcWeb.Metadata | null,
+    callback?: (err: grpcWeb.RpcError,
+               response: message_and_service_pb.PersonInfoResponse) => void) {
+    if (callback !== undefined) {
+      return this.client_.rpcCall(
+        this.hostname_ +
+          '/pb.ExistCRUD/RetreiveUserBasedOnField',
+        request,
+        metadata || {},
+        this.methodDescriptorRetreiveUserBasedOnField,
+        callback);
+    }
+    return this.client_.unaryCall(
+    this.hostname_ +
+      '/pb.ExistCRUD/RetreiveUserBasedOnField',
+    request,
+    metadata || {},
+    this.methodDescriptorRetreiveUserBasedOnField);
+  }
+
   methodDescriptorSignInAgent = new grpcWeb.MethodDescriptor(
     '/pb.ExistCRUD/SignInAgent',
     grpcWeb.MethodType.UNARY,

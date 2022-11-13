@@ -19,6 +19,7 @@ import Button from '@mui/material/Button';
 import {Address, Biometric, DateOfBirth, EditPersonInfoParameters, Origin,Names, NationalIDNumber, PersonInfoRequest, Phenotype } from "../../grpc/pb/message_and_service_pb";
 import { ExistService } from "../../store/exist_api_call";
 import useHistoryState from "../../hooks/useHistoryState";
+import Container from '@mui/material/Container';
 
 
 
@@ -136,7 +137,7 @@ function AddressForm({register, errors}) {
     const [dReference, setDReference] = useState("")
 
     return (
-        <div>
+        <div>   
           <TextField
             {...register("Ville")}
             id="outlined-ville-input"
@@ -208,7 +209,8 @@ function AddressForm({register, errors}) {
             value={dReference}
             onChange={(e) => setDReference(e.target.value)}
           />
-        </div>
+        
+        </div>  
       );
 }
 
@@ -402,10 +404,11 @@ export default function RegisterForm() {
     };
 
     return (
-        <Box
+        <Container maxWidth="sm">
+            <Box
             component={"form"}
             sx={{
-            '& .MuiTextField-root': { m: 1,  width: '25ch' },
+            '& .MuiTextField-root': { m: 1,  width: '25ch',},
         }}
              noValidate
              autoComplete={"off"}
@@ -447,5 +450,7 @@ export default function RegisterForm() {
                     </>
                 )}
         </Box>
+        </Container>
+        
     );
 }

@@ -1,14 +1,19 @@
-import React from 'react'
+import React from "react";
 import { BrowserRouter, Route, Link, Routes } from "react-router-dom"; //import the package
-import SignIn from "./SignIn" //import your signIn page
-import SignUp from "./SignUp" //import your signUp page
+import CardGenerationPage from "./CardGenerationPage";
+import RegisterForm from "./RegisterForm";
+import SignIn from "./SignIn"; //import your signIn page
+import SignUp from "./SignUp"; //import your signUp page
+import UpdateUserForm from "./updateUserInfo";
 
-function MainRouter(){
-    return(
-        <Routes>
-                    <Route path="/" element={<SignIn />} />
-                    <Route path="/signUp" element={<SignUp />} />
-       </Routes>
-    );
+function MainRouter() {
+  return (
+    <Routes>
+      <Route path="/" element={<SignIn />} />
+      <Route path="/signUp" element={<SignUp />} />
+      <Route path="/register" element={<RegisterForm />} />
+      <Route path="/generateCard" element={<CardGenerationPage />} />
+    </Routes>
+  );
 }
-export default MainRouter
+export default MainRouter;
