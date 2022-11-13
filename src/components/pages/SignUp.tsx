@@ -18,6 +18,8 @@ import {
 import { ExistService } from "../../store/exist_api_call";
 import { AgentInfo } from "../../grpc/pb/message_and_service_pb";
 import useHistoryState from "../../hooks/useHistoryState";
+import { BrowserRouter, Route, Link as RouterLink , Routes } from "react-router-dom"; //import the package
+
 
 const schema = yup.object().shape({
   //requirement for the inputs
