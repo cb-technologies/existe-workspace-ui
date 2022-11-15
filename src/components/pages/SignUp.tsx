@@ -21,6 +21,7 @@ import { useNavigate } from "react-router-dom";
 import { Grid } from "@mui/material";
 import LoadingButton from "@mui/lab/LoadingButton";
 import SaveIcon from "@mui/icons-material/Save";
+import { BrowserRouter, Route, Link as RouterLink , Routes } from "react-router-dom";
 
 const schema = yup.object().shape({
   //requirement for the inputs
@@ -164,9 +165,12 @@ export default function SignUp() {
               </LoadingButton>
             )}
             <Grid item>
-              <Link href="/signIn" variant="body2">
+              <RouterLink to="/">
+              {"Deja enregistré? Connecter vous"}
+              </RouterLink>
+              {/* <Link href="/signIn" variant="body2">
                 {"Deja enregistré? Connecter vous"}
-              </Link>
+              </Link> */}
             </Grid>
           </Box>
         </Box>

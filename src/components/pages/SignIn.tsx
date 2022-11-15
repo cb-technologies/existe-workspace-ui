@@ -113,7 +113,9 @@ export default function SignIn() {
               variant="contained"
               sx={{ mt: 3, mb: 2 }}
             >
-              Se Connecter
+              <RouterLink to="/orientation">
+                  {"Se connecter"}
+                </RouterLink>
             </Button>
             <Grid container>
               <Grid item xs>
