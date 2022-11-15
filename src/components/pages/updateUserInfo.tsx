@@ -65,11 +65,11 @@ const schema = yup.object().shape({
 });
 
 type UpdateUserFormProps = {
-  nationalID: NationalIDNumber
+  userInfo: PersonInfoResponse
 }
 
-export default function UpdateUserForm({nationalID} : UpdateUserFormProps) {
-  const [userInfo, setUserInformation] = useState<PersonInfoResponse>();
+export default function UpdateUserForm({userInfo} : UpdateUserFormProps) {
+  // const [userInfo, setUserInformation] = useState<PersonInfoResponse>();
 
   const {
     register,
@@ -80,15 +80,15 @@ export default function UpdateUserForm({nationalID} : UpdateUserFormProps) {
     resolver: yupResolver(schema),
   });
 
-  useEffect(() => {
-    ExistService.findPersonInfo(nationalID, null).then((value) => {
-      setUserInformation(value);
-    });
-  }, []);
+  // useEffect(() => {
+  //   // ExistService.findPersonInfo(nationalID, null).then((value) => {
+  //     setUserInformation(value);
+  //   });
+  // }, []);
 
-  useEffect(() => {
-    reset()
-  }, [userInfo])
+  // useEffect(() => {
+  //   reset()
+  // }, [userInfo])
 
 
   const [json, setJson] = useState<string>();

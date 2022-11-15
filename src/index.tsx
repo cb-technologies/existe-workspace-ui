@@ -9,6 +9,7 @@ import SignIn from './components/pages/SignIn';
 import SignUp from './components/pages/SignUp';
 import MainRouter from './components/pages/MainRouter';
 import RegisterForm from './components/pages/RegisterForm';
+import RetrieveUserInfo from './components/pages/RetrieveUserInfo';
 import { BrowserRouter } from "react-router-dom"
 
 
@@ -19,7 +20,7 @@ root.render(
     <BrowserRouter>
     <ThemeProvider theme={theme}>
         <CssBaseline />
-        <App/>
+        <RetrieveUserInfo/>
     </ThemeProvider>,
     </BrowserRouter>
 

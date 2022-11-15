@@ -5,6 +5,7 @@ import RegisterForm from "./RegisterForm";
 import SignIn from "./SignIn"; //import your signIn page
 import SignUp from "./SignUp"; //import your signUp page
 import UpdateUserForm from "./updateUserInfo";
+import RetrieveUserInfo from "./RetrieveUserInfo";
 
 function MainRouter() {
   return (
@@ -13,6 +14,7 @@ function MainRouter() {
       <Route path="/signUp" element={<SignUp />} />
       <Route path="/register" element={<RegisterForm />} />
       <Route path="/generateCard" element={<CardGenerationPage />} />
+      <Route path="/retrieveUserInfo" element={<RetrieveUserInfo />} />
     </Routes>
   );
 }
