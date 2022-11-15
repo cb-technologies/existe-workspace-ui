@@ -13,22 +13,26 @@ import Container from '@mui/material/Container';
 import AppRegistrationIcon from '@mui/icons-material/AppRegistration';
 import BrowserUpdatedIcon from '@mui/icons-material/BrowserUpdated';
 import PermIdentityIcon from '@mui/icons-material/PermIdentity';
+import { BrowserRouter, Route, Link as RouterLink , Routes, useNavigate } from "react-router-dom"; //import the package
 
 const tiers = [
   {
     buttonText: 'Enregistrer Un Citoyen',
     buttonVariant: 'outlined',
-    icon: AppRegistrationIcon
+    icon: AppRegistrationIcon,
+    page: "/register"
   },
   {
     buttonText: "Actualiser Un Citoyen",
     buttonVariant: 'outlined',
-    icon: BrowserUpdatedIcon
+    icon: BrowserUpdatedIcon,
+    page: "/generateCard"
   },
   {
     buttonText: "Generer carte d'identitée",
     buttonVariant: 'outlined',
-    icon: PermIdentityIcon
+    icon: PermIdentityIcon,
+    page: "/generateCard"
   },
 ];
 
@@ -43,6 +47,11 @@ const styles = {
 
 
 function OrientationContent() {
+  const navigate = useNavigate();
+
+  const navigateTo = (page: string) => {
+    navigate(page)
+  };
   return (
     <React.Fragment>
       <GlobalStyles styles={{ ul: { margin: 0, padding: 0, listStyle: 'none' } }} />
@@ -95,6 +104,10 @@ function OrientationContent() {
                     sx={{
                       "&.MuiButton-text": { color: "#1E0909" }
                     }}
+                    value={tier.page}
+                    onClick={
+                      () => navigateTo(tier.page)
+                    }
                   >
                     {tier.buttonText}
                   </Button>
