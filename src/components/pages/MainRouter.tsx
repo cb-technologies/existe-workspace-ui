@@ -15,6 +15,8 @@ function MainRouter() {
       <Route path="/register" element={<RegisterForm />} />
       <Route path="/generateCard" element={<CardGenerationPage />} />
       <Route path="/retrieveUserInfo" element={<RetrieveUserInfo />} />
+
+
     </Routes>
   );
 }

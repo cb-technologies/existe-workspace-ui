@@ -64,11 +64,11 @@ const schema = yup.object().shape({
   EyeColor: yup.string().required().min(2).max(30),
 });
 
-type UpdateUserFormProps = {
-  userInfo: PersonInfoResponse
-}
+// type UpdateUserFormProps = {
+//   userInfo: PersonInfoResponse
+// }
 
-export default function UpdateUserForm({userInfo} : UpdateUserFormProps) {
+export default function UpdateUserForm({userInfo}: PersonInfoResponse) {
   // const [userInfo, setUserInformation] = useState<PersonInfoResponse>();
 
   const {

@@ -16,10 +16,13 @@ import * as yup from "yup"; // to validate the form input
 import { useForm } from "react-hook-form"; // to handle the form's submission and error states
 import { yupResolver } from "@hookform/resolvers/yup";
 import Button from '@mui/material/Button';
-import { DateOfBirth, RetreivePersonInfoParameters , Names, PersonInfoRequest } from "../../grpc/pb/message_and_service_pb";
+import { DateOfBirth, RetreivePersonInfoParameters , Names, PersonInfoRequest , PersonInfoResponse} from "../../grpc/pb/message_and_service_pb";
 import { ExistService } from "../../store/exist_api_call";
 import useHistoryState from "../../hooks/useHistoryState";
 import Container from '@mui/material/Container';
+import { BrowserRouter, Route, Link as RouterLink , Routes, useNavigate } from "react-router-dom"; //import the package
+import UpdateUserForm from './updateUserInfo';
+
 
 
 
@@ -123,10 +126,13 @@ function mapdata (data) {
 
 
 // @ts-ignore
-function retreiveUser(data) {
+function retreiveUser(data) :PersonInfoResponse {
 
     var retreivePersonInfoParameters = mapdata(data)
-    ExistService.retreiveUserBasedOnField(retreivePersonInfoParameters, null).then((val)=>{console.log(val.getNames(), val.getDateOfBirth(), val.getAddress()?.getAvenue())})
+    ExistService.retreiveUserBasedOnField(retreivePersonInfoParameters, null).then((val)=>{
+        return val
+        console.log(val)
+    })
 
 }
 
@@ -137,7 +143,6 @@ function retreiveUser(data) {
 // }
 
 export default function RetrieveUserInfo() {
-
     const {
         register,
         handleSubmit,
@@ -147,10 +152,12 @@ export default function RetrieveUserInfo() {
     });
 
     const [json, setJson] = useState<string>();
+    const [dataResposnse, setDataResponse] = useState<PersonInfoResponse>();
 
     const onSubmit = (data: RetrieveFormInput) => {
         setJson(JSON.stringify(data));
-        retreiveUser(data)
+        setDataResponse(retreiveUser(data));
+        console.log(dataResposnse)
         // console.log(retreiveUser(data))
     };
 
@@ -182,7 +189,7 @@ export default function RetrieveUserInfo() {
                     color="primary"
                     onClick={handleSubmit(onSubmit)}
                 >
-                    Retrouvez le Citoyen
+                    {/* <Route path="/updateUserInfo" element={<UpdateUserForm  UpdateUserFormProps ={dataResposnse} />} /> */}
                 </Button>
                 
         </Box>
