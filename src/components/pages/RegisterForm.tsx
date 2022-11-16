@@ -21,6 +21,9 @@ import { ExistService } from "../../store/exist_api_call";
 import useHistoryState from "../../hooks/useHistoryState";
 import Container from '@mui/material/Container';
 
+var globalDay: string;
+var globalMonth: string;
+var globalYear: string;
 
 
 interface RegisterFormInput {
@@ -41,6 +44,7 @@ interface RegisterFormInput {
     Territoire: string
     Secteur: string
     Village: string
+
 
     Taille: number
     Poids: number
@@ -128,13 +132,13 @@ function SexForm() {
 // @ts-ignore
 function AddressForm({register, errors}) {
 
-    const [dVille, setDVille] = useState("");
-    const [dQuartier, setDQuartier] = useState("");
-    const [dAvenue, setDAvenue] = useState("")
-    const [dCommune, setDCommune] = useState("")
-    const [dNumero, setDNumero] = useState("")
-    const [dCodePostal, setDCodePostal] = useState("")
-    const [dReference, setDReference] = useState("")
+    const [dVille, setDVille] = useHistoryState("Ville", "");
+    const [dQuartier, setDQuartier] = useHistoryState("Quartier", "");
+    const [dAvenue, setDAvenue] = useHistoryState("Avenue", "")
+    const [dCommune, setDCommune] = useHistoryState("Commune", "")
+    const [dNumero, setDNumero] = useHistoryState("Numero", "")
+    const [dCodePostal, setDCodePostal] = useHistoryState("CodePostal", "")
+    const [dReference, setDReference] = useHistoryState("Reference", "")
 
     return (
         <div>   
@@ -308,7 +312,7 @@ function PhenotypeForm({register, errors}) {
             onChange={(e) => setDPoids(e.target.value)}
           />
           <TextField
-            {...register("EyeColor")}
+                {...register("EyeColor")}
             id="outlined-eyecolor-input"
             label="Couleur des yeux"
             helperText={errors.EyeColor?.message}
@@ -321,16 +325,25 @@ function PhenotypeForm({register, errors}) {
       );
 }
 
-function DateOfBirthForm() {
+// @ts-ignore
+function DateOfBirthForm({register}) {
     const [value, setValue] = React.useState<Dayjs | null>(null);
+
+    
     return <LocalizationProvider dateAdapter={AdapterDayjs}>
         <Stack spacing={1}>
-        <DatePicker
+            <DatePicker
             views={['day', 'month', 'year']}
             label="Date de naissance"
-            value={value}
+                value={value}
+                onAccept={(newValue?: Dayjs | null) => {
+                    globalYear = newValue!.year().toString();
+                    globalMonth = (newValue!.month() + 1).toString()
+                    globalDay = newValue!.date().toString()      
+                }}
             onChange={(newValue?:any) => {
                 setValue(newValue);
+                
             }}
             renderInput={(params?:any) => <TextField {...params} helperText={null} />}
         />
@@ -354,9 +367,9 @@ function mapdata (data) {
     var biometric = new Biometric().setFingerPrint("bbbbbbbbbbb")
     biometric.setPhotos("bbbbbbbbbb")
 
-    var dob = new DateOfBirth().setDay("23")
-    dob.setMonth("march")
-    dob.setYear("1998")
+    var dob = new DateOfBirth().setDay(globalDay)
+    dob.setMonth(globalMonth)
+    dob.setYear(globalYear)
 
     var address = new Address().setAvenue(data.Avenue)
     address.setCommune(data.Commune)
@@ -382,6 +395,7 @@ function mapdata (data) {
 function createUser(data) {
 
     var personInfoRequest = mapdata(data)
+    console.log(personInfoRequest)
     ExistService.addNewPersonInfo(personInfoRequest, null, (err: grpcWeb.RpcError) => {})
 }
 
@@ -395,11 +409,8 @@ export default function RegisterForm() {
         resolver: yupResolver(schema),
     });
 
-    const [json, setJson] = useState<string>();
 
     const onSubmit = (data: RegisterFormInput) => {
-        setJson(JSON.stringify(data));
-        console.log(data)
         createUser(data)
     };
 
@@ -424,7 +435,7 @@ export default function RegisterForm() {
             <Typography variant="h6" component="h6" gutterBottom>
                 3. Entrez la Date de Naissance de l'individu
             </Typography>
-            <DateOfBirthForm></DateOfBirthForm>
+            <DateOfBirthForm register={register}></DateOfBirthForm>
             <Typography variant="h6" component="h6" gutterBottom>
                 4. Entrez l'Adresse de l'individu
             </Typography>
@@ -445,10 +456,6 @@ export default function RegisterForm() {
                 >
                     Register
                 </Button>
-                {json && (
-                    <><Typography variant="body2">{json}</Typography>
-                    </>
-                )}
         </Box>
         </Container>
         
