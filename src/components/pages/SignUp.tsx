@@ -21,7 +21,7 @@ import { useNavigate } from "react-router-dom";
 import { Grid } from "@mui/material";
 import LoadingButton from "@mui/lab/LoadingButton";
 import SaveIcon from "@mui/icons-material/Save";
-import { BrowserRouter, Route, Link as RouterLink , Routes } from "react-router-dom";
+import {Link as RouterLink} from "react-router-dom";
 
 const schema = yup.object().shape({
   //requirement for the inputs
@@ -60,7 +60,7 @@ export default function SignUp() {
     ExistService.signUpAgent(agentInfo, null).then((value) => {
       setSpinRegister(false);
       if (value.getStatus() == 1) {
-        navigate("/signIn");
+        navigate("/");
       } else {
         console.log("could not register user");
       }
@@ -168,9 +168,6 @@ export default function SignUp() {
               <RouterLink to="/">
               {"Deja enregistré? Connecter vous"}
               </RouterLink>
-              {/* <Link href="/signIn" variant="body2">
-                {"Deja enregistré? Connecter vous"}
-              </Link> */}
             </Grid>
           </Box>
         </Box>
