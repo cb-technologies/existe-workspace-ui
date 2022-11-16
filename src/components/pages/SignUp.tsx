@@ -21,19 +21,16 @@ import { useNavigate } from "react-router-dom";
 import { Grid } from "@mui/material";
 import LoadingButton from "@mui/lab/LoadingButton";
 import SaveIcon from "@mui/icons-material/Save";
-import { BrowserRouter, Route, Link as RouterLink , Routes } from "react-router-dom";
-// import React from 'react';
-import { ToastContainer, toast } from 'react-toastify';
+import { Link as RouterLink } from "react-router-dom";
 import 'react-toastify/dist/ReactToastify.css';
-// import Notification from rc-notification;
-// import Alert from '@mui/material/Alert';
-import Dialog from '@mui/material/Dialog';
+
 import {
   Alert,
   AlertIcon,
   AlertTitle,
   AlertDescription,
 } from '@chakra-ui/react'
+import { URLExistPath } from "../../constants/existUrlPath";
 
 
 const schema = yup.object().shape({
@@ -79,7 +76,7 @@ export default function SignUp() {
       ExistService.signUpAgent(agentInfo, null).then((value) => {
         setSpinRegister(false);
         if (value.getStatus() == 1) {
-          navigate("/");
+          navigate(URLExistPath.HomePage);
         } else {
           console.log("could not register user");
         }

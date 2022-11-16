@@ -14,40 +14,31 @@ import AppRegistrationIcon from "@mui/icons-material/AppRegistration";
 import BrowserUpdatedIcon from "@mui/icons-material/BrowserUpdated";
 import PermIdentityIcon from "@mui/icons-material/PermIdentity";
 import {
-  BrowserRouter,
-  Route,
-  Link as RouterLink,
-  Routes,
   useNavigate,
 } from "react-router-dom"; //import the package
+import { URLExistPath } from "../../constants/existUrlPath";
 
 const tiers = [
   {
     buttonText: "Enregistrer Un Citoyen",
     buttonVariant: "outlined",
     icon: AppRegistrationIcon,
-    page: "/register",
+    page: URLExistPath.RegisterPage,
   },
   {
     buttonText: "Actualiser Un Citoyen",
     buttonVariant: "outlined",
     icon: BrowserUpdatedIcon,
-    page: "/generateCard",
+    page: URLExistPath.GeneratedCardPage,
   },
   {
     buttonText: "Generer carte d'identitée",
     buttonVariant: "outlined",
     icon: PermIdentityIcon,
-    page: "/generateCard",
+    page: URLExistPath.GeneratedCardPage,
   },
 ];
 
-const styles = {
-  largeIcon: {
-    width: 60,
-    height: 60,
-  },
-};
 
 function OrientationContent() {
   const navigate = useNavigate();
