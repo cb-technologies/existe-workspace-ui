@@ -3575,8 +3575,7 @@ proto.pb.Response.prototype.toObject = function(opt_includeInstance) {
  */
 proto.pb.Response.toObject = function(includeInstance, msg) {
   var f, obj = {
-    status: jspb.Message.getFieldWithDefault(msg, 1, 0),
-    errormessage: jspb.Message.getFieldWithDefault(msg, 2, "")
+    status: jspb.Message.getFieldWithDefault(msg, 1, 0)
   };
 
   if (includeInstance) {
@@ -3617,10 +3616,6 @@ proto.pb.Response.deserializeBinaryFromReader = function(msg, reader) {
       var value = /** @type {number} */ (reader.readInt32());
       msg.setStatus(value);
       break;
-    case 2:
-      var value = /** @type {string} */ (reader.readString());
-      msg.setErrormessage(value);
-      break;
     default:
       reader.skipField();
       break;
@@ -3657,13 +3652,6 @@ proto.pb.Response.serializeBinaryToWriter = function(message, writer) {
       f
     );
   }
-  f = message.getErrormessage();
-  if (f.length > 0) {
-    writer.writeString(
-      2,
-      f
-    );
-  }
 };
 
 
@@ -3682,24 +3670,6 @@ proto.pb.Response.prototype.getStatus = function() {
  */
 proto.pb.Response.prototype.setStatus = function(value) {
   return jspb.Message.setProto3IntField(this, 1, value);
-};
-
-
-/**
- * optional string errorMessage = 2;
- * @return {string}
- */
-proto.pb.Response.prototype.getErrormessage = function() {
-  return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 2, ""));
-};
-
-
-/**
- * @param {string} value
- * @return {!proto.pb.Response} returns this
- */
-proto.pb.Response.prototype.setErrormessage = function(value) {
-  return jspb.Message.setProto3StringField(this, 2, value);
 };
 
 
