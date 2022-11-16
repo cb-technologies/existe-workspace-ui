@@ -22,6 +22,18 @@ import { Grid } from "@mui/material";
 import LoadingButton from "@mui/lab/LoadingButton";
 import SaveIcon from "@mui/icons-material/Save";
 import { BrowserRouter, Route, Link as RouterLink , Routes } from "react-router-dom";
+// import React from 'react';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+// import Notification from rc-notification;
+// import Alert from '@mui/material/Alert';
+import Dialog from '@mui/material/Dialog';
+import {
+  Alert,
+  AlertIcon,
+  AlertTitle,
+  AlertDescription,
+} from '@chakra-ui/react'
 
 const schema = yup.object().shape({
   //requirement for the inputs
@@ -42,6 +54,8 @@ export default function SignUp() {
     resolver: yupResolver(schema),
   });
 
+
+
   const [Nom, setNom] = useHistoryState("Nom", "");
   const [Prenom, setPrenom] = useHistoryState("Prenom", "");
   const [Email, setEmail] = useHistoryState("Email", "");
@@ -50,6 +64,9 @@ export default function SignUp() {
   const [spinRegister, setSpinRegister] = useState(false);
   const navigate = useNavigate();
 
+  const [open, setOpen] = React.useState(false);
+
+
   const onSubmit = (data: AgentSignUpFormInput) => {
     const agentInfo: AgentInfo = new AgentInfo()
       .setNom(data.Nom)
@@ -57,20 +74,56 @@ export default function SignUp() {
       .setEmail(data.Email)
       .setPassword(data.Password);
     setSpinRegister(true);
-    ExistService.signUpAgent(agentInfo, null).then((value) => {
-      setSpinRegister(false);
-      if (value.getStatus() == 1) {
-        navigate("/signIn");
-      } else {
-        console.log("could not register user");
-      }
-    });
+    try {
+      ExistService.signUpAgent(agentInfo, null).then((value) => {
+        setSpinRegister(false);
+        if (value.getStatus() == 1) {
+          navigate("/");
+        } else {
+          console.log("could not register user");
+        }
+      }).catch ((error) => {
+        console.log(`try error ${error}`)
+        setSpinRegister(false);
+        setOpen(!open);
+        console.log(open)
+      });
+    } catch (error) {
+      // setSpinRegister(false);
+      console.log(`try error ${error}`)
+      setOpen(!open);
+      console.log(open)
+      // return (
+      //   <Alert security="error">
+      //     This is an error alert — <strong>check it out!</strong>
+      //   </Alert>
+      // );
+    }
   };
 
   return (
     <ThemeProvider theme={theme}>
       <Container component="main" maxWidth="xs">
         <CssBaseline />
+        {open ? (
+              <Alert
+                status='error'
+                variant='subtle'
+                flexDirection='column'
+                alignItems='center'
+                justifyContent='center'
+                textAlign='center'
+                height='200px'
+              >
+                <AlertIcon boxSize='40px' mr={0} />
+                <AlertTitle mt={4} mb={1} fontSize='lg'>
+                  Erreur!
+                </AlertTitle>
+                <AlertDescription maxWidth='sm'>
+                  Votre email est deja en utilisation, veuillez l'utiliser pour vous connecter ou choisisez un autre email.
+                </AlertDescription>
+              </Alert>
+            ):('')}
         <Box
           sx={{
             marginTop: 8,
@@ -164,6 +217,15 @@ export default function SignUp() {
                   S'enregister
               </LoadingButton>
             )}
+            {/* <Dialog open={open} >
+              <Alert
+
+                //props go here
+              >
+                The "Close" button does not work.
+              </Alert>
+            </Dialog> */}
+
             <Grid item>
               <RouterLink to="/">
               {"Deja enregistré? Connecter vous"}
