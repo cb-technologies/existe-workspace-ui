@@ -416,6 +416,9 @@ export class Response extends jspb.Message {
   getStatus(): number;
   setStatus(value: number): Response;
 
+  getErrormessage(): string;
+  setErrormessage(value: string): Response;
+
   serializeBinary(): Uint8Array;
   toObject(includeInstance?: boolean): Response.AsObject;
   static toObject(includeInstance: boolean, msg: Response): Response.AsObject;
@@ -427,6 +430,7 @@ export class Response extends jspb.Message {
 export namespace Response {
   export type AsObject = {
     status: number,
+    errormessage: string,
   }
 }
 
