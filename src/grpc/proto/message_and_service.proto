@@ -92,6 +92,7 @@ message RetreivePersonInfoParameters{
 
 message Response {
   int32 status = 1;
+  string errorMessage = 2;
 }
 
 service ExistCRUD {
