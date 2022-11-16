@@ -12,11 +12,16 @@ import { createTheme, ThemeProvider } from "@mui/material/styles";
 import * as yup from "yup"; // to validate the form input
 import { useForm } from "react-hook-form"; // to handle the form's submission and error states
 import { yupResolver } from "@hookform/resolvers/yup";
-import { Link as RouterLink } from "react-router-dom"; //import the package
+import { Link as RouterLink, useNavigate } from "react-router-dom"; //import the package
 import { ExistService } from "../../store/exist_api_call";
 import { AgentSignInInfo } from "../../grpc/pb/message_and_service_pb";
 import useHistoryState from "../../hooks/useHistoryState";
 import { Stack } from "@mui/system";
+import { useState } from "react";
+import { URLExistPath } from "../../constants/existUrlPath";
+import LoadingButton from "@mui/lab/LoadingButton";
+import SaveIcon from "@mui/icons-material/Save";
+import { red } from "@mui/material/colors";
 
 interface SignInInput {
   Email: string;
@@ -24,12 +29,11 @@ interface SignInInput {
 }
 
 const schema = yup.object().shape({
-  //requirement for the inputs
-  email: yup
+  Email: yup
     .string()
     .required("L'email addresse ne peut pas etre vide")
     .email(),
-  password: yup
+  Password: yup
     .string()
     .required("Le mot de passe ne peut pas etre vide")
     .min(8)
@@ -50,13 +54,31 @@ export default function SignIn() {
   const [Email, setEmail] = useHistoryState("Email", "");
   const [Password, setPassword] = useHistoryState("Password", "");
 
+  const [spinRegister, setSpinRegister] = useState(false);
+  const [errorSignIn, setErrorSignIn] = useState(false);
+  const navigate = useNavigate();
+
   const onSubmit = (data: SignInInput) => {
     const agentSignInInfo: AgentSignInInfo = new AgentSignInInfo()
       .setEmail(data.Email)
       .setPassword(data.Password);
-    ExistService.signInAgent(agentSignInInfo, null).then((value) => {
-      console.log("The respone was ", value);
-    });
+    setSpinRegister(true);
+    try {
+      ExistService.signInAgent(agentSignInInfo, null)
+        .then((value) => {
+          setSpinRegister(false);
+          if (value.getStatus() === 1) {
+            navigate(URLExistPath.OrientationPage);
+          }
+        })
+        .catch(() => {
+          setErrorSignIn(true);
+          setSpinRegister(false);
+        });
+    } catch (error) {
+      setErrorSignIn(true);
+      setSpinRegister(true);
+    }
   };
 
   return (
@@ -108,17 +130,37 @@ export default function SignIn() {
               error={!!errors["Password"]}
               fullWidth
             />
-            <Button
-              type="submit"
-              fullWidth
-              variant="contained"
-              sx={{ mt: 3, mb: 2 }}
-            >
-              <RouterLink to="/orientation">{"Se connecter"}</RouterLink>
-            </Button>
+            {!spinRegister ? (
+              <Button
+                type="submit"
+                fullWidth
+                variant="contained"
+                sx={{ mt: 3, mb: 2 }}
+              >
+                Se Connecter
+              </Button>
+            ) : (
+              <LoadingButton
+                loading
+                fullWidth
+                loadingPosition="start"
+                startIcon={<SaveIcon />}
+                variant="contained"
+                sx={{ mt: 3, mb: 2 }}
+              >
+                Se connecter
+              </LoadingButton>
+            )}
             <Stack>
-              <RouterLink to="/notdefined">Mot de passe oublié?</RouterLink>
-              <RouterLink to="/signUp">
+              {errorSignIn ? (
+                <Typography variant="body1" color={red}>
+                  Incorrect Mot de Passe ou Email
+                </Typography>
+              ) : null}
+              <RouterLink to={URLExistPath.UndefinedPage}>
+                Mot de passe oublié?
+              </RouterLink>
+              <RouterLink to={URLExistPath.SignUpPage}>
                 {"Pas encore enregistré? Veuillez vous inscrire"}
               </RouterLink>
             </Stack>
@@ -138,7 +180,7 @@ function Copyright(props: any) {
       {...props}
     >
       {"Copyright © "}
-      <Link color="inherit" href="https://www.google.com/">
+      <Link color="inherit" href="/NotDefinedYet">
         Exist
       </Link>{" "}
       {new Date().getFullYear()}
