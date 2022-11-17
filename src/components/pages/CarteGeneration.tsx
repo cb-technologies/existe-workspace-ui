@@ -1,29 +1,31 @@
 import React, { useEffect, useState } from "react";
 import { css } from "aphrodite/no-important";
 import styles from "../styles/carteGenerationStyle";
+import { Link, useLocation } from "react-router-dom";
+import { Container, Box, Button } from "@mui/material";
+import { PersonInfoResponse } from "../../grpc/pb/message_and_service_pb";
 
-import {
-  NationalIDNumber,
-  PersonInfoResponse,
-} from "../../grpc/pb/message_and_service_pb";
-import { ExistService } from "../../store/exist_api_call";
+export default function CarteGenerationPage() {
+  const location = useLocation();
+  const userInfo = location.state.cardInfo as PersonInfoResponse;
+
+  return (
+    <Container maxWidth="lg">
+      <Box sx={{ my: 8 }}>
+        <CarteGeneration userInfo={userInfo} />
+        <Link to="/" style={{ textDecoration: "none" }}>
+          <Button variant="contained">Go Back</Button>
+        </Link>
+      </Box>
+    </Container>
+  );
+}
 
 type CarteGenerationProps = {
-  personInfo: PersonInfoResponse | undefined;
+  userInfo: PersonInfoResponse;
 };
 
-export default function CarteGeneration() {
-  const [userInfo, setUserInfo] = useState<PersonInfoResponse>();
-
-  useEffect(() => {
-    ExistService.findPersonInfo(
-      new NationalIDNumber().setId("6035223a0000181"),
-      null
-    ).then((value) => {
-      setUserInfo(value);
-    });
-  }, []);
-
+function CarteGeneration({ userInfo }: CarteGenerationProps) {
   return (
     <div className={css(styles.box)}>
       <div className={css(styles.row)}>
