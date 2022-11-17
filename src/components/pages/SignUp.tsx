@@ -91,11 +91,6 @@ export default function SignUp() {
       console.log(`try error ${error}`)
       setOpen(!open);
       console.log(open)
-      // return (
-      //   <Alert security="error">
-      //     This is an error alert — <strong>check it out!</strong>
-      //   </Alert>
-      // );
     }
   };
 
