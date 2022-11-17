@@ -4,5 +4,7 @@ export const URLExistPath = {
     RegisterPage: "/register",
     GeneratedCardPage: "/generateCard",
     OrientationPage: "/orientation",
+    RetrieveUserInfo: "/retrieveUserInfo",
+    UpdateUserInfoForm: "/updateUserInfo",
     UndefinedPage: "*"
 } as const;
