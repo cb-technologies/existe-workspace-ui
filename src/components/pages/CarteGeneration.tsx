@@ -1,29 +1,31 @@
 import React, { useEffect, useState } from "react";
 import { css } from "aphrodite/no-important";
 import styles from "../styles/carteGenerationStyle";
+import { Link, useLocation } from "react-router-dom";
+import { Container, Box, Button } from "@mui/material";
+import { PersonInfoResponse } from "../../grpc/pb/message_and_service_pb";
 
-import {
-  NationalIDNumber,
-  PersonInfoResponse,
-} from "../../grpc/pb/message_and_service_pb";
-import { ExistService } from "../../store/exist_api_call";
+export default function CardGenerationPage() {
+  const location = useLocation();
+  const userInfo = location.state.cardInfo as PersonInfoResponse.AsObject;
+
+  return (
+    <Container maxWidth="lg">
+      <Box sx={{ my: 8 }}>
+        <CarteGeneration userInfo={userInfo} />
+        <Link to="/" style={{ textDecoration: "none" }}>
+          <Button variant="contained">Go Back</Button>
+        </Link>
+      </Box>
+    </Container>
+  );
+}
 
 type CarteGenerationProps = {
-  personInfo: PersonInfoResponse | undefined;
+  userInfo: PersonInfoResponse.AsObject;
 };
 
-export default function CarteGeneration() {
-  const [userInfo, setUserInfo] = useState<PersonInfoResponse>();
-
-  useEffect(() => {
-    ExistService.findPersonInfo(
-      new NationalIDNumber().setId("6035223a0000181"),
-      null
-    ).then((value) => {
-      setUserInfo(value);
-    });
-  }, []);
-
+function CarteGeneration({ userInfo }: CarteGenerationProps) {
   return (
     <div className={css(styles.box)}>
       <div className={css(styles.row)}>
@@ -68,9 +70,7 @@ export default function CarteGeneration() {
 
       <div className={css(styles.content_box2)}>
         <div className={css(styles.content_box1)}>
-          <h4 className={css(styles.highlights5)}>
-            {userInfo?.getId()?.getId()}
-          </h4>
+          <h4 className={css(styles.highlights5)}>{userInfo?.id?.id}</h4>
         </div>
       </div>
 
@@ -126,7 +126,7 @@ export default function CarteGeneration() {
                   <div className={css(styles.col5)}>
                     <h5 className={css(styles.highlights1)}>Nom/Surname</h5>
                     <h4 className={css(styles.highlights4)}>
-                      {userInfo?.getNames()?.getNom()}
+                      {userInfo?.names?.nom}
                     </h4>
                   </div>
 
@@ -135,7 +135,7 @@ export default function CarteGeneration() {
                       Postnom/ Middle name
                     </h5>
                     <h4 className={css(styles.highlights41)}>
-                      {userInfo?.getNames()?.getMiddleNamesList().at(0)!}
+                      {userInfo?.names?.middleNamesList[0]}
                     </h4>
                   </div>
 
@@ -144,7 +144,7 @@ export default function CarteGeneration() {
                       Prenom/Given name
                     </h5>
                     <h4 className={css(styles.highlights42)}>
-                      {userInfo?.getNames()?.getPrenom()}
+                      {userInfo?.names?.prenom}
                     </h4>
                   </div>
                   <div className={css(styles.col7)}>
@@ -158,10 +158,8 @@ export default function CarteGeneration() {
                 <div className={css(styles.row5)}>
                   <div className={css(styles.text)}>ADDRESS:</div>
                   <p className={css(styles.desc1)}>
-                    Av {userInfo?.getAddress()?.getAvenue()}{" "}
-                    {userInfo?.getAddress()?.getNumber()},{" "}
-                    {userInfo?.getAddress()?.getQuartier()},{" "}
-                    {userInfo?.getAddress()?.getCommune()}
+                    Av {userInfo?.address?.avenue} {userInfo?.address?.number},{" "}
+                    {userInfo?.address?.quartier}, {userInfo?.address?.commune}
                   </p>
                 </div>
               </div>
@@ -173,11 +171,9 @@ export default function CarteGeneration() {
               <h5 className={css(styles.highlights1)}>
                 Date de Naissance/ Date of birth
               </h5>
-              <h4 className={css(styles.highlights44)}>{`${userInfo
-                ?.getDateOfBirth()
-                ?.getDay()}-${userInfo?.getDateOfBirth()?.getMonth()}-${userInfo
-                ?.getDateOfBirth()
-                ?.getYear()}`}</h4>
+              <h4
+                className={css(styles.highlights44)}
+              >{`${userInfo?.dateOfBirth?.day}-${userInfo?.dateOfBirth?.month}-${userInfo?.dateOfBirth?.year}`}</h4>
             </div>
           </div>
         </div>

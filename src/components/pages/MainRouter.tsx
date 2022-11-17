@@ -1,22 +1,30 @@
 import React from "react";
-import { BrowserRouter, Route, Link, Routes } from "react-router-dom"; //import the package
-import CardGenerationPage from "./CardGenerationPage";
+import { Route, Routes } from "react-router-dom"; //import the package
+import CardGenerationPage from "./CarteGeneration";
 import RegisterForm from "./RegisterForm";
-import SignIn from "./SignIn"; //import your signIn page
-import SignUp from "./SignUp"; //import your signUp page
+import SignIn from "./SignIn";
+import SignUp from "./SignUp";
+import Orientation from "./OrientationPage";
 import UpdateUserForm from "./updateUserInfo";
+import { URLExistPath } from "../../constants/existUrlPath";
 import RetrieveUserInfo from "./RetrieveUserInfo";
 
 function MainRouter() {
   return (
     <Routes>
-      <Route path="/" element={<SignIn />} />
-      <Route path="/signUp" element={<SignUp />} />
-      <Route path="/register" element={<RegisterForm />} />
-      <Route path="/generateCard" element={<CardGenerationPage />} />
-      <Route path="/retrieveUserInfo" element={<RetrieveUserInfo />} />
-
-
+      <Route path={URLExistPath.HomePage} element={<SignIn />} />
+      <Route path={URLExistPath.SignUpPage} element={<SignUp />} />
+      <Route path={URLExistPath.RegisterPage} element={<RegisterForm />} />
+      <Route
+        path={URLExistPath.GeneratedCardPage}
+        element={<CardGenerationPage />}
+      />
+      <Route path={URLExistPath.RetrieveUserInfo} element={<RetrieveUserInfo/>} />
+      <Route path={URLExistPath.OrientationPage} element={<Orientation />} />
+      <Route
+        path={URLExistPath.UndefinedPage}
+        element={<React.Fragment>This page is not defined yet</React.Fragment>}
+      />
     </Routes>
   );
 }
