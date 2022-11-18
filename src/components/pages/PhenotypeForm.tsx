@@ -4,7 +4,7 @@ import { TextField } from "@mui/material";
 import { UpdateFormProps } from "../../utils/exist_types";
 import { Phenotype } from "../../grpc/pb/message_and_service_pb";
 
-export default function PhenotypeForm({ register, errors, formVal }: UpdateFormProps<Phenotype>) {
+export default function PhenotypeForm({ register, errors, formVal }: UpdateFormProps<Phenotype.AsObject>) {
 
   const [dTaille, setDTaille] = useState("");
   const [dPoids, setDPoids] = useState("");
@@ -12,9 +12,9 @@ export default function PhenotypeForm({ register, errors, formVal }: UpdateFormP
 
   useEffect(() => {
     if (formVal) {
-      setDTaille(formVal!.getHeight().toString());
-      setDPoids(formVal!.getWeight().toString())
-      setDEyeColor(formVal!.getEyeColor())
+      setDTaille(formVal?.height!.toString());
+      setDPoids(formVal?.weight!.toString())
+      setDEyeColor(formVal?.eyeColor!)
     }
   }, [formVal]);
   return (

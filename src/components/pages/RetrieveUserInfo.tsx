@@ -28,6 +28,7 @@ import useHistoryState from "../../hooks/useHistoryState";
 import Container from "@mui/material/Container";
 import {
   useNavigate,
+  useLocation,
 } from "react-router-dom"; //import the package
 
 interface RetrieveFormInput {
@@ -149,15 +150,22 @@ export default function RetrieveUserInfo() {
     resolver: yupResolver(schema),
   });
   const navigate = useNavigate();
+  const location = useLocation();
+  const flag = location.state.flag_to_page
   // @ts-ignore
-  function retreiveUser(data): PersonInfoResponse {
+//   function retreiveUser(data): PersonInfoResponse {
+function retreiveUser(data): PersonInfoResponse {
     var retreivePersonInfoParameters = mapdata(data);
+    
     ExistService.retreiveUserBasedOnField(
       retreivePersonInfoParameters,
       null
     ).then((userInfo) => {
         const userInfoObject = userInfo.toObject()
-      navigate(URLExistPath.GeneratedCardPage, { state: { cardInfo: userInfoObject } });
+        if (flag == "to_generate") {
+      navigate(URLExistPath.GeneratedCardPage, { state: { cardInfo: userInfoObject } });}
+        else {
+            navigate(URLExistPath.UpdateUserInfoForm, { state: { cardInfo: userInfoObject } })};
     });
   }
 
@@ -166,9 +174,10 @@ export default function RetrieveUserInfo() {
 
   const onSubmit = (data: RetrieveFormInput) => {
     setJson(JSON.stringify(data));
+    // const flag_to_page = location.state.flag 
     setDataResponse(retreiveUser(data));
     console.log(dataResposnse);
-    // console.log(retreiveUser(data))
+    console.log(flag)
   };
 
   return (
@@ -199,6 +208,7 @@ export default function RetrieveUserInfo() {
           color="primary"
           onClick={handleSubmit(onSubmit)}
         >
+            Retrouvez le citoyen
           {/* <Route path="/updateUserInfo" element={<UpdateUserForm  UpdateUserFormProps ={dataResposnse} />} /> */}
         </Button>
       </Box>

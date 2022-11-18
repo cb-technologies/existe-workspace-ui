@@ -22,6 +22,7 @@ import SexForm from "./SexForm";
 import { useRadioGroup } from "@mui/material";
 import { ExistService } from "../../store/exist_api_call";
 import Container from '@mui/material/Container';
+import { useLocation } from "react-router-dom";
 
 export interface UpdateUserFormInput {
   Prenom: string;
@@ -64,13 +65,11 @@ const schema = yup.object().shape({
   EyeColor: yup.string().required().min(2).max(30),
 });
 
-type UpdateUserFormProps = {
-  nationalID: NationalIDNumber
-}
 
-export default function UpdateUserForm({nationalID} : UpdateUserFormProps) {
-  const [userInfo, setUserInformation] = useState<PersonInfoResponse>();
-
+export default function UpdateUserForm() {
+  // const [userInfo, setUserInformation] = useState<PersonInfoResponse>();
+  const location = useLocation();
+  const userInfo = location.state.cardInfo as PersonInfoResponse.AsObject;
   const {
     register,
     handleSubmit,
@@ -80,11 +79,11 @@ export default function UpdateUserForm({nationalID} : UpdateUserFormProps) {
     resolver: yupResolver(schema),
   });
 
-  useEffect(() => {
-    ExistService.findPersonInfo(nationalID, null).then((value) => {
-      setUserInformation(value);
-    });
-  }, []);
+  // useEffect(() => {
+  //   ExistService.findPersonInfo(nationalID, null).then((value) => {
+  //     setUserInformation(value);
+  //   });
+  // }, []);
 
   useEffect(() => {
     reset()
@@ -115,7 +114,7 @@ export default function UpdateUserForm({nationalID} : UpdateUserFormProps) {
       <NameForm
         register={register}
         errors={errors}
-        formVal={userInfo?.getNames()!}
+        formVal={userInfo?.names!}
       ></NameForm>
       <Typography variant="h6" component="h6" gutterBottom>
         2.Modifiez le Sexe l'individu
@@ -128,11 +127,11 @@ export default function UpdateUserForm({nationalID} : UpdateUserFormProps) {
       <Typography variant="h6" component="h6" gutterBottom>
         4.Modifiez l'Adresse de l'individu
       </Typography>
-      <AddressForm register={register} errors={errors} formVal={userInfo?.getAddress()!}></AddressForm>
+      <AddressForm register={register} errors={errors} formVal={userInfo?.address!}></AddressForm>
       <Typography variant="h6" component="h6" gutterBottom>
         6.Modifiez les Phénotypes de l'individu
       </Typography>
-      <PhenotypeForm register={register} errors={errors} formVal={userInfo?.getPhenotypes()!}></PhenotypeForm>
+      <PhenotypeForm register={register} errors={errors} formVal={userInfo?.phenotypes!}></PhenotypeForm>
       <Button
         fullWidth
         variant="contained"
