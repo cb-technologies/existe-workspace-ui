@@ -139,25 +139,26 @@ const data = {
             name: 'Kinshasa',
             communes: [
                 {
-                    name: ['Ngaliema'],
+                    name: 'Ngaliema',
                     quartiers: [
                         {
                             name: 'Macampagne',
-                            zipCode: '100229034'
+                            zipCode: ['100229034']
                         },
                         {
                             name: 'Pigeon',
-                            zipCode: '10010520'
+                            zipCode: ['100105200']
                         }
                     ]
                 },
                 {
                     name: 'Kalamu',
-                    quartiers:
+                    quartiers: [
                         {
                             name: 'Matonge',
-                            zipCode: '10010666'
+                            zipCode: ['10010666']
                         }
+                    ]
                 },
             ]
         },
@@ -174,29 +175,33 @@ function DynamicAddressForm() {
     const [selectedProvince, setProvince] = useState('');
     const [selectedCommune, setCommune] = useState('');
     const [selectedQuartier, setQuartier] = useState('');
-
+    const [selectedZipCode, setZipCode] = useState('');
+    
     const provinceData = data.provinces.find((province) => province.name === selectedProvince);
     // @ts-ignore
-    // const provinceName = data.provinces.find((province) => province.name === selectedProvince).name;
     const communeData = provinceData?.communes?.find((commune) => commune.name === selectedCommune);
     // @ts-ignore
     const quartierData = communeData?.quartiers?.find((quartier) => quartier.name === selectedQuartier);
+    console.log(quartierData);
 
     const handleChangeProvince = (event: SelectChangeEvent) => {
         setProvince(event.target.value);
-        // setAvailableCommune(data.provinces.find((province) => province.name === selectedProvince))
     };
 
     const handleChangeCommune = (event: SelectChangeEvent) => {
         setCommune(event.target.value);
     }
 
-    // const communeName = availableCommune?.name;
+    const handleChangeQuartier = (event: SelectChangeEvent) => {
+        setQuartier(event.target.value);
+        setZipCode(quartierData?.zipCode);
+    }
 
-    // @ts-ignore
-    // const avaibleQuartier = data.provinces?.find((province) => province.name === selectedProvince).communes?.find((commune) => commune.name === selectedCommune).quartiers ?.find((quartier) => quartier.name === selectedQuartier);
+    const handleChangeZipCode = (event: SelectChangeEvent) => {
+        setQuartier(event.target.value);
+    }
 
-    // const avaibleZipCode = data.provinces.find((province)).communes.find(selectedProvince;
+
     return (
         <Typography>
             <FormControl sx={{m: 1, minWidth: 120}}>
@@ -239,11 +244,11 @@ function DynamicAddressForm() {
                 <InputLabel id="demo-simple-select-helper-label">Quartier</InputLabel>
                 <Select
                     value={selectedQuartier}
-                    label="Commune"
-                    onChange={handleChangeCommune}
+                    label="Quartier"
+                    onChange={handleChangeQuartier}
                 >
                     {/*@ts-ignore */}
-                    {communeData?.quartiers.map((e: { name: string | number | readonly string[] | undefined; }, key: React.Key | null | undefined) => (
+                    {communeData?.quartiers.map((e, key) => (
                         <MenuItem
                             key={key}
                             value={e.name}
@@ -255,17 +260,13 @@ function DynamicAddressForm() {
             </FormControl>
             <FormControl sx={{m: 1, minWidth: 130}}>
                 <InputLabel id="demo-simple-select-helper-label">Code Postal</InputLabel>
-                <Select
-                    value={quartierData.zipCode}
-                    onChange={handleChangeCommune}
-                >
-                    <MenuItem
-                        value={quartierData.zipCode}
-                    >
-                        {quartierData?.zipCode}
-                    </MenuItem>
-
-                </Select>
+                <TextField
+                    id="outlined-read-only-input"
+                    defaultValue={selectedZipCode}
+                    InputProps={{
+                        readOnly: true,
+                    }}
+                >{selectedZipCode}</TextField>
             </FormControl>
         </Typography>
     )
