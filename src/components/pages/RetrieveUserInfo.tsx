@@ -1,5 +1,4 @@
 import * as React from "react";
-import * as grpcWeb from "grpc-web";
 import Box from "@mui/material/Box";
 import { useState } from "react";
 import { Dayjs } from "dayjs";
@@ -22,20 +21,14 @@ import {
   DateOfBirth,
   RetreivePersonInfoParameters,
   Names,
-  PersonInfoRequest,
   PersonInfoResponse,
 } from "../../grpc/pb/message_and_service_pb";
 import { ExistService } from "../../store/exist_api_call";
 import useHistoryState from "../../hooks/useHistoryState";
 import Container from "@mui/material/Container";
 import {
-  BrowserRouter,
-  Route,
-  Link as RouterLink,
-  Routes,
   useNavigate,
 } from "react-router-dom"; //import the package
-import UpdateUserForm from "./updateUserInfo";
 
 interface RetrieveFormInput {
   Prenom: string;
