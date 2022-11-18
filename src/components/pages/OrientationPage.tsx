@@ -24,18 +24,21 @@ const tiers = [
     buttonVariant: "outlined",
     icon: AppRegistrationIcon,
     page: URLExistPath.RegisterPage,
+    flag: "to_register",
   },
   {
     buttonText: "Actualiser Un Citoyen",
     buttonVariant: "outlined",
     icon: BrowserUpdatedIcon,
-    page: URLExistPath.GeneratedCardPage,
+    page: URLExistPath.RetrieveUserInfo,
+    flag: "to_update",
   },
   {
     buttonText: "Generer carte d'identitée",
     buttonVariant: "outlined",
     icon: PermIdentityIcon,
-    page: URLExistPath.GeneratedCardPage,
+    page: URLExistPath.RetrieveUserInfo,
+    flag: "to_generate",
   },
 ];
 
@@ -43,8 +46,8 @@ const tiers = [
 function OrientationContent() {
   const navigate = useNavigate();
 
-  const navigateTo = (page: string) => {
-    navigate(page);
+  const navigateTo = (page: string, flag: string) => {
+    navigate(page,{ state: { flag_to_page: flag } });
   };
   return (
     <React.Fragment>
@@ -104,7 +107,7 @@ function OrientationContent() {
                       "&.MuiButton-text": { color: "#1E0909" },
                     }}
                     value={tier.page}
-                    onClick={() => navigateTo(tier.page)}
+                    onClick={() => {navigateTo(tier.page, tier.flag); console.log(tier.page, tier.flag)}}
                   >
                     {tier.buttonText}
                   </Button>
@@ -118,5 +121,17 @@ function OrientationContent() {
   );
 }
 export default function Orientation() {
+
+  // function retreiveUser(flag_to_page): string {
+  //   var flag_to_send  = tier.flag;
+  //   ExistService.retreiveUserBasedOnField(
+  //     retreivePersonInfoParameters,
+  //     null
+  //   ).then((userInfo) => {
+  //       const userInfoObject = userInfo.toObject()
+  //     navigate(URLExistPath.GeneratedCardPage, { state: { cardInfo: userInfoObject } });
+  //   });
+  // }
+
   return <OrientationContent />;
 }

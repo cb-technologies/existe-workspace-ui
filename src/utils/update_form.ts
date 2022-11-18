@@ -4,7 +4,7 @@ import { ExistService } from "../store/exist_api_call";
 
 
 
-function mapdata(data: UpdateUserFormInput, response: PersonInfoResponse) {
+function mapdata(data: UpdateUserFormInput, response: PersonInfoResponse.AsObject) {
   var personId = new NationalIDNumber().setId("6035223a0000181");
 
   var names = new Names().setNom(data.Nom);
@@ -15,8 +15,8 @@ function mapdata(data: UpdateUserFormInput, response: PersonInfoResponse) {
   phenotype.setHeight(data.Taille);
   phenotype.setWeight(data.Poids);
 
-  var origins = new Origin().setChefLieu(response.getOrigins()!.getChefLieu())
-  origins.setProvinceList(response.getOrigins()!.getProvinceList())
+  var origins = new Origin().setChefLieu(response.origins?.chefLieu!)
+  origins.setProvinceList(response.origins?.provinceList!)
 
   var biometric = new Biometric().setPhotos("bbbbbbbbbb");
 
@@ -46,7 +46,7 @@ function mapdata(data: UpdateUserFormInput, response: PersonInfoResponse) {
   return editPersonInfoParameters;
 }
 
-export function updateUserInformation(formData: UpdateUserFormInput, userInfo: PersonInfoResponse) {
+export function updateUserInformation(formData: UpdateUserFormInput, userInfo: PersonInfoResponse.AsObject) {
   var EditPersonInfoParameters = mapdata(formData, userInfo);
   ExistService.updatePersonInfo(
     EditPersonInfoParameters,

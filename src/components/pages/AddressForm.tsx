@@ -3,7 +3,7 @@ import React, { useEffect, useState } from "react";
 import { Address } from "../../grpc/pb/message_and_service_pb";
 import { UpdateFormProps } from "../../utils/exist_types";
 
-export default function AddressForm({ register, errors, formVal }: UpdateFormProps<Address>) {
+export default function AddressForm({ register, errors, formVal }: UpdateFormProps<Address.AsObject>) {
 
   const [dVille, setDVille] = useState("");
   const [dQuartier, setDQuartier] = useState("");
@@ -15,13 +15,13 @@ export default function AddressForm({ register, errors, formVal }: UpdateFormPro
 
   useEffect(() => {
     if (formVal) {
-      setDVille(formVal!.getVille());
-      setDQuartier(formVal!.getQuartier())
-      setDAvenue(formVal!.getAvenue())
-      setDCommune(formVal!.getCommune())
-      setDNumero(formVal!.getNumber().toString())
-      setDCodePostal(formVal!.getZipCode())
-      setDReference(formVal!.getReference())
+      setDVille(formVal?.ville!);
+      setDQuartier(formVal?.quartier!)
+      setDAvenue(formVal?.avenue!)
+      setDCommune(formVal?.commune!)
+      setDNumero(formVal?.number!.toString())
+      setDCodePostal(formVal?.zipCode!)
+      setDReference(formVal?.reference!)
     }
   }, [formVal]);
   return (

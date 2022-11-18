@@ -7,16 +7,16 @@ export default function NameForm({
   register,
   errors,
   formVal,
-}: UpdateFormProps<Names>) {
+}: UpdateFormProps<Names.AsObject>) {
   const [dfirstName, setDFirstName] = useState("");
   const [dLastName, setDLastName] = useState("");
   const [dMiddleNames, setDMiddleNames] = useState("")
 
   useEffect(() => {
     if (formVal) {
-      setDFirstName(formVal!.getPrenom());
-      setDLastName(formVal!.getNom())
-      setDMiddleNames(formVal!.getMiddleNamesList().toString())
+      setDFirstName(formVal?.prenom!)
+      setDLastName(formVal?.nom!)
+      setDMiddleNames(formVal?.middleNamesList!.toString())
       
     }
   }, [formVal]);

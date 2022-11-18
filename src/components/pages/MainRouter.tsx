@@ -21,6 +21,7 @@ function MainRouter() {
       />
       <Route path={URLExistPath.RetrieveUserInfo} element={<RetrieveUserInfo/>} />
       <Route path={URLExistPath.OrientationPage} element={<Orientation />} />
+      <Route path={URLExistPath.UpdateUserInfoForm} element={<UpdateUserForm />} />
       <Route
         path={URLExistPath.UndefinedPage}
         element={<React.Fragment>This page is not defined yet</React.Fragment>}

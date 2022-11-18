@@ -5,6 +5,7 @@ import { ThemeProvider } from '@mui/material/styles';
 import App from './App';
 import theme from './Theme';
 import { BrowserRouter } from "react-router-dom"
+import OrientationPage from './components/pages/OrientationPage';
 
 
 const rootElement = document.getElementById('root');
