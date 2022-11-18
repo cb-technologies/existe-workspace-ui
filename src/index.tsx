@@ -4,7 +4,8 @@ import CssBaseline from '@mui/material/CssBaseline';
 import { ThemeProvider } from '@mui/material/styles';
 import App from './App';
 import theme from './Theme';
-import { BrowserRouter } from "react-router-dom"
+import { BrowserRouter } from "react-router-dom";
+import ResponsiveAppBar from "./components/pages/AppBar"
 
 
 const rootElement = document.getElementById('root');
@@ -14,6 +15,7 @@ root.render(
     <BrowserRouter>
     <ThemeProvider theme={theme}>
         <CssBaseline />
+        <ResponsiveAppBar/>
         <App/>
     </ThemeProvider>,
     </BrowserRouter>
