@@ -4,18 +4,17 @@ import MenuItem from "@mui/material/MenuItem";
 import Typography from "@mui/material/Typography";
 import Box from "@mui/material/Box";
 import SortIcon from "@mui/icons-material/Sort";
-import {makeStyles} from "@mui/styles";
 import Menu from "@mui/material/Menu";
 
 const pages = ['Ressources', 'Services', ''];
-const useStyles = makeStyles(() => ({
-    icon:{
+const useStyles = {
+    icon: {
         color: '#ffff',
         fontSize: '2rem'
     }
-}));
+};
 
-const MenuButton = (props:any) => {
+const MenuButton = (props: any) => {
     const [anchorElNav, setAnchorElNav] = React.useState<null | HTMLElement>(null);
 
     const handleOpenNavMenu = (event: React.MouseEvent<HTMLElement>) => {
@@ -26,7 +25,6 @@ const MenuButton = (props:any) => {
         setAnchorElNav(null);
     };
 
-    const classes = useStyles();
     return (
         <Box>
             <IconButton
@@ -37,7 +35,7 @@ const MenuButton = (props:any) => {
                 onClick={handleOpenNavMenu}
                 color="inherit"
             >
-                <SortIcon className={classes.icon}/>
+                <SortIcon style={useStyles.icon}/>
             </IconButton>
             <Menu
                 id="menu-appbar"
