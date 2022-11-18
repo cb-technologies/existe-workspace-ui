@@ -8,7 +8,7 @@ import Typography from "@mui/material/Typography";
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
-import {Stack} from "@mui/material";
+import {Select, Stack} from "@mui/material";
 import FormGroup from '@mui/material/FormGroup';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import Checkbox from '@mui/material/Checkbox';
@@ -20,6 +20,18 @@ import {Address, Biometric, DateOfBirth, EditPersonInfoParameters, Origin,Names,
 import { ExistService } from "../../store/exist_api_call";
 import useHistoryState from "../../hooks/useHistoryState";
 import Container from '@mui/material/Container';
+import { URLExistPath } from '../../constants/existUrlPath';
+import { ZipCode } from '../../constants/zipCodeKinshasa';
+import SaveIcon from "@mui/icons-material/Save";
+import { useNavigate } from "react-router-dom";
+import LoadingButton from '@mui/lab/LoadingButton';
+import MenuItem from '@mui/material/MenuItem';
+import FormControl from '@mui/material/FormControl';
+import InputLabel from '@mui/material/InputLabel'; 
+import Alert from '@mui/material/Alert';
+import AlertTitle from '@mui/material/AlertTitle';
+import { ExistPrompts } from "../../constants/existPrompts";
+
 
 var globalDay: string;
 var globalMonth: string;
@@ -130,8 +142,8 @@ function SexForm() {
 }
 
 // @ts-ignore
-function AddressForm({register, errors}) {
-
+function AddressForm({ register, errors }) {
+    
     const [dVille, setDVille] = useHistoryState("Ville", "");
     const [dQuartier, setDQuartier] = useHistoryState("Quartier", "");
     const [dAvenue, setDAvenue] = useHistoryState("Avenue", "")
@@ -140,8 +152,11 @@ function AddressForm({register, errors}) {
     const [dCodePostal, setDCodePostal] = useHistoryState("CodePostal", "")
     const [dReference, setDReference] = useHistoryState("Reference", "")
 
+
+
+
     return (
-        <div>   
+        <div>
           <TextField
             {...register("Ville")}
             id="outlined-ville-input"
@@ -391,15 +406,18 @@ function mapdata (data) {
 
 
 }
-// @ts-ignore
-function createUser(data) {
 
-    var personInfoRequest = mapdata(data)
-    console.log(personInfoRequest)
-    ExistService.addNewPersonInfo(personInfoRequest, null, (err: grpcWeb.RpcError) => {})
+function delay(milliseconds : number) {
+    return new Promise(resolve => setTimeout( resolve, milliseconds));
 }
 
 export default function RegisterForm() {
+
+
+    const [spinRegister, setSpinRegister] = useState(false);
+    const [showAlert, setShowAlert] = useState(false);
+    const [showErrorAlert, setShowErrorAlert] = useState(false);
+    const navigate = useNavigate();
 
     const {
         register,
@@ -409,21 +427,51 @@ export default function RegisterForm() {
         resolver: yupResolver(schema),
     });
 
-
     const onSubmit = (data: RegisterFormInput) => {
-        createUser(data)
+        var personInfoRequest = mapdata(data)
+        setSpinRegister(true);
+        try {
+            ExistService.addNewPersonInfo(personInfoRequest, null).then((value) => {
+                if (value.getStatus() === 1) {
+                    (async () => { 
+                        setShowAlert(true);
+                        setSpinRegister(false);
+                        await delay(3000);
+                        setShowAlert(false)
+                    })();
+                    
+                } else {
+                    console.log("Could not register a citizen");
+                    setShowErrorAlert(true);
+                }
+           }).catch ((error) => {
+                console.log(`try error ${error}`)
+               setSpinRegister(false);
+               setShowErrorAlert(true);
+      });
+    } catch (error) {
+            console.log(`try error ${error}`)
+            setShowErrorAlert(true);
+        }
     };
 
     return (
         <Container maxWidth="sm">
             <Box
-            component={"form"}
+                component={"form"}
+                onSubmit={handleSubmit(onSubmit)}
             sx={{
             '& .MuiTextField-root': { m: 1,  width: '25ch',},
         }}
              noValidate
              autoComplete={"off"}
-        >
+            >
+                <Typography variant="h3" gutterBottom>
+                    
+                </Typography>
+                <Typography variant="h3" gutterBottom>
+                    Enregistrez l'individu
+                </Typography>
             <Typography variant="h6" component="h6" gutterBottom>
                 1. Entrez les Noms de l'individu
             </Typography>
@@ -448,14 +496,41 @@ export default function RegisterForm() {
                 6. Entrez les Phénotypes de l'individu
             </Typography>
             <PhenotypeForm register={register} errors={errors}></PhenotypeForm>
-                <Button
-                    fullWidth
-                    variant="contained"
-                    color="primary"
-                    onClick={handleSubmit(onSubmit)}
+                {!spinRegister ? (
+              <Button
+                type="submit"
+                fullWidth
+                variant="contained"
+                sx={{ mt: 3, mb: 2 }}
+              >
+                Enregistrez l'individu
+              </Button>
+            ) : (
+              <LoadingButton
+                loading
+                fullWidth
+                loadingPosition="start"
+                startIcon={<SaveIcon />}
+                variant="contained"
+                sx={{ mt: 3, mb: 2 }}
                 >
-                    Register
-                </Button>
+                  Enregistrez l'individu
+              </LoadingButton>
+                )}
+                { showAlert && 
+                    <Alert severity="success">
+                    <AlertTitle>Enregistrement réussite</AlertTitle>
+                    Enregistrement réussite — <strong>ok!</strong>
+                    </Alert>
+                }
+                {showErrorAlert &&
+                    <Alert severity="error">
+                    <AlertTitle>L'enregistrement a échoué</AlertTitle>
+                    L'enregistrement a échoué — <strong>réessayez</strong>
+                    </Alert>
+
+                }  
+                
         </Box>
         </Container>
         
