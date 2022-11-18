@@ -189,7 +189,7 @@ function DynamicAddressForm() {
         setCommune(event.target.value);
     }
 
-    return (
+    // const avaibleZipCode = data.provinces.find(selectedProvince).communes.find(selectedCommune).return(
         <Typography>
             <FormControl sx={{m: 1, minWidth: 120}}>
                 <InputLabel id="demo-simple-select-helper-label">Province</InputLabel>
@@ -230,7 +230,7 @@ function DynamicAddressForm() {
             <FormControl sx={{m: 1, minWidth: 150}}>
                 <InputLabel id="demo-simple-select-helper-label">Quartier</InputLabel>
                 <Select
-                    value={selectedCommune}
+                    value={selectedQuartier}
                     label="Commune"
                     onChange={handleChangeCommune}
                 >
@@ -247,7 +247,7 @@ function DynamicAddressForm() {
             <FormControl sx={{m: 1, minWidth: 130}}>
                 <InputLabel id="demo-simple-select-helper-label">Code Postal</InputLabel>
                 <Select
-                    value={selectedCommune}
+                    value={avaibleQuartier?.zipCode}
                     onChange={handleChangeCommune}
                 >
                     {availableCommune?.communes.map((e: { name: string | number | readonly string[] | undefined; }, key: React.Key | null | undefined) => (
@@ -261,8 +261,6 @@ function DynamicAddressForm() {
                 </Select>
             </FormControl>
         </Typography>
-
-
     )
 }
 
