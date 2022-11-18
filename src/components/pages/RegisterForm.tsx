@@ -3,8 +3,7 @@ import {useState} from 'react';
 import * as grpcWeb from 'grpc-web';
 import Box from '@mui/material/Box';
 import {Dayjs} from 'dayjs';
-import TextField from '@mui/material/TextField';
-import Typography from "@mui/material/Typography";
+import {Button, TextField, Typography} from '@mui/material/';
 import {LocalizationProvider} from '@mui/x-date-pickers/LocalizationProvider';
 import {AdapterDayjs} from "@mui/x-date-pickers/AdapterDayjs";
 import {DatePicker} from '@mui/x-date-pickers/DatePicker';
@@ -15,7 +14,6 @@ import Checkbox from '@mui/material/Checkbox';
 import * as yup from "yup"; // to validate the form input
 import {useForm} from "react-hook-form"; // to handle the form's submission and error states
 import {yupResolver} from "@hookform/resolvers/yup";
-import Button from '@mui/material/Button';
 import {
     Address,
     Biometric,
@@ -177,8 +175,12 @@ function DynamicAddressForm() {
     const [selectedCommune, setCommune] = useState('');
     const [selectedQuartier, setQuartier] = useState('');
 
-    const availableCommune = data.provinces.find((province) => province.name === selectedProvince);
-    const availableQuartier = availableCommune?.communes?.find((commune) => commune.name === selectedCommune);
+    const provinceData = data.provinces.find((province) => province.name === selectedProvince);
+    // @ts-ignore
+    // const provinceName = data.provinces.find((province) => province.name === selectedProvince).name;
+    const communeData = provinceData?.communes?.find((commune) => commune.name === selectedCommune);
+    // @ts-ignore
+    const quartierData = communeData?.quartiers?.find((quartier) => quartier.name === selectedQuartier);
 
     const handleChangeProvince = (event: SelectChangeEvent) => {
         setProvince(event.target.value);
@@ -189,7 +191,13 @@ function DynamicAddressForm() {
         setCommune(event.target.value);
     }
 
-    // const avaibleZipCode = data.provinces.find(selectedProvince).communes.find(selectedCommune).return(
+    // const communeName = availableCommune?.name;
+
+    // @ts-ignore
+    // const avaibleQuartier = data.provinces?.find((province) => province.name === selectedProvince).communes?.find((commune) => commune.name === selectedCommune).quartiers ?.find((quartier) => quartier.name === selectedQuartier);
+
+    // const avaibleZipCode = data.provinces.find((province)).communes.find(selectedProvince;
+    return (
         <Typography>
             <FormControl sx={{m: 1, minWidth: 120}}>
                 <InputLabel id="demo-simple-select-helper-label">Province</InputLabel>
@@ -217,7 +225,7 @@ function DynamicAddressForm() {
                     label="Commune"
                     onChange={handleChangeCommune}
                 >
-                    {availableCommune?.communes.map((e: { name: string | number | readonly string[] | undefined; }, key: React.Key | null | undefined) => (
+                    {provinceData?.communes.map((e: { name: string | number | readonly string[] | undefined; }, key: React.Key | null | undefined) => (
                         <MenuItem
                             key={key}
                             value={e.name}
@@ -234,7 +242,8 @@ function DynamicAddressForm() {
                     label="Commune"
                     onChange={handleChangeCommune}
                 >
-                    {availableCommune?.communes.map((e: { name: string | number | readonly string[] | undefined; }, key: React.Key | null | undefined) => (
+                    {/*@ts-ignore */}
+                    {communeData?.quartiers.map((e: { name: string | number | readonly string[] | undefined; }, key: React.Key | null | undefined) => (
                         <MenuItem
                             key={key}
                             value={e.name}
@@ -247,17 +256,15 @@ function DynamicAddressForm() {
             <FormControl sx={{m: 1, minWidth: 130}}>
                 <InputLabel id="demo-simple-select-helper-label">Code Postal</InputLabel>
                 <Select
-                    value={avaibleQuartier?.zipCode}
+                    value={quartierData.zipCode}
                     onChange={handleChangeCommune}
                 >
-                    {availableCommune?.communes.map((e: { name: string | number | readonly string[] | undefined; }, key: React.Key | null | undefined) => (
-                        <MenuItem
-                            key={key}
-                            value={e.name}
-                        >
-                            {e.name}
-                        </MenuItem>
-                    ))}
+                    <MenuItem
+                        value={quartierData.zipCode}
+                    >
+                        {quartierData?.zipCode}
+                    </MenuItem>
+
                 </Select>
             </FormControl>
         </Typography>
