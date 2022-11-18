@@ -21,7 +21,7 @@ import { useState } from "react";
 import { URLExistPath } from "../../constants/existUrlPath";
 import LoadingButton from "@mui/lab/LoadingButton";
 import SaveIcon from "@mui/icons-material/Save";
-import { red } from "@mui/material/colors";
+import { ExistPrompts } from "../../constants/existPrompts";
 
 interface SignInInput {
   Email: string;
@@ -31,13 +31,13 @@ interface SignInInput {
 const schema = yup.object().shape({
   Email: yup
     .string()
-    .required("L'email addresse ne peut pas etre vide")
-    .email(),
+    .required(ExistPrompts.EMPTY("L'addresse email"))
+    .email(ExistPrompts.INVALID("Addresse email")),
   Password: yup
     .string()
-    .required("Le mot de passe ne peut pas etre vide")
-    .min(8)
-    .max(100),
+    .required(ExistPrompts.EMPTY("Le mot de passe"))
+    .min(8, ExistPrompts.MIN("Le mot de passe", 8))
+    .max(30,ExistPrompts.MAX("Le mot de passe", 30)),
 });
 
 const theme = createTheme();
@@ -46,6 +46,7 @@ export default function SignIn() {
   const {
     register,
     handleSubmit,
+    setError,
     formState: { errors },
   } = useForm<SignInInput>({
     resolver: yupResolver(schema),
@@ -55,7 +56,6 @@ export default function SignIn() {
   const [Password, setPassword] = useHistoryState("Password", "");
 
   const [spinRegister, setSpinRegister] = useState(false);
-  const [errorSignIn, setErrorSignIn] = useState(false);
   const navigate = useNavigate();
 
   const onSubmit = (data: SignInInput) => {
@@ -72,12 +72,14 @@ export default function SignIn() {
           }
         })
         .catch(() => {
-          setErrorSignIn(true);
           setSpinRegister(false);
+          setError("Email", {message:ExistPrompts.WRONG_EMAIL_OR_PASSWORD})
+          setError("Password", {message:ExistPrompts.WRONG_EMAIL_OR_PASSWORD})
         });
     } catch (error) {
-      setErrorSignIn(true);
       setSpinRegister(true);
+      setError("Email", {message:ExistPrompts.WRONG_EMAIL_OR_PASSWORD})
+      setError("Password", {message:ExistPrompts.WRONG_EMAIL_OR_PASSWORD})
     }
   };
 
@@ -113,7 +115,7 @@ export default function SignIn() {
               type="text"
               value={Email}
               onChange={(e) => setEmail(e.target.value)}
-              helperText={!!errors["Email"] ? `Incorrect Email` : ""}
+              helperText={errors.Email?.message}
               error={!!errors["Email"]}
               fullWidth
               required
@@ -126,7 +128,7 @@ export default function SignIn() {
               value={Password}
               type="password"
               onChange={(e) => setPassword(e.target.value)}
-              helperText={!!errors["Password"] ? `Incorrect Password` : ""}
+              helperText={errors.Password?.message}
               error={!!errors["Password"]}
               fullWidth
             />
@@ -152,16 +154,11 @@ export default function SignIn() {
               </LoadingButton>
             )}
             <Stack>
-              {errorSignIn ? (
-                <Typography variant="body1" color={red}>
-                  Incorrect Mot de Passe ou Email
-                </Typography>
-              ) : null}
               <RouterLink to={URLExistPath.UndefinedPage}>
                 Mot de passe oublié?
               </RouterLink>
               <RouterLink to={URLExistPath.SignUpPage}>
-                {"Pas encore enregistré? Veuillez vous inscrire"}
+                {"Pas encore enregistré? Enregistrer vous"}
               </RouterLink>
             </Stack>
           </Box>
