@@ -148,6 +148,22 @@ const data = {
                         {
                             name: 'Pigeon',
                             zipCode: '100105200'
+                        },
+                        {
+                            name: 'Basoko',
+                            zipCode: '1002030'
+                        },
+                        {
+                            name: 'Binza Pigeon',
+                            zipCode: '1002040'
+                        },
+                        {
+                            name: 'Joli Parc',
+                            zipCode: '1002140'
+                        },
+                        {
+                            name: 'Congo',
+                            zipCode: '1002120'
                         }
                     ]
                 },
@@ -155,17 +171,51 @@ const data = {
                     name: 'Kalamu',
                     quartiers: [
                         {
-                            name: 'Matonge',
-                            zipCode: '10010666'
+                            name: 'Matonge I',
+                            zipCode: '1022080'
+                        },
+                        {
+                            name: 'Matonge II',
+                            zipCode: '1022091'
+                        },
+                        {
+                            name: 'Yolo-Nord I',
+                            zipCode: '1022120'
+                        }
+                    ]
+                },
+                {
+                    name: 'Mont-Ngafula',
+                    quartiers: [
+                        {
+                            name: 'Camp Sings Boyenge',
+                            zipCode: '1001010',
+                        },
+                        {
+                            name: 'Kimbwala',
+                            zipCode: '1001030'
+                        },
+                        {
+                            name: 'Kimwenza',
+                            zipCode: '1001050'
+                        },
+                        {
+                            name: 'Mitendi',
+                            zipCode: '1001140'
                         }
                     ]
                 },
             ]
         },
         {
-            name: 'Bas-Congo',
+            name: 'Kongo Central',
             communes: [{}]
-        }
+        },
+        {
+            name: 'Equateur',
+            communes: [{}]
+        },
+
     ]
 }
 
@@ -178,10 +228,10 @@ function DynamicAddressForm() {
     const [selectedZipCode, setZipCode] = useState('');
 
     const provinceData = data.provinces.find((province) => province.name === selectedProvince);
-    // @ts-ignore
+
     const communeData = provinceData?.communes?.find((commune) => commune.name === selectedCommune);
     // @ts-ignore
-    const quartierData = communeData?.quartiers?.find((quartier) => quartier.name === selectedQuartier);
+    const quartierData = communeData?.quartiers?.find((quartier: { name: string; }) => quartier.name === selectedQuartier);
     console.log(quartierData);
     const zipcodeData = quartierData?.zipCode;
 
@@ -201,11 +251,10 @@ function DynamicAddressForm() {
         setZipCode(event.target.value);
     }
 
-
     return (
         <Typography>
-            <FormControl sx={{m: 1, minWidth: 120}}>
-                <InputLabel id="demo-simple-select-helper-label">Province</InputLabel>
+            <FormControl sx={{m: 2, minWidth: 225}}>
+                <InputLabel id="select-province">Province</InputLabel>
                 <Select
                     value={selectedProvince}
                     onChange={handleChangeProvince}
@@ -223,8 +272,8 @@ function DynamicAddressForm() {
                 </Select>
 
             </FormControl>
-            <FormControl sx={{m: 1, minWidth: 120}}>
-                <InputLabel id="demo-simple-select-helper-label">Commune</InputLabel>
+            <FormControl sx={{m: 2, minWidth: 225}}>
+                <InputLabel id="commune-simple-select">Commune</InputLabel>
                 <Select
                     value={selectedCommune}
                     label="Commune"
@@ -240,8 +289,8 @@ function DynamicAddressForm() {
                     ))}
                 </Select>
             </FormControl>
-            <FormControl sx={{m: 1, minWidth: 150}}>
-                <InputLabel id="demo-simple-select-helper-label">Quartier</InputLabel>
+            <FormControl sx={{m: 2, minWidth: 225}}>
+                <InputLabel id="quartier-simple-select">Quartier</InputLabel>
                 <Select
                     value={selectedQuartier}
                     label="Quartier"
@@ -258,8 +307,8 @@ function DynamicAddressForm() {
                     ))}
                 </Select>
             </FormControl>
-            <FormControl sx={{m: 1, minWidth: 130}}>
-                <InputLabel id="demo-simple-select-helper-label">Code Postal</InputLabel>
+            <FormControl sx={{m: 2, minWidth: 225}}>
+                <InputLabel id="code-postal-simple-select">Code Postal</InputLabel>
                 <Select
                     id="outlined-read-only-input"
                     value={selectedZipCode}
@@ -276,87 +325,64 @@ function DynamicAddressForm() {
 function AddressForm({register, errors}) {
 
     const [dVille, setDVille] = useHistoryState("Ville", "");
-    const [dQuartier, setDQuartier] = useHistoryState("Quartier", "");
+    const [selectedQuartier, setQuartier] = useHistoryState("Quartier", "");
     const [dAvenue, setDAvenue] = useHistoryState("Avenue", "")
-    const [dCommune, setDCommune] = useHistoryState("Commune", "")
+    const [selectedCommune, setCommune] = useState("")
     const [dNumero, setDNumero] = useHistoryState("Numero", "")
-    const [dCodePostal, setDCodePostal] = useHistoryState("CodePostal", "")
+    const [selectedCodePostal, setCodePostal] = useState("")
     const [dReference, setDReference] = useHistoryState("Reference", "")
+    const [selectedProvince, setProvince] = useState("")
 
     return (
         <div>
-            <TextField
-                {...register("Ville")}
-                id="outlined-ville-input"
-                label="Ville"
-                helperText={errors.Ville?.message}
-                error={!!errors.Ville}
-                required
-                value={dVille}
-                onChange={(e) => setDVille(e.target.value)}
-            />
-            <TextField
-                {...register("Quartier")}
-                id="outlined-quartier-input"
-                label="Quartier"
-                helperText={errors.Quartier?.message}
-                error={!!errors.Quartier}
-                required
-                value={dQuartier}
-                onChange={(e) => setDQuartier(e.target.value)}
-            />
-            <TextField
-                {...register("Avenue")}
-                id="outlined-avenue-input"
-                label="Avenue"
-                helperText={errors.Avenue?.message}
-                error={!!errors.Avenue}
-                required
-                value={dAvenue}
-                onChange={(e) => setDAvenue(e.target.value)}
-            />
-            <TextField
-                {...register("Commune")}
-                id="outlined-commune-input"
-                label="Commune"
-                helperText={errors.Commune?.message}
-                error={!!errors.Commune}
-                required
-                value={dCommune}
-                onChange={(e) => setDCommune(e.target.value)}
-            />
-
-            <TextField
-                {...register("Numero")}
-                id="outlined-numero-input"
-                label="Numero"
-                helperText={errors.Numero?.message}
-                error={!!errors.Numero}
-                required
-                value={dNumero}
-                onChange={(e) => setDNumero(e.target.value)}
-            />
-            <TextField
-                {...register("CodePostal")}
-                id="outlined-codepostal-input"
-                label="Code Postal"
-                helperText={errors.CodePostal?.message}
-                error={!!errors.CodePostal}
-                required
-                value={dCodePostal}
-                onChange={(e) => setDCodePostal(e.target.value)}
-            />
-            <TextField
-                {...register("Reference")}
-                id="outlined-reference-input"
-                label="Reference"
-                helperText={errors.Reference?.message}
-                error={!!errors.Reference}
-                required
-                value={dReference}
-                onChange={(e) => setDReference(e.target.value)}
-            />
-
+            <FormControl sx={{m: 1, minWidth: 20}}>
+                <TextField
+                    {...register("Numero")}
+                    id="outlined-numero-input"
+                    label="Numero"
+                    helperText={errors.Numero?.message}
+                    error={!!errors.Numero}
+                    required
+                    value={dNumero}
+                    onChange={(e) => setDNumero(e.target.value)}
+                />
+            </FormControl>
+            <FormControl sx={{m: 1, minWidth: 50}}>
+                <TextField
+                    {...register("Avenue")}
+                    id="outlined-avenue-input"
+                    label="Avenue"
+                    helperText={errors.Avenue?.message}
+                    error={!!errors.Avenue}
+                    required
+                    value={dAvenue}
+                    onChange={(e) => setDAvenue(e.target.value)}
+                />
+            </FormControl>
+            <FormControl sx={{m: 1}}>
+                <TextField
+                    {...register("Ville")}
+                    id="outlined-ville-input"
+                    label="Ville"
+                    helperText={errors.Ville?.message}
+                    error={!!errors.Ville}
+                    required
+                    value={dVille}
+                    onChange={(e) => setDVille(e.target.value)}
+                />
+            </FormControl>
+            <FormControl sx={{m: 1, minWidth: 50}}>
+                <TextField
+                    {...register("Reference")}
+                    id="outlined-reference-input"
+                    label="Reference"
+                    helperText={errors.Reference?.message}
+                    error={!!errors.Reference}
+                    required
+                    value={dReference}
+                    onChange={(e) => setDReference(e.target.value)}
+                />
+            </FormControl>
         </div>
     );
 }
@@ -369,8 +395,7 @@ function OriginForm({register, errors}) {
     const [dTerritoire, setDTerritoire] = useHistoryState("Territoire", "")
     const [dSecteur, setDSecteur] = useHistoryState("Secteur", "")
     const [dVillage, setDVillage] = useHistoryState("Village", "")
-
-
+    
     return <div>
         <TextField
             {...register("Province")}
@@ -583,7 +608,7 @@ export default function RegisterForm() {
                 <Typography variant="h6" component="h6" gutterBottom>
                     4. Entrez l'Adresse de l'individu
                 </Typography>
-                {/*<AddressForm register={register} errors={errors}></AddressForm>*/}
+                <AddressForm register={register} errors={errors}></AddressForm>
                 <DynamicAddressForm></DynamicAddressForm>
                 <Typography variant="h6" component="h6" gutterBottom>
                     5. Entrez les Origines de l'individu
