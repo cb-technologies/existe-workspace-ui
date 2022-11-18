@@ -10,7 +10,7 @@
     "@improbable-eng/grpc-web": "^0.15.0",
     "@mui/icons-material": "^5.10.9",
     "@mui/lab": "^5.0.0-alpha.107",
-    "@mui/material": "^5.10.11",
+    "@mui/material": "^5.10.14",
     "@mui/x-date-pickers": "^5.0.5",
     "@testing-library/jest-dom": "^5.16.5",
     "@testing-library/react": "^13.4.0",
