@@ -55,6 +55,17 @@ const styles = StyleSheet.create({
     minWidth: 86,
     margin: "5px 5px 0px",
   },
+  image15: {
+    borderRadius: "20px 5px 5px 5px",
+    width: 70,
+    height: 70,
+    verticalAlign: "top",
+    objectFit: "contain",
+    objectPosition: "center top",
+    position: "relative",
+    minWidth: 86,
+    margin: "5px 5px 0px",
+  },
   row1__spacer: {
     flex: "0 1 15px",
   },
