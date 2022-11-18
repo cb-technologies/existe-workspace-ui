@@ -30,6 +30,7 @@ import FormControl from '@mui/material/FormControl';
 import InputLabel from '@mui/material/InputLabel'; 
 import Alert from '@mui/material/Alert';
 import AlertTitle from '@mui/material/AlertTitle';
+import { ExistPrompts } from "../../constants/existPrompts";
 
 
 var globalDay: string;
@@ -415,6 +416,7 @@ export default function RegisterForm() {
 
     const [spinRegister, setSpinRegister] = useState(false);
     const [showAlert, setShowAlert] = useState(false);
+    const [showErrorAlert, setShowErrorAlert] = useState(false);
     const navigate = useNavigate();
 
     const {
@@ -439,14 +441,17 @@ export default function RegisterForm() {
                     })();
                     
                 } else {
-                console.log("Could not register a citizen");
+                    console.log("Could not register a citizen");
+                    setShowErrorAlert(true);
                 }
            }).catch ((error) => {
                 console.log(`try error ${error}`)
-                setSpinRegister(false);
+               setSpinRegister(false);
+               setShowErrorAlert(true);
       });
     } catch (error) {
-        console.log(`try error ${error}`)
+            console.log(`try error ${error}`)
+            setShowErrorAlert(true);
         }
     };
 
@@ -514,10 +519,17 @@ export default function RegisterForm() {
                 )}
                 { showAlert && 
                     <Alert severity="success">
-                    <AlertTitle>Success</AlertTitle>
-                    Success — <strong>Done!</strong>
+                    <AlertTitle>Enregistrement réussite</AlertTitle>
+                    Enregistrement réussite — <strong>ok!</strong>
                     </Alert>
-                }     
+                }
+                {showErrorAlert &&
+                    <Alert severity="error">
+                    <AlertTitle>L'enregistrement a échoué</AlertTitle>
+                    L'enregistrement a échoué — <strong>réessayez</strong>
+                    </Alert>
+
+                }  
                 
         </Box>
         </Container>

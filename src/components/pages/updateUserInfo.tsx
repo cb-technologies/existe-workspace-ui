@@ -133,6 +133,7 @@ export default function UpdateUserForm() {
 
   const [spinRegister, setSpinRegister] = useState(false);
   const [showAlert, setShowAlert] = useState(false);
+  const [showErrorAlert, setShowErrorAlert] = useState(false);
   const navigate = useNavigate();
   
 
@@ -150,14 +151,17 @@ export default function UpdateUserForm() {
                   setShowAlert(false)
                 })();       
           } else {
-          console.log("Could not update citizen Info");
+            console.log("Could not update citizen Info");
+            setShowErrorAlert(true);
           }
       }).catch ((error) => {
                 console.log(`try error ${error}`)
-                setSpinRegister(false);
+        setSpinRegister(false);
+        setShowErrorAlert(true);
       });
     } catch (error) {
-        console.log(`try error ${error}`)
+      console.log(`try error ${error}`)
+      setShowErrorAlert(true);
         }
     };
 
@@ -219,10 +223,17 @@ export default function UpdateUserForm() {
                 )}
                 { showAlert && 
                     <Alert severity="success">
-                    <AlertTitle>Success</AlertTitle>
-                    Success — <strong>Done!</strong>
+                    <AlertTitle>Sauvegarde réussite</AlertTitle>
+                    Sauvegarde réussite — <strong>ok!</strong>
                     </Alert>
-                }
+        }
+        {showErrorAlert &&
+                    <Alert severity="error">
+                    <AlertTitle>La sauvegarde a échoué</AlertTitle>
+                    La sauvegarde a échoué — <strong>réessayez</strong>
+                    </Alert>
+
+                } 
     </Box>
     </Container>
     
