@@ -143,11 +143,11 @@ const data = {
                     quartiers: [
                         {
                             name: 'Macampagne',
-                            zipCode: ['100229034']
+                            zipCode: '100229034'
                         },
                         {
                             name: 'Pigeon',
-                            zipCode: ['100105200']
+                            zipCode: '100105200'
                         }
                     ]
                 },
@@ -156,7 +156,7 @@ const data = {
                     quartiers: [
                         {
                             name: 'Matonge',
-                            zipCode: ['10010666']
+                            zipCode: '10010666'
                         }
                     ]
                 },
@@ -176,13 +176,14 @@ function DynamicAddressForm() {
     const [selectedCommune, setCommune] = useState('');
     const [selectedQuartier, setQuartier] = useState('');
     const [selectedZipCode, setZipCode] = useState('');
-    
+
     const provinceData = data.provinces.find((province) => province.name === selectedProvince);
     // @ts-ignore
     const communeData = provinceData?.communes?.find((commune) => commune.name === selectedCommune);
     // @ts-ignore
     const quartierData = communeData?.quartiers?.find((quartier) => quartier.name === selectedQuartier);
     console.log(quartierData);
+    const zipcodeData = quartierData?.zipCode;
 
     const handleChangeProvince = (event: SelectChangeEvent) => {
         setProvince(event.target.value);
@@ -194,11 +195,10 @@ function DynamicAddressForm() {
 
     const handleChangeQuartier = (event: SelectChangeEvent) => {
         setQuartier(event.target.value);
-        setZipCode(quartierData?.zipCode);
     }
 
     const handleChangeZipCode = (event: SelectChangeEvent) => {
-        setQuartier(event.target.value);
+        setZipCode(event.target.value);
     }
 
 
@@ -260,13 +260,13 @@ function DynamicAddressForm() {
             </FormControl>
             <FormControl sx={{m: 1, minWidth: 130}}>
                 <InputLabel id="demo-simple-select-helper-label">Code Postal</InputLabel>
-                <TextField
+                <Select
                     id="outlined-read-only-input"
-                    defaultValue={selectedZipCode}
-                    InputProps={{
-                        readOnly: true,
-                    }}
-                >{selectedZipCode}</TextField>
+                    value={selectedZipCode}
+                    onChange={handleChangeZipCode}
+                >
+                    <MenuItem value={zipcodeData}>{zipcodeData}</MenuItem>
+                </Select>
             </FormControl>
         </Typography>
     )
