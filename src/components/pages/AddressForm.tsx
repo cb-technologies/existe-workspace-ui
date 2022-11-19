@@ -202,6 +202,7 @@ export function AddressFormRegister({
   );
 }
 
+
 export function DynamicAddressForm() {
   const [selectedProvince, setProvince] = useState("");
   const [selectedCommune, setCommune] = useState("");
@@ -248,14 +249,12 @@ export function DynamicAddressForm() {
           label="Commune"
           onChange={handleChangeCommune}
         >
-          {selectedProvince &&
-            Object.getOwnPropertyNames(zipCodeData[selectedProvince]).map(
-              (value) => (
-                <MenuItem key={value} value={value}>
-                  {value}
-                </MenuItem>
-              )
-            )}
+          {selectedProvince && Object.getOwnPropertyNames(zipCodeData[selectedProvince as string]).map((value) => (
+              <MenuItem key={value} value={value}>
+                {value}
+              </MenuItem>
+            )
+          )}
         </Select>
       </FormControl>
       <FormControl sx={{ m: 2, minWidth: 225 }}>
@@ -265,36 +264,12 @@ export function DynamicAddressForm() {
           label="Quartier"
           onChange={handleChangeQuartier}
         >
-          {selectedCommune &&
-            selectedProvince &&
-            Object.getOwnPropertyNames(
-              zipCodeData[selectedProvince][selectedCommune]
-            ).map((value) => (
-              <MenuItem key={value} value={value}>
-                {value}
-              </MenuItem>
-            ))}
-        </Select>
-      </FormControl>
-      <FormControl sx={{ m: 2, minWidth: 225 }}>
-        <InputLabel id="zipcode-simple-select">Code Postal</InputLabel>
-        <Select
-          value={selectedZipCode}
-          label="Code Postal"
-          onChange={handleChangeZipCode}
-        >
-          {selectedCommune && selectedProvince && selectedQuartier && (
-            <MenuItem
-              key={
-                zipCodeData[selectedProvince][selectedCommune][selectedQuartier]
-              }
-              value={
-                zipCodeData[selectedProvince][selectedCommune][selectedQuartier]
-              }
-            >
-              {zipCodeData[selectedProvince][selectedCommune][selectedQuartier]}
+          {/*@ts-ignore */}
+          {selectedCommune && selectedProvince && Object.getOwnPropertyNames(zipCodeData[selectedProvince][selectedCommune]).map( (value) => (
+            <MenuItem key={value} value={value}>
+              {value}
             </MenuItem>
-          )}
+          ))}
         </Select>
       </FormControl>
     </Typography>

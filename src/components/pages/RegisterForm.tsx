@@ -2,7 +2,7 @@ import * as React from "react";
 import Box from "@mui/material/Box";
 import { useState } from "react";
 import Typography from "@mui/material/Typography";
-import { useForm } from "react-hook-form"; 
+import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import Button from "@mui/material/Button";
 import { ExistService } from "../../store/exist_api_call";
@@ -18,8 +18,13 @@ import SexForm from "./SexForm";
 import { AddressFormRegister, DynamicAddressForm } from "./AddressForm";
 import OriginFormRegister from "./OriginForm";
 import { PhenotypeFormRegister } from "./PhenotypeForm";
-import { registerMapdata } from "../../utils/form_functions";
-import { globalDay, globalMonth, globalYear, DateOfBirthFormRegister } from "./DateOfBirthForm";
+import { delay, registerMapdata } from "../../utils/form_functions";
+import {
+  globalDay,
+  globalMonth,
+  globalYear,
+  DateOfBirthFormRegister,
+} from "./DateOfBirthForm";
 
 export default function RegisterForm() {
   const [spinRegister, setSpinRegister] = useState(false);
@@ -29,13 +34,25 @@ export default function RegisterForm() {
   const {
     register,
     handleSubmit,
+    control,
     formState: { errors },
   } = useForm<RegisterFormInput>({
     resolver: yupResolver(registerFormSchema),
   });
 
   const onSubmit = (data: RegisterFormInput) => {
-    var personInfoRequest = registerMapdata(data, globalDay, globalMonth, globalYear);
+    console.log(
+      "Le moi de cette Date de naissance is : ",
+      data.DOB.month(),
+      data.DOB.day(),
+      data.DOB.year()
+    );
+    var personInfoRequest = registerMapdata(
+      data,
+      globalDay,
+      globalMonth,
+      globalYear
+    );
     setSpinRegister(true);
     try {
       ExistService.addNewPersonInfo(personInfoRequest, null)
@@ -92,20 +109,29 @@ export default function RegisterForm() {
         <Typography variant="h6" component="h6" gutterBottom>
           3. Entrez la Date de Naissance de l'individu
         </Typography>
-        <DateOfBirthFormRegister /> 
+        <DateOfBirthFormRegister control={control} />
         <Typography variant="h6" component="h6" gutterBottom>
           4. Entrez l'Adresse de l'individu
         </Typography>
-        <AddressFormRegister register={register} errors={errors}></AddressFormRegister>
+        <AddressFormRegister
+          register={register}
+          errors={errors}
+        ></AddressFormRegister>
         <DynamicAddressForm />
         <Typography variant="h6" component="h6" gutterBottom>
           5. Entrez les Origines de l'individu
         </Typography>
-        <OriginFormRegister register={register} errors={errors}></OriginFormRegister>
+        <OriginFormRegister
+          register={register}
+          errors={errors}
+        ></OriginFormRegister>
         <Typography variant="h6" component="h6" gutterBottom>
           6. Entrez les Phénotypes de l'individu
         </Typography>
-        <PhenotypeFormRegister register={register} errors={errors}></PhenotypeFormRegister>
+        <PhenotypeFormRegister
+          register={register}
+          errors={errors}
+        ></PhenotypeFormRegister>
         {!spinRegister ? (
           <Button
             type="submit"
@@ -143,7 +169,3 @@ export default function RegisterForm() {
     </Container>
   );
 }
-function delay(arg0: number) {
-  throw new Error("Function not implemented.");
-}
-

@@ -1,3 +1,5 @@
+import { Dayjs } from "dayjs";
+
 export interface RegisterFormInput {
   Prenom: string;
   Nom: string;
@@ -20,6 +22,8 @@ export interface RegisterFormInput {
   Taille: number;
   Poids: number;
   EyeColor: string;
+
+  DOB: Dayjs;
 }
 export interface UpdateUserFormInput {
   Prenom: string;

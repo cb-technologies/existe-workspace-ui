@@ -2,42 +2,69 @@ import TextField from "@mui/material/TextField";
 import React from "react";
 import { Origin } from "../../grpc/pb/message_and_service_pb";
 import useHistoryState from "../../hooks/useHistoryState";
-import { RegisterFormProps} from "../../utils/exist_types";
+import { RegisterFormProps } from "../../utils/exist_types";
 
-
-export default function OriginFormRegister({ register, errors }: RegisterFormProps<Origin>) {
-  const [dfirstName, setDFirstName] = useHistoryState("FirstName", "");
-  const [dLastName, setDLastName] = useHistoryState("LastName", "");
-  const [dMiddleNames, setDMiddleNames] = useHistoryState("MiddleName", "");
+export default function OriginFormRegister({
+  register,
+  errors,
+}: RegisterFormProps<Origin>) {
+  const [dProvince, setDProvince] = useHistoryState("Province", "");
+  const [dChefLieu, setDChefLieu] = useHistoryState("ChefLieu", "");
+  const [dTerritoire, setDTerritoire] = useHistoryState("Territoire", "");
+  const [dSecteur, setDSecteur] = useHistoryState("Secteur", "");
+  const [dVillage, setDVillage] = useHistoryState("Village", "");
 
   return (
     <div>
       <TextField
-        {...register("Prenom")}
-        id="outlined-prenom-input"
-        label="Prenom"
-        helperText={errors.Prenom?.message}
-        error={!!errors.Prenom}
-        value={dfirstName}
-        onChange={(e) => setDFirstName(e.target.value)}
+        {...register("Province")}
+        id="outlined-province-input"
+        label="Province"
+        helperText={errors.Province?.message}
+        error={!!errors.Province}
+        required
+        value={dProvince}
+        onChange={(e) => setDProvince(e.target.value)}
       />
       <TextField
-        {...register("Nom")}
-        id="outlined-nom-input"
-        label="Nom"
-        helperText={errors.Nom?.message}
-        error={!!errors.Nom}
-        value={dLastName}
-        onChange={(e) => setDLastName(e.target.value)}
+        {...register("ChefLieu")}
+        id="outlined-cheflieu-input"
+        label="Chef-Lieu"
+        helperText={errors.ChefLieu?.message}
+        error={!!errors.ChefLieu}
+        required
+        value={dChefLieu}
+        onChange={(e) => setDChefLieu(e.target.value)}
       />
       <TextField
-        {...register("PostNom")}
-        id="outlined-postnom-input"
-        label="Post-Nom"
-        helperText={errors.PostNom?.message}
-        error={!!errors.PostNom}
-        value={dMiddleNames}
-        onChange={(e) => setDMiddleNames(e.target.value)}
+        {...register("Territoire")}
+        id="outlined-territoire-input"
+        label="Territoire"
+        helperText={errors.Territoire?.message}
+        error={!!errors.Territoire}
+        required
+        value={dTerritoire}
+        onChange={(e) => setDTerritoire(e.target.value)}
+      />
+      <TextField
+        {...register("Secteur")}
+        id="outlined-secteur-input"
+        label="Secteur"
+        helperText={errors.Secteur?.message}
+        error={!!errors.Secteur}
+        required
+        value={dSecteur}
+        onChange={(e) => setDSecteur(e.target.value)}
+      />
+      <TextField
+        {...register("Village")}
+        id="outlined-village-input"
+        label="Village"
+        helperText={errors.Village?.message}
+        error={!!errors.Village}
+        required
+        value={dVillage}
+        onChange={(e) => setDVillage(e.target.value)}
       />
     </div>
   );
