@@ -470,7 +470,7 @@ function mapdata(data) {
   return personInfoRequest;
 }
 
-function delay(milliseconds: number) {
+export function delay(milliseconds: number) {
   return new Promise((resolve) => setTimeout(resolve, milliseconds));
 }
 
