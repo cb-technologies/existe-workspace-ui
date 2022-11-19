@@ -2,20 +2,14 @@ import * as React from "react";
 import Box from "@mui/material/Box";
 import { useState, useEffect } from "react";
 import Typography from "@mui/material/Typography";
-import * as yup from "yup"; // to validate the form input
 import { useForm } from "react-hook-form"; // to handle the form's submission and error states
 import { yupResolver } from "@hookform/resolvers/yup";
 import Button from "@mui/material/Button";
-import { ExistCRUDClient } from "../../grpc/pb/Message_and_serviceServiceClientPb";
-import useHistoryState from "../../hooks/useHistoryState";
-import { updateUserInformation } from "../../utils/update_form";
 import AddressForm from "./AddressForm";
 import DateOfBirthForm from "./DateOfBirthForm";
 import NameForm from "./NameForm";
-import OriginForm from "./OriginForm";
 import PhenotypeForm from "./PhenotypeForm";
 import SexForm from "./SexForm";
-import { useRadioGroup } from "@mui/material";
 import { ExistService } from "../../store/exist_api_call";
 import Container from '@mui/material/Container';
 import { useLocation } from "react-router-dom";
@@ -26,47 +20,10 @@ import LoadingButton from '@mui/lab/LoadingButton';
 import SaveIcon from "@mui/icons-material/Save";
 import {Address, Biometric, DateOfBirth, EditPersonInfoParameters, Names, NationalIDNumber, PersonInfoResponse,PersonInfoRequest, Phenotype, Origin } from "../../grpc/pb/message_and_service_pb"
 import { URLExistPath } from "../../constants/existUrlPath";
+import { UpdateUserFormInput } from "../../interface/form";
+import { updateUserInfoSchema } from "../../constants/yup_schema";
 
-export interface UpdateUserFormInput {
-  Prenom: string;
-  Nom: string;
-  PostNom: string;
 
-  Ville: string;
-  Quartier: string;
-  Avenue: string;
-  Commune: string;
-  Numero: number;
-  CodePostal: number;
-  Reference: string;
-
-  Day: string;
-  Month: string;
-  Year: string;
-
-  Taille: number;
-  Poids: number;
-  EyeColor: string;
-}
-
-const schema = yup.object().shape({
-  //requirement for the inputs
-  Nom: yup.string().required().min(2).max(30),
-  Prenom: yup.string().required().min(2).max(30),
-  PostNom: yup.string().required().min(2).max(30),
-
-  Ville: yup.string().required().min(2).max(30),
-  Quartier: yup.string().required().min(2).max(30),
-  Avenue: yup.string().required().min(2).max(30),
-  Commune: yup.string().required().min(2).max(30),
-  Numero: yup.number().required("Numero cannot be empty"),
-  CodePostal: yup.number().required("Code Postal cannot be empty"),
-  Reference: yup.string().required().min(2).max(30),
-
-  Taille: yup.number().required("Taille cannot be empty"),
-  Poids: yup.number().required("Poids cannot be empty"),
-  EyeColor: yup.string().required().min(2).max(30),
-});
 
 function mapdata(data: UpdateUserFormInput, response: PersonInfoResponse.AsObject) {
   var personId = new NationalIDNumber().setId("6035223a0000181");
@@ -123,7 +80,7 @@ export default function UpdateUserForm() {
     reset,
     formState: { errors },
   } = useForm<UpdateUserFormInput>({
-    resolver: yupResolver(schema),
+    resolver: yupResolver(updateUserInfoSchema),
   });
 
   useEffect(() => {

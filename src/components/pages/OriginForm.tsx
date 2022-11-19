@@ -1,57 +1,44 @@
 import TextField from "@mui/material/TextField";
 import React from "react";
-import { FieldErrorsImpl, UseFormRegister } from "react-hook-form";
 import { Origin } from "../../grpc/pb/message_and_service_pb";
-import { UpdateFormProps } from "../../utils/exist_types";
-import { UpdateUserFormInput } from "./updateUserInfo";
+import useHistoryState from "../../hooks/useHistoryState";
+import { RegisterFormProps} from "../../utils/exist_types";
 
 
-export default function OriginForm({ register, errors }: UpdateFormProps<Origin>) {
+export default function OriginFormRegister({ register, errors }: RegisterFormProps<Origin>) {
+  const [dfirstName, setDFirstName] = useHistoryState("FirstName", "");
+  const [dLastName, setDLastName] = useHistoryState("LastName", "");
+  const [dMiddleNames, setDMiddleNames] = useHistoryState("MiddleName", "");
+
   return (
-      <div>
-          Origin Form
+    <div>
+      <TextField
+        {...register("Prenom")}
+        id="outlined-prenom-input"
+        label="Prenom"
+        helperText={errors.Prenom?.message}
+        error={!!errors.Prenom}
+        value={dfirstName}
+        onChange={(e) => setDFirstName(e.target.value)}
+      />
+      <TextField
+        {...register("Nom")}
+        id="outlined-nom-input"
+        label="Nom"
+        helperText={errors.Nom?.message}
+        error={!!errors.Nom}
+        value={dLastName}
+        onChange={(e) => setDLastName(e.target.value)}
+      />
+      <TextField
+        {...register("PostNom")}
+        id="outlined-postnom-input"
+        label="Post-Nom"
+        helperText={errors.PostNom?.message}
+        error={!!errors.PostNom}
+        value={dMiddleNames}
+        onChange={(e) => setDMiddleNames(e.target.value)}
+      />
     </div>
-    // <div>
-    //   <TextField
-    //     {...register("Province")}
-    //     id="outlined-province-input"
-    //     label="Province"
-    //     helperText={errors.Province?.message}
-    //     error={!!errors.Province}
-    //     disabled
-    //   />
-    //   <TextField
-    //     {...register("ChefLieu")}
-    //     id="outlined-cheflieu-input"
-    //     label="Chef-Lieu"
-    //     helperText={errors.ChefLieu?.message}
-    //     error={!!errors.ChefLieu}
-    //     disabled
-    //   />
-    //   <TextField
-    //     {...register("Territoire")}
-    //     id="outlined-territoire-input"
-    //     label="Territoire"
-    //     helperText={errors.Territoire?.message}
-    //     error={!!errors.Territoire}
-    //     disabled
-    //   />
-    //   <TextField
-    //     {...register("Secteur")}
-    //     id="outlined-secteur-input"
-    //     label="Secteur"
-    //     helperText={errors.Secteur?.message}
-    //     error={!!errors.Secteur}
-    //     disabled
-    //   />
-    //   <TextField
-    //     {...register("Village")}
-    //     id="outlined-village-input"
-    //     label="Village"
-    //     helperText={errors.Village?.message}
-    //     error={!!errors.Village}
-    //     disabled
-    //   />
-    // </div>
   );
 }
