@@ -31,7 +31,14 @@ import { useNavigate } from "react-router-dom";
 import LoadingButton from "@mui/lab/LoadingButton";
 import Alert from "@mui/material/Alert";
 import AlertTitle from "@mui/material/AlertTitle";
-import { FormControl, InputLabel, MenuItem, Select, SelectChangeEvent, Stack } from "@mui/material";
+import {
+  FormControl,
+  InputLabel,
+  MenuItem,
+  Select,
+  SelectChangeEvent,
+  Stack,
+} from "@mui/material";
 import { zipCodeData } from "../../constants/zipCodeKinshasa";
 import { RegisterFormProps } from "../../utils/exist_types";
 
@@ -139,16 +146,21 @@ function SexForm() {
 }
 
 // @ts-ignore
-export function DynamicAddressForm({ register, errors, }) {
-    
-  const [selectedProvince, setProvince] = useHistoryState("SelectedProvince", "");
-  const [selectedCommune, setCommune] = useHistoryState("SelectedCommune", "")
-  const [selectedQuartier, setQuartier] = useHistoryState("SelectedQuartier", "");
+export function DynamicAddressForm({ register, errors }) {
+  const [selectedProvince, setProvince] = useHistoryState(
+    "SelectedProvince",
+    ""
+  );
+  const [selectedCommune, setCommune] = useHistoryState("SelectedCommune", "");
+  const [selectedQuartier, setQuartier] = useHistoryState(
+    "SelectedQuartier",
+    ""
+  );
   const [selectedZipCode, setZipCode] = useHistoryState("CodePostal", "");
   const [dVille, setDVille] = useHistoryState("Ville", "");
-  const [dAvenue, setDAvenue] = useHistoryState("Avenue", "")
-  const [dNumero, setDNumero] = useHistoryState("Numero", "")
-  const [dReference, setDReference] = useHistoryState("Reference", "")
+  const [dAvenue, setDAvenue] = useHistoryState("Avenue", "");
+  const [dNumero, setDNumero] = useHistoryState("Numero", "");
+  const [dReference, setDReference] = useHistoryState("Reference", "");
 
   const handleChangeProvince = (event: SelectChangeEvent) => {
     setProvince(event.target.value);
@@ -170,8 +182,8 @@ export function DynamicAddressForm({ register, errors, }) {
   };
 
   return (
-    <Typography>
-      <FormControl sx={{ m: 2, minWidth: 220 }}>
+    <div>
+      <FormControl sx={{ margin: 1, minWidth: 220 }}>
         <InputLabel id="select-province">Province</InputLabel>
         <Select
           value={selectedProvince}
@@ -186,7 +198,7 @@ export function DynamicAddressForm({ register, errors, }) {
           ))}
         </Select>
       </FormControl>
-      <FormControl sx={{ m: 2, minWidth: 220 }}>
+      <FormControl sx={{ margin: 1, minWidth: 220 }}>
         <InputLabel id="commune-simple-select">Commune</InputLabel>
         <Select
           value={selectedCommune}
@@ -203,7 +215,7 @@ export function DynamicAddressForm({ register, errors, }) {
             )}
         </Select>
       </FormControl>
-      <FormControl sx={{ m: 2, minWidth: 220 }}>
+      <FormControl sx={{ margin: 1, minWidth: 220 }}>
         <InputLabel id="quartier-simple-select">Quartier</InputLabel>
         <Select
           value={selectedQuartier}
@@ -221,7 +233,7 @@ export function DynamicAddressForm({ register, errors, }) {
             ))}
         </Select>
       </FormControl>
-      <FormControl sx={{ m: 2, minWidth: 225 }}>
+      <FormControl sx={{ margin: 1, minWidth: 220 }}>
         <InputLabel id="zipcode-simple-select">Code Postal</InputLabel>
         <Select
           value={selectedZipCode}
@@ -242,58 +254,49 @@ export function DynamicAddressForm({ register, errors, }) {
           )}
         </Select>
       </FormControl>
-      <FormControl sx={{ m: 0.5, minWidth: 200 }}>
         <TextField
-        {...register("Ville")}
-        id="outlined-ville-input"
-        label="Ville"
-        helperText={errors.Ville?.message}
-        error={!!errors.Ville}
-        required
-        value={dVille}
-        onChange={(e) => setDVille(e.target.value)}
-      />
-      </FormControl>
-      <FormControl sx={{ m: 0.5, minWidth: 200  }}>
-      <TextField
-        {...register("Avenue")}
-        id="outlined-avenue-input"
-        label="Avenue"
-        helperText={errors.Avenue?.message}
-        error={!!errors.Avenue}
-        required
-        value={dAvenue}
-        onChange={(e) => setDAvenue(e.target.value)}
-      />
-      </FormControl>
-      <FormControl sx={{ m: 0.5, minWidth: 200  }}>
+          {...register("Ville")}
+          id="outlined-ville-input"
+          label="Ville"
+          helperText={errors.Ville?.message}
+          error={!!errors.Ville}
+          required
+          value={dVille}
+          onChange={(e) => setDVille(e.target.value)}
+        />
         <TextField
-        {...register("Numero")}
-        id="outlined-numero-input"
-        label="Numero"
-        helperText={errors.Numero?.message}
-        error={!!errors.Numero}
-        required
-        value={dNumero}
-        onChange={(e) => setDNumero(e.target.value)}
-      />
-      </FormControl>
-      <FormControl sx={{ m: 0.5, minWidth: 200  }}>
+          {...register("Avenue")}
+          id="outlined-avenue-input"
+          label="Avenue"
+          helperText={errors.Avenue?.message}
+          error={!!errors.Avenue}
+          required
+          value={dAvenue}
+          onChange={(e) => setDAvenue(e.target.value)}
+        />
         <TextField
-        {...register("Reference")}
-        id="outlined-reference-input"
-        label="Reference"
-        helperText={errors.Reference?.message}
-        error={!!errors.Reference}
-        required
-        value={dReference}
-        onChange={(e) => setDReference(e.target.value)}
-      />
-      </FormControl>
-    </Typography>
+          {...register("Numero")}
+          id="outlined-numero-input"
+          label="Numero"
+          helperText={errors.Numero?.message}
+          error={!!errors.Numero}
+          required
+          value={dNumero}
+          onChange={(e) => setDNumero(e.target.value)}
+        />
+        <TextField
+          {...register("Reference")}
+          id="outlined-reference-input"
+          label="Reference"
+          helperText={errors.Reference?.message}
+          error={!!errors.Reference}
+          required
+          value={dReference}
+          onChange={(e) => setDReference(e.target.value)}
+        />
+    </div>
   );
 }
-
 
 // @ts-ignore
 function OriginForm({ register, errors }) {
@@ -544,7 +547,10 @@ export default function RegisterForm() {
         <Typography variant="h6" component="h6" gutterBottom>
           4. Entrez l'Adresse de l'individu
         </Typography>
-        <DynamicAddressForm register={register} errors={errors}></DynamicAddressForm>
+        <DynamicAddressForm
+          register={register}
+          errors={errors}
+        ></DynamicAddressForm>
         <Typography variant="h6" component="h6" gutterBottom>
           5. Entrez les Origines de l'individu
         </Typography>
