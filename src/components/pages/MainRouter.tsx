@@ -6,9 +6,9 @@ import SignUp from "./SignUp";
 import Orientation from "./OrientationPage";
 import UpdateUserForm from "./updateUserInfo";
 import {URLExistPath} from "../../constants/existUrlPath";
-import RetrieveUserInfo from "./RetrieveUserInfo";
 import LandingPage from "./LandingPage";
 import SignIn from "./SignIn";
+import RetrieveUserInfo from "./RetrieveUserInfo";
 
 function MainRouter() {
     return (

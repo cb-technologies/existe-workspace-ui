@@ -23,15 +23,12 @@ import LoadingButton from "@mui/lab/LoadingButton";
 import SaveIcon from "@mui/icons-material/Save";
 import { Link as RouterLink } from "react-router-dom";
 import "react-toastify/dist/ReactToastify.css";
+import Alert from "@mui/material/Alert";
+import AlertTitle from "@mui/material/AlertTitle";
 
-import {
-  Alert,
-  AlertIcon,
-  AlertTitle,
-  AlertDescription,
-} from "@chakra-ui/react";
 import { URLExistPath } from "../../constants/existUrlPath";
 import { ExistPrompts } from "../../constants/existPrompts";
+import { delay } from "./RegisterForm";
 
 const schema = yup.object().shape({
   Email: yup
@@ -62,6 +59,7 @@ export default function SignUp() {
     register,
     handleSubmit,
     formState: { errors },
+    reset,
   } = useForm<AgentSignUpFormInput>({
     resolver: yupResolver(schema),
   });
@@ -71,10 +69,15 @@ export default function SignUp() {
   const [Email, setEmail] = useHistoryState("Email", "");
   const [Password, setPassword] = useHistoryState("Password", "");
 
+  React.useEffect(() => {
+    reset();
+  }, [Nom, Prenom, Email, Password]);
+
   const [spinRegister, setSpinRegister] = useState(false);
   const navigate = useNavigate();
 
-  const [open, setOpen] = React.useState(false);
+  const [succcessful, setSuccessful] = useState(false);
+  const [registrationComplete, setRegistrationComplete] = useState(false);
 
   const onSubmit = (data: AgentSignUpFormInput) => {
     const agentInfo: AgentInfo = new AgentInfo()
@@ -85,10 +88,13 @@ export default function SignUp() {
     setSpinRegister(true);
     try {
       ExistService.signUpAgent(agentInfo, null)
-        .then((value) => {
+        .then(async (value) => {
           setSpinRegister(false);
           if (value.getStatus() == 1) {
-            navigate(URLExistPath.HomePage);
+            setRegistrationComplete(true);
+            await delay(1500);
+            setRegistrationComplete(false);
+            navigate(URLExistPath.SignInPage);
           } else {
             console.log("could not register user");
           }
@@ -96,14 +102,11 @@ export default function SignUp() {
         .catch((error) => {
           console.log(`try error ${error}`);
           setSpinRegister(false);
-          setOpen(!open);
-          console.log(open);
+          setSuccessful(!succcessful);
         });
     } catch (error) {
-      // setSpinRegister(false);
       console.log(`try error ${error}`);
-      setOpen(!open);
-      console.log(open);
+      setSuccessful(!succcessful);
     }
   };
 
@@ -111,28 +114,6 @@ export default function SignUp() {
     <ThemeProvider theme={theme}>
       <Container component="main" maxWidth="xs">
         <CssBaseline />
-        {open ? (
-          <Alert
-            status="error"
-            variant="subtle"
-            flexDirection="column"
-            alignItems="center"
-            justifyContent="center"
-            textAlign="center"
-            height="200px"
-          >
-            <AlertIcon boxSize="40px" mr={0} />
-            <AlertTitle mt={4} mb={1} fontSize="lg">
-              Erreur!
-            </AlertTitle>
-            <AlertDescription maxWidth="sm">
-              Votre email est deja en utilisation, veuillez l'utiliser pour vous
-              connecter ou choisisez un autre email.
-            </AlertDescription>
-          </Alert>
-        ) : (
-          ""
-        )}
         <Box
           sx={{
             marginTop: 8,
@@ -227,10 +208,23 @@ export default function SignUp() {
               </LoadingButton>
             )}
             <Grid item>
-              <RouterLink to="/">
+              <RouterLink to={URLExistPath.SignInPage}>
                 {"Deja enregistré? Connecter vous"}
               </RouterLink>
             </Grid>
+            {succcessful && (
+              <Alert severity="error">
+                <AlertTitle>Erreur!</AlertTitle>
+                Votre email est deja en utilisation, veuillez l'utiliser pour
+                vous connecter ou choisisez un autre email.
+              </Alert>
+            )}
+            {registrationComplete && (
+              <Alert severity="success">
+                <AlertTitle>Enregistrement reussit</AlertTitle>
+                Enregistrement reussit - <strong>ok!</strong>
+              </Alert>
+            )}
           </Box>
         </Box>
         <Copyright sx={{ mt: 8, mb: 4 }} />
