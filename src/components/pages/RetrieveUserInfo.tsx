@@ -31,6 +31,10 @@ import {
   useLocation,
 } from "react-router-dom"; //import the package
 
+var globalDay: string;
+var globalMonth: string;
+var globalYear: string;
+
 interface RetrieveFormInput {
   Prenom: string;
   Nom: string;
@@ -97,9 +101,10 @@ function SexForm() {
     </FormGroup>
   );
 }
-
-function DateOfBirthForm() {
+// @ts-ignore
+function DateOfBirthForm({ register }) {
   const [value, setValue] = React.useState<Dayjs | null>(null);
+  console.log("debug dob")
   return (
     <LocalizationProvider dateAdapter={AdapterDayjs}>
       <Stack spacing={1}>
@@ -107,6 +112,11 @@ function DateOfBirthForm() {
           views={["day", "month", "year"]}
           label="Date de naissance"
           value={value}
+          onAccept={(newValue?: Dayjs | null) => {
+            globalYear = newValue!.year().toString();
+            globalMonth = (newValue!.month() + 1).toString();
+            globalDay = newValue!.date().toString();
+          }}
           onChange={(newValue?: any) => {
             setValue(newValue);
           }}
@@ -120,26 +130,22 @@ function DateOfBirthForm() {
 }
 
 // @ts-ignore
-function mapdata(data) {
+function retreivemapdata(data) {
   var names = new Names().setNom(data.Nom);
   names.setPrenom(data.Prenom);
   names.setMiddleNamesList([data.PostNom]);
-
-  var dob = new DateOfBirth().setDay("23");
-  dob.setMonth("march");
-  dob.setYear("1998");
+  var dob = new DateOfBirth().setDay(globalDay);
+  dob.setMonth(globalMonth);
+  dob.setYear(globalYear);
   var retreivePersonInfoParameters =
     new RetreivePersonInfoParameters().setNames(names);
   retreivePersonInfoParameters.setDateOfBirth(dob);
+  console.log("names are", names)
+  console.log("date of birth ", dob)
+  console.log("finaly the personInput is", retreivePersonInfoParameters)
 
   return retreivePersonInfoParameters;
 }
-
-// function createUser(data) {
-
-//     var personInfoRequest = mapdata(data)
-//     ExistService.addNewPersonInfo(personInfoRequest, null, (err: grpcWeb.RpcError) => {})
-// }
 
 export default function RetrieveUserInfo() {
   const {
@@ -155,7 +161,8 @@ export default function RetrieveUserInfo() {
   // @ts-ignore
 //   function retreiveUser(data): PersonInfoResponse {
 function retreiveUser(data): PersonInfoResponse {
-    var retreivePersonInfoParameters = mapdata(data);
+    var retreivePersonInfoParameters = retreivemapdata(data);
+    console.log("Person Parameter",retreivePersonInfoParameters)
     
     ExistService.retreiveUserBasedOnField(
       retreivePersonInfoParameters,
@@ -174,10 +181,10 @@ function retreiveUser(data): PersonInfoResponse {
 
   const onSubmit = (data: RetrieveFormInput) => {
     setJson(JSON.stringify(data));
-    // const flag_to_page = location.state.flag 
     setDataResponse(retreiveUser(data));
-    console.log(dataResposnse);
-    console.log(flag)
+    // console.log(dataResposnse);
+    // console.log(flag)
+    // console.log(data)
   };
 
   return (
@@ -201,7 +208,7 @@ function retreiveUser(data): PersonInfoResponse {
         <Typography variant="h6" component="h6" gutterBottom>
           3. Entrez la Date de Naissance de l'individu
         </Typography>
-        <DateOfBirthForm></DateOfBirthForm>
+        <DateOfBirthForm register={register}></DateOfBirthForm>
         <Button
           fullWidth
           variant="contained"

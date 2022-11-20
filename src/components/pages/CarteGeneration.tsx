@@ -8,7 +8,6 @@ import { PersonInfoResponse } from "../../grpc/pb/message_and_service_pb";
 export default function CardGenerationPage() {
   const location = useLocation();
   const userInfo = location.state.cardInfo as PersonInfoResponse.AsObject;
-
   return (
     <Container maxWidth="lg">
       <Box sx={{ my: 8 }}>
