@@ -1,5 +1,6 @@
 export const URLExistPath = {
     HomePage: "/",
+    SignInPage: "/signIn",
     SignUpPage: "/signUp",
     RegisterPage: "/register",
     GeneratedCardPage: "/generateCard",

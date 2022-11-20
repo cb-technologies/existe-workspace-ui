@@ -21,6 +21,10 @@ import { useState } from "react";
 import { URLExistPath } from "../../constants/existUrlPath";
 import LoadingButton from "@mui/lab/LoadingButton";
 import SaveIcon from "@mui/icons-material/Save";
+<<<<<<< HEAD
+=======
+import { ExistPrompts } from "../../constants/existPrompts";
+>>>>>>> main
 
 interface SignInInput {
   Email: string;
@@ -30,6 +34,7 @@ interface SignInInput {
 const schema = yup.object().shape({
   Email: yup
     .string()
+<<<<<<< HEAD
     .required("L'email addresse ne peut pas etre vide")
     .email("Ceci n'est pas une valide addresse email"),
   Password: yup
@@ -37,6 +42,15 @@ const schema = yup.object().shape({
     .required("Le mot de passe ne peut pas etre vide")
     .min(8, "Ce mot de passe est trop court. Au moins 8 character")
     .max(30, "Trop long mot de passe. Max 30 characters"),
+=======
+    .required(ExistPrompts.EMPTY("L'addresse email"))
+    .email(ExistPrompts.INVALID("Addresse email")),
+  Password: yup
+    .string()
+    .required(ExistPrompts.EMPTY("Le mot de passe"))
+    .min(8, ExistPrompts.MIN("Le mot de passe", 8))
+    .max(30,ExistPrompts.MAX("Le mot de passe", 30)),
+>>>>>>> main
 });
 
 const theme = createTheme();
@@ -72,6 +86,7 @@ export default function SignIn() {
         })
         .catch(() => {
           setSpinRegister(false);
+<<<<<<< HEAD
           setError("Email", {message: "Incorrect email ou mot de passe. Reessayer svp, ou Enregistrer vous"})
           setError("Password", {message: "Incorrect email ou mot de passe. Reessayer svp, ou Enregistrer vous"})
         });
@@ -79,6 +94,15 @@ export default function SignIn() {
       setSpinRegister(true);
       setError("Email", {message: "Incorrect email ou mot de passe. Reessayer svp, ou Enregistrer vous"})
       setError("Password", {message: "Incorrect email ou mot de passe. Reessayer svp, ou Enregistrer vous"})
+=======
+          setError("Email", {message:ExistPrompts.WRONG_EMAIL_OR_PASSWORD})
+          setError("Password", {message:ExistPrompts.WRONG_EMAIL_OR_PASSWORD})
+        });
+    } catch (error) {
+      setSpinRegister(true);
+      setError("Email", {message:ExistPrompts.WRONG_EMAIL_OR_PASSWORD})
+      setError("Password", {message:ExistPrompts.WRONG_EMAIL_OR_PASSWORD})
+>>>>>>> main
     }
   };
 

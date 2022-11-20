@@ -3,7 +3,6 @@ import React from "react";
 import { FieldErrorsImpl, UseFormRegister } from "react-hook-form";
 import { Origin } from "../../grpc/pb/message_and_service_pb";
 import { UpdateFormProps } from "../../utils/exist_types";
-import { UpdateUserFormInput } from "./updateUserInfo";
 
 
 export default function OriginForm({ register, errors }: UpdateFormProps<Origin>) {
