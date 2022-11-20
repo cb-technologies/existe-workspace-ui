@@ -73,7 +73,7 @@ function OrientationContent() {
       </Container>
       <Container disableGutters maxWidth="md" component="main">
         <Grid container alignItems="center" justifyContent={"center"}>
-          {tiers.map((tier) => (
+          {tiers.map((tier, index) => (
             <Grid
               item
               xs={12}
@@ -82,6 +82,7 @@ function OrientationContent() {
               sx={{
                 padding: 1.5,
               }}
+              key={index}
             >
               <Card
                 sx={{
