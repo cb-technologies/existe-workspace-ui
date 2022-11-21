@@ -151,7 +151,7 @@ function CarteGeneration({ userInfo }: CarteGenerationProps) {
                     <h5 className={css(styles.highlights1)}>
                       Lieu de naissance
                     </h5>
-                    <h4 className={css(styles.highlights42)}>Bokoro</h4>
+                    <h4 className={css(styles.highlights42)}>{userInfo.origins?.provinceList[0]}</h4>
                   </div>
                 </div>
 
