@@ -40,12 +40,14 @@ import {
   Stack,
 } from "@mui/material";
 import { zipCodeData } from "../../constants/zipCodeKinshasa";
-import { RegisterFormProps } from "../../utils/exist_types";
+import { Control, Controller, FieldErrorsImpl } from "react-hook-form";
+import { AnyARecord } from "dns";
 
 var globalDay: string;
 var globalMonth: string;
 var globalYear: string;
 
+var globalProvince: string;
 var globalCommune: string;
 var globalQuartier: string;
 var globalZipCode: string;
@@ -62,6 +64,7 @@ interface RegisterFormInput {
   Numero: number;
   CodePostal: number;
   Reference: string;
+  ProvinceAddress: string
 
   Province: string;
   ChefLieu: string;
@@ -69,7 +72,7 @@ interface RegisterFormInput {
   Secteur: string;
   Village: string;
 
-  Taille: number;
+  Height: number;
   Poids: number;
   EyeColor: string;
 }
@@ -83,6 +86,8 @@ const schema = yup.object().shape({
   Avenue: yup.string().required().min(2).max(30),
   Numero: yup.number().required("Numero cannot be empty"),
   Reference: yup.string().required().min(2).max(30),
+  CodePostal: yup.number().required("Numero cannot be empty"),
+  ProvinceAddress: yup.string().required().min(2).max(30),
 
   Province: yup.string().required().min(2).max(30),
   ChefLieu: yup.string().required().min(2).max(30),
@@ -90,7 +95,7 @@ const schema = yup.object().shape({
   Secteur: yup.string().required().min(2).max(30),
   Village: yup.string().required().min(2).max(30),
 
-  Taille: yup.number().required("Taille cannot be empty"),
+  Height: yup.number().required("Taille cannot be empty"),
   Poids: yup.number().required("Poids cannot be empty"),
   EyeColor: yup.string().required().min(2).max(30),
 });
@@ -145,115 +150,127 @@ function SexForm() {
   );
 }
 
-// @ts-ignore
-export function DynamicAddressForm({ register, errors }) {
-  const [selectedProvince, setProvince] = useHistoryState(
-    "SelectedProvince",
-    ""
-  );
+
+export type PartialErrorRegisterForm = Partial<
+  FieldErrorsImpl<{
+    Prenom: string;
+    Nom: string;
+    PostNom: string;
+
+    Ville: string;
+    Quartier: string;
+    Avenue: string;
+    Commune: string;
+    Numero: number;
+    CodePostal: string;
+    Reference: string;
+    ProvinceAddress: string
+
+    Province: string;
+    ChefLieu: string;
+    Territoire: string;
+    Secteur: string;
+    Village: string;
+
+    Taille: number;
+    Poids: number;
+    EyeColor: string;
+  }>
+>;
+
+type AddressPropsType = {
+  register: any,
+  errors: PartialErrorRegisterForm
+}
+export function DynamicAddressForm({ register, errors}: AddressPropsType) {
+  const [selectedProvince, setProvince] = useHistoryState("SelectedProvince","");
   const [selectedCommune, setCommune] = useHistoryState("SelectedCommune", "");
-  const [selectedQuartier, setQuartier] = useHistoryState(
-    "SelectedQuartier",
-    ""
-  );
+  const [selectedQuartier, setQuartier] = useHistoryState("SelectedQuartier","");
   const [selectedZipCode, setZipCode] = useHistoryState("CodePostal", "");
   const [dVille, setDVille] = useHistoryState("Ville", "");
   const [dAvenue, setDAvenue] = useHistoryState("Avenue", "");
   const [dNumero, setDNumero] = useHistoryState("Numero", "");
   const [dReference, setDReference] = useHistoryState("Reference", "");
 
-  const handleChangeProvince = (event: SelectChangeEvent) => {
-    setProvince(event.target.value);
-  };
-
-  const handleChangeCommune = (event: SelectChangeEvent) => {
-    setCommune(event.target.value);
-    globalCommune = event.target.value;
-  };
-
-  const handleChangeQuartier = (event: SelectChangeEvent) => {
-    setQuartier(event.target.value);
-    globalQuartier = event.target.value;
-  };
-
-  const handleChangeZipCode = (event: SelectChangeEvent) => {
-    setZipCode(event.target.value);
-    globalZipCode = event.target.value;
-  };
-
+  
   return (
-    <div>
-      <FormControl sx={{ margin: 1, minWidth: 220 }}>
-        <InputLabel id="select-province">Province</InputLabel>
-        <Select
-          value={selectedProvince}
-          onChange={handleChangeProvince}
-          label="Province"
-          id="adress-province"
-        >
-          {Object.getOwnPropertyNames(zipCodeData).map((value) => (
+    <div>     
+      <TextField
+        {...register("ProvinceAddress")}
+      select
+      value={selectedProvince}
+      onChange={(e) => {
+        setProvince(e.target.value)
+      }}
+      label="Province"
+      id="select-province"
+    >
+      {Object.getOwnPropertyNames(zipCodeData).map((value) => (
+        <MenuItem key={value} value={value}>
+          {value}
+        </MenuItem>
+      ))}
+    </TextField>
+      <TextField
+        {...register("Commune")}
+      select
+      value={selectedCommune}
+      label="Commune"
+      onChange={(e) => {
+                setCommune(e.target.value)
+              }}
+    >
+      {selectedProvince &&
+        Object.getOwnPropertyNames(zipCodeData[selectedProvince]!).map(
+          (value) => (
+            <MenuItem key={value} value={value}>
+              {value}
+            </MenuItem>
+          )
+        )}
+    </TextField>
+      <TextField
+        {...register("Quartier")}
+      select
+        value={selectedQuartier}
+        label="Quartier"
+        onChange={(e) => {
+                setQuartier(e.target.value)
+              }}
+      >
+        {selectedCommune &&
+          selectedProvince &&
+          Object.getOwnPropertyNames(
+            zipCodeData[selectedProvince]![selectedCommune]!
+          ).map((value) => (
             <MenuItem key={value} value={value}>
               {value}
             </MenuItem>
           ))}
-        </Select>
-      </FormControl>
-      <FormControl sx={{ margin: 1, minWidth: 220 }}>
-        <InputLabel id="commune-simple-select">Commune</InputLabel>
-        <Select
-          value={selectedCommune}
-          label="Commune"
-          onChange={handleChangeCommune}
-        >
-          {selectedProvince &&
-            Object.getOwnPropertyNames(zipCodeData[selectedProvince]).map(
-              (value) => (
-                <MenuItem key={value} value={value}>
-                  {value}
-                </MenuItem>
-              )
-            )}
-        </Select>
-      </FormControl>
-      <FormControl sx={{ margin: 1, minWidth: 220 }}>
-        <InputLabel id="quartier-simple-select">Quartier</InputLabel>
-        <Select
-          value={selectedQuartier}
-          label="Quartier"
-          onChange={handleChangeQuartier}
-        >
-          {selectedCommune &&
-            selectedProvince &&
-            Object.getOwnPropertyNames(
-              zipCodeData[selectedProvince][selectedCommune]
-            ).map((value) => (
-              <MenuItem key={value} value={value}>
-                {value}
-              </MenuItem>
-            ))}
-        </Select>
-      </FormControl>
-      <FormControl sx={{ margin: 1, minWidth: 220 }}>
-        <InputLabel id="zipcode-simple-select">Code Postal</InputLabel>
-        <Select
+      </TextField>
+      <TextField
+        {...register("CodePostal")}
+        select
           value={selectedZipCode}
-          label="Code Postal"
-          onChange={handleChangeZipCode}
+        label="Code Postal"
+        onChange={(e) => {
+                setZipCode(e.target.value)
+              }}
+    
         >
           {selectedCommune && selectedProvince && selectedQuartier && (
             <MenuItem
               key={
-                zipCodeData[selectedProvince][selectedCommune][selectedQuartier]
+                zipCodeData[selectedProvince]![selectedCommune]![selectedQuartier]
               }
               value={
-                zipCodeData[selectedProvince][selectedCommune][selectedQuartier]
+                zipCodeData[selectedProvince]![selectedCommune]![selectedQuartier]!
               }
             >
-              {zipCodeData[selectedProvince][selectedCommune][selectedQuartier]}
+              {zipCodeData[selectedProvince]![selectedCommune]![selectedQuartier]!}
             </MenuItem>
           )}
-        </Select>
-      </FormControl>
+        </TextField>
         <TextField
           {...register("Ville")}
           id="outlined-ville-input"
@@ -285,7 +302,7 @@ export function DynamicAddressForm({ register, errors }) {
           onChange={(e) => setDNumero(e.target.value)}
         />
         <TextField
-          {...register("Reference")}
+        {...register("Reference")}
           id="outlined-reference-input"
           label="Reference"
           helperText={errors.Reference?.message}
@@ -293,7 +310,7 @@ export function DynamicAddressForm({ register, errors }) {
           required
           value={dReference}
           onChange={(e) => setDReference(e.target.value)}
-        />
+      />
     </div>
   );
 }
@@ -364,21 +381,21 @@ function OriginForm({ register, errors }) {
 
 // @ts-ignore
 function PhenotypeForm({ register, errors }) {
-  const [dTaille, setDTaille] = useHistoryState("Taille", "");
+  const [dHeight, setDHeight] = useHistoryState("Height", "");
   const [dPoids, setDPoids] = useHistoryState("Poids", "");
   const [dEyeColor, setDEyeColor] = useHistoryState("EyeColor", "");
 
   return (
     <div>
       <TextField
-        {...register("Taille")}
+        {...register("Height")}
         id="outlined-taille-input"
         label="Taille (cm)"
         helperText={errors.Taille?.message}
         error={!!errors.Taille}
         required
-        value={dTaille}
-        onChange={(e) => setDTaille(e.target.value)}
+        value={dHeight}
+        onChange={(e) => setDHeight(e.target.value)}
       />
       <TextField
         {...register("Poids")}
@@ -453,12 +470,14 @@ function mapdata(data) {
   dob.setYear(globalYear);
 
   var address = new Address().setAvenue(data.Avenue);
-  address.setCommune(globalCommune);
-  address.setQuartier(globalQuartier);
+  address.setProvince(data.ProvinceAddress);
+  address.setCommune(data.Commune);
+  address.setQuartier(data.Quartier);
   address.setNumber(data.Numero);
   address.setVille(data.Ville);
-  address.setZipCode(data.CodePostal);
-  address.setReference(globalZipCode);
+  address.setZipCode(data.CodePostal.toString());
+  
+  address.setReference(data.Reference);
 
   var personInfoRequest = new PersonInfoRequest().setNames(names);
   personInfoRequest.setAddress(address);
@@ -466,6 +485,8 @@ function mapdata(data) {
   personInfoRequest.setDateOfBirth(dob);
   personInfoRequest.setOrigins(origins);
   personInfoRequest.setPhenotypes(phenotype);
+
+  console.log(personInfoRequest);
 
   return personInfoRequest;
 }
@@ -478,7 +499,6 @@ export default function RegisterForm() {
   const [spinRegister, setSpinRegister] = useState(false);
   const [showAlert, setShowAlert] = useState(false);
   const [showErrorAlert, setShowErrorAlert] = useState(false);
-  const navigate = useNavigate();
 
   const {
     register,
@@ -489,6 +509,7 @@ export default function RegisterForm() {
   });
 
   const onSubmit = (data: RegisterFormInput) => {
+    console.log("here petgae")
     var personInfoRequest = mapdata(data);
     setSpinRegister(true);
     try {
