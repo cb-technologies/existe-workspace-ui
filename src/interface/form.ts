@@ -37,6 +37,7 @@ export interface UpdateUserFormInput {
   Numero: number;
   CodePostal: number;
   Reference: string;
+  ProvinceAddress: string;
 
   Day: string;
   Month: string;
