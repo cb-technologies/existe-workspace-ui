@@ -21,6 +21,7 @@ export type PartialErrorRegisterForm = Partial<
     Secteur: string;
     Village: string;
     ProvinceAddress: string;
+  
 
     Taille: number;
     Poids: number;
@@ -43,10 +44,6 @@ export type UpdateFormProps<T> = {
       CodePostal: number;
       Reference: string;
       ProvinceAddress: string;
-
-      Day: string;
-      Month: string;
-      Year: string;
 
       Taille: number;
       Poids: number;

@@ -39,10 +39,6 @@ export interface UpdateUserFormInput {
   Reference: string;
   ProvinceAddress: string;
 
-  Day: string;
-  Month: string;
-  Year: string;
-
   Taille: number;
   Poids: number;
   EyeColor: string;

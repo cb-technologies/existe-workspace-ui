@@ -27,30 +27,21 @@ import { ExistService } from "../../store/exist_api_call";
 import useHistoryState from "../../hooks/useHistoryState";
 import Container from "@mui/material/Container";
 import SaveIcon from "@mui/icons-material/Save";
-import { useNavigate } from "react-router-dom";
 import LoadingButton from "@mui/lab/LoadingButton";
 import Alert from "@mui/material/Alert";
 import AlertTitle from "@mui/material/AlertTitle";
 import {
-  FormControl,
-  InputLabel,
   MenuItem,
-  Select,
-  SelectChangeEvent,
   Stack,
 } from "@mui/material";
 import { zipCodeData } from "../../constants/zipCodeKinshasa";
-import { Control, Controller, FieldErrorsImpl } from "react-hook-form";
-import { AnyARecord } from "dns";
+import { FieldErrorsImpl } from "react-hook-form";
+
 
 var globalDay: string;
 var globalMonth: string;
 var globalYear: string;
 
-var globalProvince: string;
-var globalCommune: string;
-var globalQuartier: string;
-var globalZipCode: string;
 
 interface RegisterFormInput {
   Prenom: string;
@@ -71,6 +62,7 @@ interface RegisterFormInput {
   Territoire: string;
   Secteur: string;
   Village: string;
+  LieuDeNaissance: string;
 
   Height: number;
   Poids: number;
@@ -94,6 +86,7 @@ const schema = yup.object().shape({
   Territoire: yup.string().required().min(2).max(30),
   Secteur: yup.string().required().min(2).max(30),
   Village: yup.string().required().min(2).max(30),
+  LieuDeNaissance: yup.string().required().min(2).max(30),
 
   Height: yup.number().required("Taille cannot be empty"),
   Poids: yup.number().required("Poids cannot be empty"),
@@ -171,6 +164,7 @@ export type PartialErrorRegisterForm = Partial<
     Territoire: string;
     Secteur: string;
     Village: string;
+    LieuDeNaissance: string;
 
     Taille: number;
     Poids: number;
@@ -191,6 +185,7 @@ export function DynamicAddressForm({ register, errors}: AddressPropsType) {
   const [dAvenue, setDAvenue] = useHistoryState("Avenue", "");
   const [dNumero, setDNumero] = useHistoryState("Numero", "");
   const [dReference, setDReference] = useHistoryState("Reference", "");
+  
 
   
   return (
@@ -322,6 +317,7 @@ function OriginForm({ register, errors }) {
   const [dTerritoire, setDTerritoire] = useHistoryState("Territoire", "");
   const [dSecteur, setDSecteur] = useHistoryState("Secteur", "");
   const [dVillage, setDVillage] = useHistoryState("Village", "");
+  const [dLieuDeNaissance, setdDieuDeNaissance] = useHistoryState("LieuDeNaissance", "");
 
   return (
     <div>
@@ -374,6 +370,16 @@ function OriginForm({ register, errors }) {
         required
         value={dVillage}
         onChange={(e) => setDVillage(e.target.value)}
+      />
+      <TextField
+        {...register("LieuDeNaissance")}
+        id="outlined-lieuDeNaissance-input"
+        label="Lieu de Naissance"
+        helperText={errors.LieuDeNaissance?.message}
+        error={!!errors.LieuDeNaissance}
+        required
+        value={dLieuDeNaissance}
+        onChange={(e) => setdDieuDeNaissance(e.target.value)}
       />
     </div>
   );
@@ -457,6 +463,7 @@ function mapdata(data) {
 
   var origins = new Origin().setChefLieu(data.ChefLieu);
   origins.setProvinceList([data.Province]);
+  origins.setLieuDeNaissance(data.LieuDeNaissance)
 
   var phenotype = new Phenotype().setEyeColor(data.EyeColor);
   phenotype.setHeight(data.Height);

@@ -41,10 +41,6 @@ export interface UpdateUserFormInput {
   Reference: string;
   ProvinceAddress: string;
 
-  Day: string;
-  Month: string;
-  Year: string;
-
   Taille: number;
   Poids: number;
   EyeColor: string;
@@ -65,6 +61,7 @@ const schema = yup.object().shape({
   Reference: yup.string().required().min(2).max(30),
   ProvinceAddress: yup.string().required().min(2).max(30),
 
+
   Taille: yup.number().required("Taille cannot be empty"),
   Poids: yup.number().required("Poids cannot be empty"),
   EyeColor: yup.string().required().min(2).max(30),
@@ -83,13 +80,14 @@ function mapdata(data: UpdateUserFormInput, response: PersonInfoResponse.AsObjec
 
   var origins = new Origin().setChefLieu(response.origins?.chefLieu!)
   origins.setProvinceList(response.origins?.provinceList!)
+  origins.setLieuDeNaissance(response.origins?.lieuDeNaissance!)
 
   var biometric = new Biometric().setPhotos(response.biometrics?.photos!);
   biometric.setFingerPrint(response.biometrics?.fingerPrint!)
 
-  var dob = new DateOfBirth().setDay(data.Day);
-  dob.setMonth(data.Month);
-  dob.setYear(data.Year);
+  var dob = new DateOfBirth().setDay(response.dateOfBirth?.day!);
+  dob.setMonth(response.dateOfBirth?.month!);
+  dob.setYear(response.dateOfBirth?.year!);
 
   var address = new Address().setAvenue(data.Avenue);
   address.setProvince(data.ProvinceAddress);
