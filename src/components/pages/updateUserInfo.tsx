@@ -39,6 +39,7 @@ export interface UpdateUserFormInput {
   Numero: number;
   CodePostal: number;
   Reference: string;
+  ProvinceAddress: string;
 
   Day: string;
   Month: string;
@@ -62,6 +63,7 @@ const schema = yup.object().shape({
   Numero: yup.number().required("Numero cannot be empty"),
   CodePostal: yup.number().required("Code Postal cannot be empty"),
   Reference: yup.string().required().min(2).max(30),
+  ProvinceAddress: yup.string().required().min(2).max(30),
 
   Taille: yup.number().required("Taille cannot be empty"),
   Poids: yup.number().required("Poids cannot be empty"),
@@ -69,7 +71,7 @@ const schema = yup.object().shape({
 });
 
 function mapdata(data: UpdateUserFormInput, response: PersonInfoResponse.AsObject) {
-  var personId = new NationalIDNumber().setId("6035223a0000181");
+  var personId = new NationalIDNumber().setId(response.id?.id!);
 
   var names = new Names().setNom(data.Nom);
   names.setPrenom(data.Prenom);
@@ -82,13 +84,15 @@ function mapdata(data: UpdateUserFormInput, response: PersonInfoResponse.AsObjec
   var origins = new Origin().setChefLieu(response.origins?.chefLieu!)
   origins.setProvinceList(response.origins?.provinceList!)
 
-  var biometric = new Biometric().setPhotos("bbbbbbbbbb");
+  var biometric = new Biometric().setPhotos(response.biometrics?.photos!);
+  biometric.setFingerPrint(response.biometrics?.fingerPrint!)
 
-  var dob = new DateOfBirth().setDay("23");
-  dob.setMonth("march");
-  dob.setYear("1998");
+  var dob = new DateOfBirth().setDay(data.Day);
+  dob.setMonth(data.Month);
+  dob.setYear(data.Year);
 
   var address = new Address().setAvenue(data.Avenue);
+  address.setProvince(data.ProvinceAddress);
   address.setCommune(data.Commune);
   address.setQuartier(data.Quartier);
   address.setNumber(data.Numero);
@@ -139,6 +143,7 @@ export default function UpdateUserForm() {
 
   const onSubmit = (data: UpdateUserFormInput) => {
     setSpinRegister(true);
+    setShowErrorAlert(false);
     var EditPersonInfoParameters = mapdata(data, userInfo!);
     try {
       ExistService.updatePersonInfo(EditPersonInfoParameters,null).then((value) => {
@@ -175,7 +180,11 @@ export default function UpdateUserForm() {
       }}
       noValidate
       autoComplete={"off"}
-    >
+      >
+        <Typography variant="h3" gutterBottom></Typography>
+        <Typography variant="h3" gutterBottom>
+          Modifiez les informations de l'individu
+        </Typography>
       <Typography variant="h6" component="h6" gutterBottom>
         1.Modifiez les Noms de l'individu
       </Typography>
@@ -185,19 +194,11 @@ export default function UpdateUserForm() {
         formVal={userInfo?.names!}
       ></NameForm>
       <Typography variant="h6" component="h6" gutterBottom>
-        2.Modifiez le Sexe l'individu
-      </Typography>
-      <SexForm/>
-      <Typography variant="h6" component="h6" gutterBottom>
-        3.Modifiez la Date de Naissance de l'individu
-      </Typography>
-      <DateOfBirthForm register={register} errors={errors} formVal={undefined}></DateOfBirthForm>
-      <Typography variant="h6" component="h6" gutterBottom>
-        4.Modifiez l'Adresse de l'individu
+        2.Modifiez l'Adresse de l'individu
       </Typography>
       <AddressForm register={register} errors={errors} formVal={userInfo?.address!}></AddressForm>
       <Typography variant="h6" component="h6" gutterBottom>
-        6.Modifiez les Phénotypes de l'individu
+        3.Modifiez les Phénotypes de l'individu
       </Typography>
       <PhenotypeForm register={register} errors={errors} formVal={userInfo?.phenotypes!}></PhenotypeForm>
       {!spinRegister ? (

@@ -20,6 +20,7 @@ export type PartialErrorRegisterForm = Partial<
     Territoire: string;
     Secteur: string;
     Village: string;
+    ProvinceAddress: string;
 
     Taille: number;
     Poids: number;
@@ -41,6 +42,7 @@ export type UpdateFormProps<T> = {
       Numero: number;
       CodePostal: number;
       Reference: string;
+      ProvinceAddress: string;
 
       Day: string;
       Month: string;
@@ -51,7 +53,7 @@ export type UpdateFormProps<T> = {
       EyeColor: string;
     }>
   >;
-  formVal: T | undefined
+  formVal: T | undefined;
 };
 
 export type RegisterFormProps<T> = {
