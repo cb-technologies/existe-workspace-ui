@@ -11,6 +11,11 @@ After dowloading the **protoc-gen-grpc-web**, make sure to make it executable by
  mv pathOfTheDownloadedFile /usr/local/bin/protoc-gen-grpc-web
  chmod +x /usr/local/bin/protoc-gen-grpc-web
 ```
+or simply
+
+```
+brew install protoc-gen-grpc-web
+```
 
 ## 2. Generating the different files
 

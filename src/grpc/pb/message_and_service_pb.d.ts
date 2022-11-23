@@ -48,6 +48,24 @@ export namespace Address {
   }
 }
 
+export class Sex extends jspb.Message {
+  getSex(): SexEnum;
+  setSex(value: SexEnum): Sex;
+
+  serializeBinary(): Uint8Array;
+  toObject(includeInstance?: boolean): Sex.AsObject;
+  static toObject(includeInstance: boolean, msg: Sex): Sex.AsObject;
+  static serializeBinaryToWriter(message: Sex, writer: jspb.BinaryWriter): void;
+  static deserializeBinary(bytes: Uint8Array): Sex;
+  static deserializeBinaryFromReader(message: Sex, reader: jspb.BinaryReader): Sex;
+}
+
+export namespace Sex {
+  export type AsObject = {
+    sex: SexEnum,
+  }
+}
+
 export class Names extends jspb.Message {
   getNom(): string;
   setNom(value: string): Names;
@@ -85,6 +103,9 @@ export class Origin extends jspb.Message {
   getChefLieu(): string;
   setChefLieu(value: string): Origin;
 
+  getLieuDeNaissance(): string;
+  setLieuDeNaissance(value: string): Origin;
+
   serializeBinary(): Uint8Array;
   toObject(includeInstance?: boolean): Origin.AsObject;
   static toObject(includeInstance: boolean, msg: Origin): Origin.AsObject;
@@ -97,6 +118,7 @@ export namespace Origin {
   export type AsObject = {
     provinceList: Array<string>,
     chefLieu: string,
+    lieuDeNaissance: string,
   }
 }
 
@@ -279,6 +301,11 @@ export class PersonInfoRequest extends jspb.Message {
   hasDateOfBirth(): boolean;
   clearDateOfBirth(): PersonInfoRequest;
 
+  getSex(): Sex | undefined;
+  setSex(value?: Sex): PersonInfoRequest;
+  hasSex(): boolean;
+  clearSex(): PersonInfoRequest;
+
   serializeBinary(): Uint8Array;
   toObject(includeInstance?: boolean): PersonInfoRequest.AsObject;
   static toObject(includeInstance: boolean, msg: PersonInfoRequest): PersonInfoRequest.AsObject;
@@ -295,6 +322,7 @@ export namespace PersonInfoRequest {
     origins?: Origin.AsObject,
     phenotypes?: Phenotype.AsObject,
     dateOfBirth?: DateOfBirth.AsObject,
+    sex?: Sex.AsObject,
   }
 }
 
@@ -339,6 +367,11 @@ export class PersonInfoResponse extends jspb.Message {
   hasId(): boolean;
   clearId(): PersonInfoResponse;
 
+  getSex(): Sex | undefined;
+  setSex(value?: Sex): PersonInfoResponse;
+  hasSex(): boolean;
+  clearSex(): PersonInfoResponse;
+
   serializeBinary(): Uint8Array;
   toObject(includeInstance?: boolean): PersonInfoResponse.AsObject;
   static toObject(includeInstance: boolean, msg: PersonInfoResponse): PersonInfoResponse.AsObject;
@@ -357,6 +390,7 @@ export namespace PersonInfoResponse {
     dateOfBirth?: DateOfBirth.AsObject,
     cardValidity?: CardValidity.AsObject,
     id?: NationalIDNumber.AsObject,
+    sex?: Sex.AsObject,
   }
 }
 
@@ -482,3 +516,8 @@ export namespace AgentSignInInfo {
   }
 }
 
+export enum SexEnum { 
+  UNKNOWN = 0,
+  HOMME = 1,
+  FEMME = 2,
+}

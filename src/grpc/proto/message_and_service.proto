@@ -14,6 +14,15 @@ message Address {
   string reference = 8; // reference is optional. this is just to help with easier localisation
 }
 
+enum SexEnum {
+  UNKNOWN = 0;
+  HOMME = 1;
+  FEMME = 2;
+}
+message Sex {
+  SexEnum sex = 1;
+}
+
 message Names {
   string nom = 1;
   string prenom = 2;
@@ -23,6 +32,7 @@ message Names {
 message Origin {
   repeated string province = 1; // could be from multiple provinces
   string chef_lieu = 2;
+  string lieu_de_naissance = 3;
 }
 
 message Phenotype {
@@ -67,6 +77,7 @@ message PersonInfoRequest {
   Origin origins = 4;
   Phenotype phenotypes = 5;
   DateOfBirth date_of_birth = 6;
+  Sex sex = 7;
 }
 
 message PersonInfoResponse {
@@ -78,6 +89,7 @@ message PersonInfoResponse {
   DateOfBirth date_of_birth = 6;
   CardValidity card_validity = 7;
   NationalIDNumber id = 8;
+  Sex sex = 9;
 }
 
 message EditPersonInfoParameters{
