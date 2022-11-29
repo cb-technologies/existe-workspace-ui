@@ -24,7 +24,7 @@ import AlertTitle from '@mui/material/AlertTitle';
 import { useNavigate } from "react-router-dom";
 import LoadingButton from '@mui/lab/LoadingButton';
 import SaveIcon from "@mui/icons-material/Save";
-import {Address, Biometric, DateOfBirth, EditPersonInfoParameters, Names, NationalIDNumber, PersonInfoResponse,PersonInfoRequest, Phenotype, Origin } from "../../grpc/pb/message_and_service_pb"
+import {Address, Biometric, DateOfBirth, EditPersonInfoParameters, Names, NationalIDNumber, PersonInfoResponse,PersonInfoRequest, Phenotype, Origin, Sex } from "../../grpc/pb/message_and_service_pb"
 import { URLExistPath } from "../../constants/existUrlPath";
 
 export interface UpdateUserFormInput {
@@ -98,12 +98,15 @@ function mapdata(data: UpdateUserFormInput, response: PersonInfoResponse.AsObjec
   address.setZipCode(data.CodePostal.toString());
   address.setReference(data.Reference);
 
+  var sex  = new Sex().setSex(response.sex?.sex!)
+
   var personInfoRequest = new PersonInfoRequest().setNames(names);
   personInfoRequest.setAddress(address);
   personInfoRequest.setBiometrics(biometric);
   personInfoRequest.setDateOfBirth(dob);
   personInfoRequest.setPhenotypes(phenotype);
   personInfoRequest.setOrigins(origins);
+  personInfoRequest.setSex(sex);
 
   var editPersonInfoParameters =
     new EditPersonInfoParameters().setEditedpersoninfo(personInfoRequest);
