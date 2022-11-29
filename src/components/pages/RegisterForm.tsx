@@ -22,6 +22,7 @@ import {
   Names,
   PersonInfoRequest,
   Phenotype,
+  Sex
 } from "../../grpc/pb/message_and_service_pb";
 import { ExistService } from "../../store/exist_api_call";
 import useHistoryState from "../../hooks/useHistoryState";
@@ -36,11 +37,14 @@ import {
 } from "@mui/material";
 import { zipCodeData } from "../../constants/zipCodeKinshasa";
 import { FieldErrorsImpl } from "react-hook-form";
+import { SexEnum } from "../../grpc/pb/message_and_service_pb";
 
 
 var globalDay: string;
 var globalMonth: string;
 var globalYear: string;
+
+var globalSex = SexEnum.UNKNOWN;
 
 
 interface RegisterFormInput {
@@ -133,11 +137,47 @@ function NameForm({ register, errors }) {
 }
 
 function SexForm() {
+
+  const [checkedHomme, setCheckedHomme] = useHistoryState("Homme", false);
+  const [checkedFemme, setCheckedFemme] = useHistoryState("Femme", false);
+
+  const [disabledHomme, setDisabledHomme] = useHistoryState("HommeDisabled", false);
+  const [disabledFemme, setDisabledFemme] = useHistoryState("FemmeDisabled", false);
+
+
+  const handleChangeHomme = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setCheckedHomme(event.target.checked);
+    setDisabledFemme(event.target.checked);
+    globalSex = SexEnum.HOMME
+  };
+
+  const handleChangeFemme = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setCheckedFemme(event.target.checked);
+    setDisabledHomme(event.target.checked);
+    globalSex = SexEnum.FEMME
+  };
+  
   return (
     <FormGroup>
       <div>
-        <FormControlLabel control={<Checkbox />} label="Homme" />
-        <FormControlLabel control={<Checkbox />} label="Femme" />
+        <FormControlLabel
+          control={
+            <Checkbox
+              checked={checkedHomme}
+              onChange={handleChangeHomme}
+              disabled={disabledHomme}
+            />
+          } 
+          label="Homme"
+        />
+        <FormControlLabel
+          control={
+            <Checkbox
+              checked={checkedFemme}
+              onChange={handleChangeFemme}
+              disabled={disabledFemme}
+            />}
+          label="Femme" />
       </div>
     </FormGroup>
   );
@@ -483,8 +523,9 @@ function mapdata(data) {
   address.setNumber(data.Numero);
   address.setVille(data.Ville);
   address.setZipCode(data.CodePostal.toString());
-  
   address.setReference(data.Reference);
+
+  var sex = new Sex().setSex(globalSex)
 
   var personInfoRequest = new PersonInfoRequest().setNames(names);
   personInfoRequest.setAddress(address);
@@ -492,6 +533,7 @@ function mapdata(data) {
   personInfoRequest.setDateOfBirth(dob);
   personInfoRequest.setOrigins(origins);
   personInfoRequest.setPhenotypes(phenotype);
+  personInfoRequest.setSex(sex);
 
   console.log(personInfoRequest);
 
@@ -516,8 +558,8 @@ export default function RegisterForm() {
   });
 
   const onSubmit = (data: RegisterFormInput) => {
-    console.log("here petgae")
     var personInfoRequest = mapdata(data);
+    console.log(personInfoRequest)
     setSpinRegister(true);
     try {
       ExistService.addNewPersonInfo(personInfoRequest, null)
