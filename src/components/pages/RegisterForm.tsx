@@ -500,6 +500,61 @@ type PhotoPropsType = {
   errors: PartialErrorRegisterForm
 }
 function PhotoForm({ register, errors }: PhotoPropsType) {
+  const [file, setFile] = useState(null);
+  const [fileDataURL, setFileDataURL] = useState("");
+  const [ImageBase64, setImageBase64] = useState("");
+
+  const convertToBase64 = (file: any) => {
+    return new Promise((resolve, reject) => {
+      const fileReader = new FileReader();
+      fileReader.readAsDataURL(file);
+      fileReader.onload = () => {
+        resolve(fileReader.result);
+      };
+      fileReader.onerror = (error) => {
+        reject(error);
+      };
+    });
+  };
+
+  const changeHandler = async (e:any) => {
+    const { files } = e.target
+    const file = files[0];
+    // if (!file.type.match(imageMimeType)) {
+    //   alert("Image mime type is not valid");
+    //   return;
+    // }
+    setFile(file);
+    const base64 = await convertToBase64(file);
+    setImageBase64(base64 as string);
+    console.log(base64)
+    // const fileReader = new FileReader();
+    // fileReader.onload = (e) => {
+    //   const result  = e.target?.result;
+    // }
+    // fileReader.readAsDataURL(file);
+
+  }
+
+  React.useEffect(() => {
+    let fileReader: FileReader, isCancel = false;
+    if(file) {
+      fileReader = new FileReader();
+      fileReader.onload = (e) => {
+        const result  = e.target?.result;
+        if (result && !isCancel) {
+          setFileDataURL(result as string)
+        }
+      }
+      fileReader.readAsDataURL(file)
+    }
+    return () => {
+      isCancel = true;
+      if(fileReader && fileReader.readyState === 1) {
+        fileReader.abort();
+      }
+    }
+  }, [file]);
 
   return (
     <div>
@@ -509,15 +564,24 @@ function PhotoForm({ register, errors }: PhotoPropsType) {
         maxWidth: '70%',
       }}
       >
-        <TextField
+        <input
         {...register("Photo")}
           id="photo-upload"
           type="file"
+          accept="image/*"
+          onChange={changeHandler}
           fullWidth
           required
       />
+      {fileDataURL ?
+      <p className="img-preview-wrapper">
+        {
+          <img style={{ width: 250, height: 300 }} src={fileDataURL} alt="preview" />
+        }
+      </p> : null}
     </Box>
        </div>
+    
   );
 }
 
