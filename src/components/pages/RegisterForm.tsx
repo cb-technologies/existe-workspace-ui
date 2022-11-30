@@ -229,7 +229,7 @@ export function DynamicAddressForm({ register, errors}: AddressPropsType) {
 
   
   return (
-    <div>     
+    <div>
       <TextField
         {...register("ProvinceAddress")}
       select
@@ -495,6 +495,32 @@ function DateOfBirthForm({ register }) {
   );
 }
 
+type PhotoPropsType = {
+  register: any,
+  errors: PartialErrorRegisterForm
+}
+function PhotoForm({ register, errors }: PhotoPropsType) {
+
+  return (
+    <div>
+      <Box
+      sx={{
+        width: 400,
+        maxWidth: '70%',
+      }}
+      >
+        <TextField
+        {...register("Photo")}
+          id="photo-upload"
+          type="file"
+          fullWidth
+          required
+      />
+    </Box>
+       </div>
+  );
+}
+
 // @ts-ignore
 function mapdata(data) {
   var names = new Names().setNom(data.Nom);
@@ -629,6 +655,11 @@ export default function RegisterForm() {
           6. Entrez les Phénotypes de l'individu
         </Typography>
         <PhenotypeForm register={register} errors={errors}></PhenotypeForm>
+      </Box>
+      <Typography variant="h6" component="h6" gutterBottom>
+          7. Importez la photo de l'individu
+        </Typography>
+        <PhotoForm register={register} errors={errors}></PhotoForm>
         {!spinRegister ? (
           <Button
             type="submit"
@@ -662,7 +693,6 @@ export default function RegisterForm() {
             L'enregistrement a échoué — <strong>réessayez</strong>
           </Alert>
         )}
-      </Box>
     </Container>
   );
 }
