@@ -159,6 +159,9 @@ export class Biometric extends jspb.Message {
   getFingerPrint_asB64(): string;
   setFingerPrint(value: Uint8Array | string): Biometric;
 
+  getPhotoType(): string;
+  setPhotoType(value: string): Biometric;
+
   serializeBinary(): Uint8Array;
   toObject(includeInstance?: boolean): Biometric.AsObject;
   static toObject(includeInstance: boolean, msg: Biometric): Biometric.AsObject;
@@ -171,6 +174,7 @@ export namespace Biometric {
   export type AsObject = {
     photos: Uint8Array | string,
     fingerPrint: Uint8Array | string,
+    photoType: string,
   }
 }
 

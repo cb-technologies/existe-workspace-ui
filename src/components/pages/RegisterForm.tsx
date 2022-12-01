@@ -46,6 +46,9 @@ var globalYear: string;
 
 var globalSex = SexEnum.UNKNOWN;
 
+var globalPicture: string;
+var globalPhotoType: string
+
 
 interface RegisterFormInput {
   Prenom: string;
@@ -495,11 +498,8 @@ function DateOfBirthForm({ register }) {
   );
 }
 
-type PhotoPropsType = {
-  register: any,
-  errors: PartialErrorRegisterForm
-}
-function PhotoForm({ register, errors }: PhotoPropsType) {
+
+function PhotoForm() {
   const [file, setFile] = useState(null);
   const [fileDataURL, setFileDataURL] = useState("");
   const [ImageBase64, setImageBase64] = useState("");
@@ -520,19 +520,14 @@ function PhotoForm({ register, errors }: PhotoPropsType) {
   const changeHandler = async (e:any) => {
     const { files } = e.target
     const file = files[0];
-    // if (!file.type.match(imageMimeType)) {
-    //   alert("Image mime type is not valid");
-    //   return;
-    // }
     setFile(file);
     const base64 = await convertToBase64(file);
     setImageBase64(base64 as string);
-    console.log(base64)
-    // const fileReader = new FileReader();
-    // fileReader.onload = (e) => {
-    //   const result  = e.target?.result;
-    // }
-    // fileReader.readAsDataURL(file);
+    var temp = base64 as string;
+    var splitedPhotoData = temp.split(",")
+    globalPhotoType = splitedPhotoData[0]
+    globalPicture = splitedPhotoData[1]
+    
 
   }
 
@@ -565,12 +560,10 @@ function PhotoForm({ register, errors }: PhotoPropsType) {
       }}
       >
         <input
-        {...register("Photo")}
           id="photo-upload"
           type="file"
           accept="image/*"
           onChange={changeHandler}
-          fullWidth
           required
       />
       {fileDataURL ?
@@ -600,7 +593,9 @@ function mapdata(data) {
   phenotype.setWeight(data.Poids);
 
   var biometric = new Biometric().setFingerPrint("bbbbbbbbbbb");
-  biometric.setPhotos("bbbbbbbbbb");
+  console.log(globalPicture);
+  biometric.setPhotos(globalPicture);
+  biometric.setPhotoType(globalPhotoType);
 
   var dob = new DateOfBirth().setDay(globalDay);
   dob.setMonth(globalMonth);
@@ -652,10 +647,12 @@ export default function RegisterForm() {
     console.log(personInfoRequest)
     setSpinRegister(true);
     try {
+      setShowErrorAlert(false);
       ExistService.addNewPersonInfo(personInfoRequest, null)
         .then((value) => {
           if (value.getStatus() === 1) {
             (async () => {
+              setShowErrorAlert(false);
               setShowAlert(true);
               setSpinRegister(false);
               await delay(3000);
@@ -670,10 +667,12 @@ export default function RegisterForm() {
           console.log(`try error ${error}`);
           setSpinRegister(false);
           setShowErrorAlert(true);
+           
         });
     } catch (error) {
       console.log(`try error ${error}`);
       setShowErrorAlert(true);
+       
     }
   };
 
@@ -719,11 +718,10 @@ export default function RegisterForm() {
           6. Entrez les Phénotypes de l'individu
         </Typography>
         <PhenotypeForm register={register} errors={errors}></PhenotypeForm>
-      </Box>
-      <Typography variant="h6" component="h6" gutterBottom>
+        <Typography variant="h6" component="h6" gutterBottom>
           7. Importez la photo de l'individu
         </Typography>
-        <PhotoForm register={register} errors={errors}></PhotoForm>
+        <PhotoForm></PhotoForm>
         {!spinRegister ? (
           <Button
             type="submit"
@@ -757,6 +755,8 @@ export default function RegisterForm() {
             L'enregistrement a échoué — <strong>réessayez</strong>
           </Alert>
         )}
+      </Box>
+    
     </Container>
   );
 }

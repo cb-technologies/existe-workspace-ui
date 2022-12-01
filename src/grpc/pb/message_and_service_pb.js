@@ -1515,7 +1515,8 @@ proto.pb.Biometric.prototype.toObject = function(opt_includeInstance) {
 proto.pb.Biometric.toObject = function(includeInstance, msg) {
   var f, obj = {
     photos: msg.getPhotos_asB64(),
-    fingerPrint: msg.getFingerPrint_asB64()
+    fingerPrint: msg.getFingerPrint_asB64(),
+    photoType: jspb.Message.getFieldWithDefault(msg, 3, "")
   };
 
   if (includeInstance) {
@@ -1560,6 +1561,10 @@ proto.pb.Biometric.deserializeBinaryFromReader = function(msg, reader) {
       var value = /** @type {!Uint8Array} */ (reader.readBytes());
       msg.setFingerPrint(value);
       break;
+    case 3:
+      var value = /** @type {string} */ (reader.readString());
+      msg.setPhotoType(value);
+      break;
     default:
       reader.skipField();
       break;
@@ -1600,6 +1605,13 @@ proto.pb.Biometric.serializeBinaryToWriter = function(message, writer) {
   if (f.length > 0) {
     writer.writeBytes(
       2,
+      f
+    );
+  }
+  f = message.getPhotoType();
+  if (f.length > 0) {
+    writer.writeString(
+      3,
       f
     );
   }
@@ -1687,6 +1699,24 @@ proto.pb.Biometric.prototype.getFingerPrint_asU8 = function() {
  */
 proto.pb.Biometric.prototype.setFingerPrint = function(value) {
   return jspb.Message.setProto3BytesField(this, 2, value);
+};
+
+
+/**
+ * optional string photo_type = 3;
+ * @return {string}
+ */
+proto.pb.Biometric.prototype.getPhotoType = function() {
+  return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 3, ""));
+};
+
+
+/**
+ * @param {string} value
+ * @return {!proto.pb.Biometric} returns this
+ */
+proto.pb.Biometric.prototype.setPhotoType = function(value) {
+  return jspb.Message.setProto3StringField(this, 3, value);
 };
 
 
