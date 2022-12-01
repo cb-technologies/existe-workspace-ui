@@ -9,7 +9,7 @@ import {URLExistPath} from "../../constants/existUrlPath";
 import LandingPage from "./LandingPage";
 import SignIn from "./SignIn";
 import RetrieveUserInfo from "./RetrieveUserInfo";
-import CardFront from "./CardFront";
+import IDCard from "./IDCard";
 
 
 function MainRouter() {
@@ -21,7 +21,7 @@ function MainRouter() {
             <Route path={URLExistPath.RegisterPage} element={<RegisterForm/>}/>
             <Route
                 path={URLExistPath.GeneratedCardPage}
-                element={<CardFront/>}
+                element={<IDCard/>}
             />
             <Route path={URLExistPath.RetrieveUserInfo} element={<RetrieveUserInfo/>}/>
             <Route path={URLExistPath.OrientationPage} element={<Orientation/>}/>

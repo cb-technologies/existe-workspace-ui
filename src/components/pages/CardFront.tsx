@@ -2,24 +2,9 @@ import React from "react";
 import { StyleSheet, css } from "aphrodite/no-important";
 import cn from "classnames";
 import { Container, Box, Button } from "@mui/material";
-import { Link, useLocation } from "react-router-dom";
+import { useLocation } from "react-router-dom";
 import { PersonInfoResponse } from "../../grpc/pb/message_and_service_pb";
 
-export default function CardFront() {
-  const location = useLocation();
-  const userInfo = location.state.cardInfo as PersonInfoResponse.AsObject;
-
-  return (
-    <Container maxWidth="lg">
-      <Box sx={{ my: 8, width: "80%" }}>
-        <Carte userInfo={userInfo} />
-        <Link to="/" style={{ textDecoration: "none" }}>
-          <Button variant="contained">Go Back</Button>
-        </Link>
-      </Box>
-    </Container>
-  );
-}
 
 type CarteGenerationProps = {
   userInfo: PersonInfoResponse.AsObject;
@@ -30,7 +15,7 @@ const SexMap = {
   2: "F"
 }
 
-function Carte({ userInfo }: CarteGenerationProps) {
+export default function CardFront({ userInfo }: CarteGenerationProps) {
   return (
     <div className={cn(css(styles.root), "card-front-and-bac")}>
       <img
