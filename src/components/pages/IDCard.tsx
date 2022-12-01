@@ -12,11 +12,11 @@ export default function IDCard() {
   return (
     <Container maxWidth="lg">
       <Container maxWidth="lg">
-        <Box sx={{ my: 8, width: "80%" }}>
+        <Box sx={{ my: 8, width: "80%", boxShadow: 15, borderRadius: 3 }}>
           <CardFront userInfo={userInfo} />
         </Box>
       </Container>
-      <Box sx={{ my: 8, width: "80%" }}>
+      <Box sx={{ my: 8, width: "80%", boxShadow: 15, borderRadius: 3 }}>
         <CardBack />
         <Link to="/" style={{ textDecoration: "none" }}>
           <Button variant="contained">Go Back</Button>

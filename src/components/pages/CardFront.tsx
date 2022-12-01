@@ -125,7 +125,7 @@ export default function CardFront({ userInfo }: CarteGenerationProps) {
           <div className={css(styles.content_box11)}>
             <div className={css(styles.content_box)} style={{
             }}>
-              <h4 className={css(styles.highlights4)}>KN-985674394</h4>
+              <h4 className={css(styles.highlights4)}>{userInfo.id?.id}</h4>
             </div>
           </div>
 
