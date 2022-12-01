@@ -9,8 +9,8 @@ export default function CardGenerationPage() {
   const location = useLocation();
   const userInfo = location.state.cardInfo as PersonInfoResponse.AsObject;
   return (
-    <Container maxWidth="lg">
-      <Box sx={{ my: 8 }}>
+    <Container >
+      <Box sx={{ my: 8, width: 300}}>
         <CarteGeneration userInfo={userInfo} />
         <Link to="/" style={{ textDecoration: "none" }}>
           <Button variant="contained">Go Back</Button>
