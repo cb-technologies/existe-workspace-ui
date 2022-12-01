@@ -1,6 +1,5 @@
 import React from "react";
 import {Route, Routes} from "react-router-dom"; //import the package
-import CardGenerationPage from "./CarteGeneration";
 import RegisterForm from "./RegisterForm";
 import SignUp from "./SignUp";
 import Orientation from "./OrientationPage";
