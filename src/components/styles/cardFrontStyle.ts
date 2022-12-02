@@ -429,6 +429,7 @@ const styles = StyleSheet.create({
   },
   image3: {
     width: 93,
+    filter: "brightness(60%)",
     height: "auto",
     verticalAlign: "top",
     objectFit: "contain",
