@@ -13,6 +13,25 @@ const SexMap = {
   1: "M",
   2: "F"
 }
+function rebuildBase64Image(userInfo : PersonInfoResponse.AsObject) {
+  var base64String = userInfo.biometrics?.photoType! + "," + userInfo.biometrics?.photos!
+  return base64String
+}
+const convertBackToImage = (imageBased64: any) => {
+  return new Promise((resolve, reject) => {
+    // const fileReader = new FileReader();
+    // fileReader.readAsDataURL(file);
+
+    // fileReader.onload = () => {
+    //   resolve(fileReader.result);
+    // };
+    // fileReader.onerror = (error) => {
+    //   reject(error);
+    // };
+
+  });
+};
+
 
 export default function CardFront({ userInfo }: CarteGenerationProps) {
   return (
@@ -109,7 +128,8 @@ export default function CardFront({ userInfo }: CarteGenerationProps) {
       <div className={css(styles.group)}>
         <img
           className={css(styles.image2)}
-          src={require("../../assets/card_generation/photo_passport.png")}
+          // style={{ width: 250, height: 600 }}
+          src={rebuildBase64Image(userInfo)}
           alt="alt text"
         />
 
@@ -179,7 +199,7 @@ export default function CardFront({ userInfo }: CarteGenerationProps) {
 
       <img
         className={css(styles.image3)}
-        src={require("../../assets/card_generation/46113674794a06c1848542ccb07fbb6b.png")}
+        src={rebuildBase64Image(userInfo)}
         alt="alt text"
       />
       <img
