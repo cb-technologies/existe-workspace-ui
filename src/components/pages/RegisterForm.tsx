@@ -520,20 +520,10 @@ function PhotoForm({ register, errors }: PhotoPropsType) {
   const changeHandler = async (e:any) => {
     const { files } = e.target
     const file = files[0];
-    // if (!file.type.match(imageMimeType)) {
-    //   alert("Image mime type is not valid");
-    //   return;
-    // }
     setFile(file);
     const base64 = await convertToBase64(file);
     setImageBase64(base64 as string);
     console.log(base64)
-    // const fileReader = new FileReader();
-    // fileReader.onload = (e) => {
-    //   const result  = e.target?.result;
-    // }
-    // fileReader.readAsDataURL(file);
-
   }
 
   React.useEffect(() => {
