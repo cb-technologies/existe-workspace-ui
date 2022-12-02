@@ -1,6 +1,5 @@
 import React from "react";
 import {Route, Routes} from "react-router-dom"; //import the package
-import CardGenerationPage from "./CarteGeneration";
 import RegisterForm from "./RegisterForm";
 import SignUp from "./SignUp";
 import Orientation from "./OrientationPage";
@@ -9,6 +8,8 @@ import {URLExistPath} from "../../constants/existUrlPath";
 import LandingPage from "./LandingPage";
 import SignIn from "./SignIn";
 import RetrieveUserInfo from "./RetrieveUserInfo";
+import IDCard from "./IDCard";
+
 
 function MainRouter() {
     return (
@@ -19,7 +20,7 @@ function MainRouter() {
             <Route path={URLExistPath.RegisterPage} element={<RegisterForm/>}/>
             <Route
                 path={URLExistPath.GeneratedCardPage}
-                element={<CardGenerationPage/>}
+                element={<IDCard/>}
             />
             <Route path={URLExistPath.RetrieveUserInfo} element={<RetrieveUserInfo/>}/>
             <Route path={URLExistPath.OrientationPage} element={<Orientation/>}/>
