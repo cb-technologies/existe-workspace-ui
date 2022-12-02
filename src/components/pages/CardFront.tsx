@@ -109,7 +109,7 @@ export default function CardFront({ userInfo }: CarteGenerationProps) {
       <div className={css(styles.group)}>
         <img
           className={css(styles.image2)}
-          src={require("../../assets/card_generation/3cf3a7ba6d826e0b61cf04750e3197e8.png")}
+          src={require("../../assets/card_generation/photo_passport.png")}
           alt="alt text"
         />
 

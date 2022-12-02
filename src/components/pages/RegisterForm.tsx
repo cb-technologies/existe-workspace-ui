@@ -566,12 +566,12 @@ function PhotoForm() {
           onChange={changeHandler}
           required
       />
-      {fileDataURL ?
+      {/* {fileDataURL ?
       <p className="img-preview-wrapper">
         {
           <img style={{ width: 250, height: 300 }} src={fileDataURL} alt="preview" />
         }
-      </p> : null}
+      </p> : null} */}
     </Box>
        </div>
     

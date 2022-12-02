@@ -169,6 +169,8 @@ function retreiveUser(data): PersonInfoResponse {
       null
     ).then((userInfo) => {
         const userInfoObject = userInfo.toObject()
+        console.log("Petage", userInfo.getBiometrics()?.getPhotos_asB64())
+        console.log("AnotherPetage", userInfo.getBiometrics()?.getPhotoType())
         if (flag == "to_generate") {
       navigate(URLExistPath.GeneratedCardPage, { state: { cardInfo: userInfoObject } });}
         else {
