@@ -4017,7 +4017,8 @@ proto.pb.AgentInfo.toObject = function(includeInstance, msg) {
     nom: jspb.Message.getFieldWithDefault(msg, 1, ""),
     prenom: jspb.Message.getFieldWithDefault(msg, 2, ""),
     email: jspb.Message.getFieldWithDefault(msg, 3, ""),
-    password: jspb.Message.getFieldWithDefault(msg, 4, "")
+    password: jspb.Message.getFieldWithDefault(msg, 4, ""),
+    role: jspb.Message.getFieldWithDefault(msg, 5, "")
   };
 
   if (includeInstance) {
@@ -4069,6 +4070,10 @@ proto.pb.AgentInfo.deserializeBinaryFromReader = function(msg, reader) {
     case 4:
       var value = /** @type {string} */ (reader.readString());
       msg.setPassword(value);
+      break;
+    case 5:
+      var value = /** @type {string} */ (reader.readString());
+      msg.setRole(value);
       break;
     default:
       reader.skipField();
@@ -4124,6 +4129,13 @@ proto.pb.AgentInfo.serializeBinaryToWriter = function(message, writer) {
   if (f.length > 0) {
     writer.writeString(
       4,
+      f
+    );
+  }
+  f = message.getRole();
+  if (f.length > 0) {
+    writer.writeString(
+      5,
       f
     );
   }
@@ -4199,6 +4211,24 @@ proto.pb.AgentInfo.prototype.getPassword = function() {
  */
 proto.pb.AgentInfo.prototype.setPassword = function(value) {
   return jspb.Message.setProto3StringField(this, 4, value);
+};
+
+
+/**
+ * optional string Role = 5;
+ * @return {string}
+ */
+proto.pb.AgentInfo.prototype.getRole = function() {
+  return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 5, ""));
+};
+
+
+/**
+ * @param {string} value
+ * @return {!proto.pb.AgentInfo} returns this
+ */
+proto.pb.AgentInfo.prototype.setRole = function(value) {
+  return jspb.Message.setProto3StringField(this, 5, value);
 };
 
 
