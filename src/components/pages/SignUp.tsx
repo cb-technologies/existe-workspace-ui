@@ -106,10 +106,11 @@ export default function SignUp() {
   const [Prenom, setPrenom] = useHistoryState("Prenom", "");
   const [Email, setEmail] = useHistoryState<any>("Email", '');
   const [Password, setPassword] = useHistoryState("Password", "");
+  const [Role, setRole] = useHistoryState("Role", "");
 
   React.useEffect(() => {
     reset();
-  }, [Nom, Prenom, Email, Password]);
+  }, [Nom, Prenom, Email, Password, Role]);
 
   const [spinRegister, setSpinRegister] = useState(false);
   const navigate = useNavigate();
@@ -122,7 +123,8 @@ export default function SignUp() {
       .setNom(data.Nom)
       .setPrenom(data.Prenom)
       .setEmail(data.Email)
-      .setPassword(data.Password);
+      .setPassword(data.Password)
+      .setRole(data.Role);
     setSpinRegister(true);
     try {
       // const result = await signUp(agentInfo.getEmail(), agentInfo.getPassword())
@@ -277,6 +279,19 @@ export default function SignUp() {
               onChange={(e) => setPassword(e.target.value)}
               helperText={errors.Password?.message}
               error={!!errors["Password"]}
+              required
+              fullWidth
+            />
+            <TextField
+              {...register("Role")}
+              variant="outlined"
+              margin="normal"
+              type="text"
+              label={"Role"}
+              value={Role}
+              onChange={(e) => setRole(e.target.value)}
+              helperText={errors.Role?.message}
+              error={!!errors["Role"]}
               required
               fullWidth
             />
