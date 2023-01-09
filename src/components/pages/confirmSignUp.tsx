@@ -6,6 +6,7 @@ import TextField from "@mui/material/TextField";
 import Link from "@mui/material/Link";
 import Box from "@mui/material/Box";
 import PeopleAltIcon from "@mui/icons-material/PeopleAlt";
+import SecurityIcon from '@mui/icons-material/Security';
 import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
@@ -25,89 +26,78 @@ import { ExistPrompts } from "../../constants/existPrompts";
 import { Auth } from 'aws-amplify';
 import { AgentInfo } from "../../grpc/pb/message_and_service_pb";
 
-interface SignInInput {
-  Email: string;
-  Password: string;
+interface VerificationInput {
+  UserName: string;
+  Code: string;
 }
 
 const schema = yup.object().shape({
-  Email: yup
+  UserName: yup
     .string()
     .required(ExistPrompts.EMPTY("L'addresse email"))
     .email(ExistPrompts.INVALID("Addresse email")),
-  Password: yup
+  Code: yup
     .string()
-    .required(ExistPrompts.EMPTY("Le mot de passe"))
-    .min(8, ExistPrompts.MIN("Le mot de passe", 8))
-    .max(30,ExistPrompts.MAX("Le mot de passe", 30)),
+    .required(ExistPrompts.EMPTY("Le code de verification"))
 });
 
 const theme = createTheme();
 
-async function signIn(agentInfo : AgentSignInInfo) {
-  try {
-      const username = agentInfo.getEmail()
-      const password = agentInfo.getPassword()
-      const user = await Auth.signIn(username, password);
-  } catch (error) {
-      console.log('error signing in', error);
-  }
-}
+// async function signIn(agentInfo : AgentSignInInfo) {
+//   try {
+//       const username = agentInfo.getEmail()
+//       const password = agentInfo.getPassword()
+//       const user = await Auth.signIn(username, password);
+//   } catch (error) {
+//       console.log('error signing in', error);
+//   }
+// }
 
-export default function SignIn() {
+export default function VerifyCode() {
   const {
     register,
     handleSubmit,
     setError,
     formState: { errors },
-  } = useForm<SignInInput>({
+  } = useForm<VerificationInput>({
     resolver: yupResolver(schema),
   });
 
-  const [Email, setEmail] = useHistoryState("Email", "");
-  const [Password, setPassword] = useHistoryState("Password", "");
+  const [UserName, SetUserName] = useHistoryState("UserName", "");
+  const [Code, setCode] = useHistoryState("Code", "");
 
   const [spinRegister, setSpinRegister] = useState(false);
   const navigate = useNavigate();
 
-  const onSubmit = (data: SignInInput) => {
-    const agentSignInInfo: AgentSignInInfo = new AgentSignInInfo()
-      .setEmail(data.Email)
-      .setPassword(data.Password);
-    setSpinRegister(true);
+  
+  const onSubmit = async (data: VerificationInput) => {
+    const username = data.UserName
+    const code = data.Code
+    console.log('Arriving');
     try {
-      const email = agentSignInInfo.getEmail();
-      const password = agentSignInInfo.getPassword();
-
-      Auth.signIn(email, password)
-        .then(user => {
-          console.log('sign in success!', user);
-          setSpinRegister(false);
-          navigate(URLExistPath.OrientationPage);
+        Auth.confirmSignUp(username, code)
+        .then(data => {
+            if (data) {
+                navigate(URLExistPath.SignInPage);
+            } else {
+                console.log('Confirm sign up was not successful');
+            }
         })
         .catch(err => {
-          setSpinRegister(false);
-          console.log('error signing in:', err);
-          setError("Email", {message:ExistPrompts.WRONG_EMAIL_OR_PASSWORD})
-          setError("Password", {message:ExistPrompts.WRONG_EMAIL_OR_PASSWORD})
+            console.log('error resending code: ', err);
         });
-      // signIn(agentSignInInfo)
-      // ExistService.signInAgent(agentSignInInfo, null)
-      //   .then((value) => {
-      //     setSpinRegister(false);
-      //     if (value.getStatus() === 1) {
-      //       navigate(URLExistPath.OrientationPage);
-      //     }
-      //   })
-      //   .catch(() => {
-      //     setSpinRegister(false);
-      //     setError("Email", {message:ExistPrompts.WRONG_EMAIL_OR_PASSWORD})
-      //     setError("Password", {message:ExistPrompts.WRONG_EMAIL_OR_PASSWORD})
-      //   });
     } catch (error) {
-      setSpinRegister(true);
-      setError("Email", {message:ExistPrompts.WRONG_EMAIL_OR_PASSWORD})
-      setError("Password", {message:ExistPrompts.WRONG_EMAIL_OR_PASSWORD})
+        console.log('error confirming sign up', error);
+    }
+  };
+  const resendSubmit = async (data: VerificationInput) => {
+    const username = data.UserName
+    console.log('Arriving');
+    try {
+        await Auth.resendSignUp(username);
+        console.log('code resent successfully');
+    } catch (err) {
+        console.log('error resending code: ', err);
     }
   };
 
@@ -124,10 +114,10 @@ export default function SignIn() {
           }}
         >
           <Avatar sx={{ m: 1, bgcolor: "secondary.main" }}>
-            <PeopleAltIcon />
+            <SecurityIcon />
           </Avatar>
           <Typography component="h1" variant="h5">
-            Exist-Id Login
+            Verifier Email
           </Typography>
           <Box
             component="form"
@@ -136,38 +126,55 @@ export default function SignIn() {
             sx={{ mt: 1 }}
           >
             <TextField
-              {...register("Email")}
+              {...register("UserName")}
               variant="outlined"
               margin="normal"
               label="Email"
               type="text"
-              value={Email}
-              onChange={(e) => setEmail(e.target.value)}
-              helperText={errors.Email?.message}
-              error={!!errors["Email"]}
+              value={UserName}
+              onChange={(e) => SetUserName(e.target.value)}
+              helperText={errors.UserName?.message}
+              error={!!errors["UserName"]}
               fullWidth
               required
             />
             <TextField
-              {...register("Password")}
+              {...register("Code")}
               variant="outlined"
               margin="normal"
-              label="Mot de Passe"
-              value={Password}
-              type="password"
-              onChange={(e) => setPassword(e.target.value)}
-              helperText={errors.Password?.message}
-              error={!!errors["Password"]}
+              label="Code de verification"
+              value={Code}
+              type="text"
+              onChange={(e) => setCode(e.target.value)}
+              helperText={errors.Code?.message}
+              error={!!errors["Code"]}
               fullWidth
             />
-            {!spinRegister ? (
+            <Button
+                type="submit"
+                fullWidth
+                variant="contained"
+                sx={{ mt: 3, mb: 2 }}
+              >
+                Verifier Code
+              </Button>
+            {/* <Button
+                type="submit"
+                fullWidth
+                onSubmit={handleSubmit(resendSubmit)}
+                variant="contained"
+                sx={{ mt: 3, mb: 2 }}
+                >
+                Resend Code
+            </Button> */}
+            {/* {!spinRegister ? (
               <Button
                 type="submit"
                 fullWidth
                 variant="contained"
                 sx={{ mt: 3, mb: 2 }}
               >
-                Se Connecter
+                Verifier Code
               </Button>
             ) : (
               <LoadingButton
@@ -180,7 +187,7 @@ export default function SignIn() {
               >
                 Se connecter
               </LoadingButton>
-            )}
+            )} */}
             <Stack>
               <RouterLink to={URLExistPath.UndefinedPage}>
                 Mot de passe oublié?

@@ -9,6 +9,8 @@ import LandingPage from "./LandingPage";
 import SignIn from "./SignIn";
 import RetrieveUserInfo from "./RetrieveUserInfo";
 import IDCard from "./IDCard";
+import VerifyCode from "./confirmSignUp";
+import ResendCode from "./resendVerifyCode";
 
 
 function MainRouter() {
@@ -18,6 +20,8 @@ function MainRouter() {
             <Route path={URLExistPath.SignInPage} element={<SignIn/>}/>
             <Route path={URLExistPath.SignUpPage} element={<SignUp/>}/>
             <Route path={URLExistPath.RegisterPage} element={<RegisterForm/>}/>
+            <Route path={URLExistPath.ConfirmSignUpPage} element={<VerifyCode/>}/>
+            <Route path={URLExistPath.ResendCodePage} element={<ResendCode/>}/>
             <Route
                 path={URLExistPath.GeneratedCardPage}
                 element={<IDCard/>}
