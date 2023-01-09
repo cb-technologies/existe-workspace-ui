@@ -84,22 +84,22 @@ export default function VerifyCode() {
             }
         })
         .catch(err => {
-            console.log('error resending code: ', err);
+            console.log('error confirming sign up: ', err);
         });
     } catch (error) {
         console.log('error confirming sign up', error);
     }
   };
-  const resendSubmit = async (data: VerificationInput) => {
-    const username = data.UserName
-    console.log('Arriving');
-    try {
-        await Auth.resendSignUp(username);
-        console.log('code resent successfully');
-    } catch (err) {
-        console.log('error resending code: ', err);
-    }
-  };
+//   const resendSubmit = async (data: VerificationInput) => {
+//     const username = data.UserName
+//     console.log('Arriving');
+//     try {
+//         await Auth.resendSignUp(username);
+//         console.log('code resent successfully');
+//     } catch (err) {
+//         console.log('error resending code: ', err);
+//     }
+//   };
 
   return (
     <ThemeProvider theme={theme}>
@@ -189,11 +189,11 @@ export default function VerifyCode() {
               </LoadingButton>
             )} */}
             <Stack>
-              <RouterLink to={URLExistPath.UndefinedPage}>
+              {/* <RouterLink to={URLExistPath.UndefinedPage}>
                 Mot de passe oublié?
-              </RouterLink>
+              </RouterLink> */}
               <RouterLink to={URLExistPath.SignUpPage}>
-                {"Pas encore enregistré? Enregistrer vous"}
+                {"Code non recu? Renvoyer le code"}
               </RouterLink>
             </Stack>
           </Box>

@@ -90,7 +90,17 @@ export default function ResendCode() {
     const username = data.UserName
     console.log('Arriving');
     try {
-        await Auth.resendSignUp(username);
+        Auth.resendSignUp(username)
+        .then(data => {
+            if (data) {
+                navigate(URLExistPath.ConfirmSignUpPage);
+            } else {
+                console.log('error resending code');
+            }
+        })
+        .catch(err => {
+            console.log('error resending code: ', err);
+        });
         console.log('code resent successfully');
     } catch (err) {
         console.log('error resending code: ', err);

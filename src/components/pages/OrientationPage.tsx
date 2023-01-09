@@ -13,6 +13,8 @@ import Container from "@mui/material/Container";
 import AppRegistrationIcon from "@mui/icons-material/AppRegistration";
 import BrowserUpdatedIcon from "@mui/icons-material/BrowserUpdated";
 import PermIdentityIcon from "@mui/icons-material/PermIdentity";
+import { useEffect, useState } from "react";
+import { Auth } from 'aws-amplify';
 import {
   useNavigate,
 } from "react-router-dom"; //import the package
@@ -42,6 +44,22 @@ const tiers = [
   },
 ];
 
+// async componentDidMount() {
+//   try {
+//     const user = await Auth.currentAuthenticatedUser();
+//     this.setState({ isLoggedIn: true, isLoading: false });
+//   } catch (err) {
+//     this.setState({ isLoggedIn: false, isLoading: false });
+//   }
+// }
+function PrivateComponent() {
+  return (
+    <div>
+      This is a private component
+    </div>
+  );
+}
+
 
 function OrientationContent() {
   const navigate = useNavigate();
@@ -49,13 +67,33 @@ function OrientationContent() {
   const navigateTo = (page: string, flag: string) => {
     navigate(page,{ state: { flag_to_page: flag } });
   };
+
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+  var state = {
+    isAuthenticated: false,
+  }
+
+  useEffect(() => {
+    Auth.currentAuthenticatedUser()
+      .then(user => {
+        setIsLoggedIn(true);
+      })
+      .catch(err => {
+        setIsLoggedIn(false);
+      });
+  }, []);
+
   return (
-    <React.Fragment>
+    <div>
+      {isLoggedIn ?
+      <React.Fragment>
       <GlobalStyles
         styles={{ ul: { margin: 0, padding: 0, listStyle: "none" } }}
       />
       <CssBaseline />
       <AppBar position="static" color="default" elevation={0}></AppBar>
+
       <Container
         disableGutters
         maxWidth="sm"
@@ -119,6 +157,9 @@ function OrientationContent() {
         </Grid>
       </Container>
     </React.Fragment>
+       : 'Cannot load this page'}
+    </div>
+    
   );
 }
 export default function Orientation() {
