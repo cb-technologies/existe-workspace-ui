@@ -7,5 +7,7 @@ export const URLExistPath = {
     OrientationPage: "/orientation",
     RetrieveUserInfo: "/retrieveUserInfo",
     UpdateUserInfoForm: "/updateUserInfo",
+    ConfirmSignUpPage: "/confirmSignUpPage",
+    ResendCodePage: "/resendCodePage",
     UndefinedPage: "*"
 } as const;

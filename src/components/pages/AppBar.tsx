@@ -14,10 +14,31 @@ import MenuItem from '@mui/material/MenuItem';
 import AdbIcon from '@mui/icons-material/Adb';
 import styles from "../styles/carteGenerationStyle";
 import { css } from "aphrodite/no-important";
+import { Auth } from 'aws-amplify';
 
 const pages = [''];
 const settings = ['Profile', 'Account', 'Orientation', 'Logout'];
-
+// const settings = [
+//   {
+//     title: "Profile",
+//     page: URLExistPath.RegisterPage,
+//     flag: "to_register",
+//   },
+//   {
+//     buttonText: "Actualiser Un Citoyen",
+//     buttonVariant: "outlined",
+//     icon: BrowserUpdatedIcon,
+//     page: URLExistPath.RetrieveUserInfo,
+//     flag: "to_update",
+//   },
+//   {
+//     buttonText: "Generer carte d'identitée",
+//     buttonVariant: "outlined",
+//     icon: PermIdentityIcon,
+//     page: URLExistPath.RetrieveUserInfo,
+//     flag: "to_generate",
+//   },
+// ];
 
 
 
@@ -34,9 +55,17 @@ function ResponsiveAppBar() {
   const handleCloseNavMenu = () => {
     setAnchorElNav(null);
   };
-
   const handleCloseUserMenu = () => {
     setAnchorElUser(null);
+  };
+
+  const signOut = async () => {
+    // setAnchorElUser(null);
+    try {
+      await Auth.signOut();
+    } catch (error) {
+        console.log('error signing out: ', error);
+    }
   };
 
   return (
@@ -102,7 +131,7 @@ function ResponsiveAppBar() {
               onClose={handleCloseUserMenu}
             >
               {settings.map((setting) => (
-                <MenuItem key={setting} onClick={handleCloseUserMenu}>
+                <MenuItem key={setting} onClick={signOut}>
                   <Typography textAlign="center">{setting}</Typography>
                 </MenuItem>
               ))}

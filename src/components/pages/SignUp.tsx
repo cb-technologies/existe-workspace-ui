@@ -30,6 +30,11 @@ import { URLExistPath } from "../../constants/existUrlPath";
 import { ExistPrompts } from "../../constants/existPrompts";
 import { delay } from "./RegisterForm";
 
+import { Amplify, Auth } from 'aws-amplify';
+import awsconfig from '../../aws-exports';
+Amplify.configure(awsconfig);
+
+
 const schema = yup.object().shape({
   Email: yup
     .string()
@@ -54,6 +59,39 @@ const schema = yup.object().shape({
 
 const theme = createTheme();
 
+
+async function signUp(username: string, password:string) {
+  try {
+      // const email = agentInfo.getEmail()
+      // const password = agentInfo.getPassword()
+      // const username = agentInfo.getEmail()
+      const user  = await Auth.signUp({
+          username,
+          password,
+          attributes: {
+              // email,          // optional
+             // optional - E.164 number convention
+              // other custom attributes 
+          },
+          autoSignIn: { // optional - enables auto sign in after user is confirmed
+              enabled: true,
+          }
+      });
+      // setSpinRegister(false);
+
+      console.log(user);
+      if (user.userConfirmed) {
+        console.log('Sign-up successful');
+        return 1;
+      }else {
+        console.log('Please check your email to confirm your account');
+        return 0;
+      }
+  } catch (error) {
+      console.log('error signing up:', error);
+  }
+}
+
 export default function SignUp() {
   const {
     register,
@@ -66,7 +104,7 @@ export default function SignUp() {
 
   const [Nom, setNom] = useHistoryState("Nom", "");
   const [Prenom, setPrenom] = useHistoryState("Prenom", "");
-  const [Email, setEmail] = useHistoryState("Email", "");
+  const [Email, setEmail] = useHistoryState<any>("Email", '');
   const [Password, setPassword] = useHistoryState("Password", "");
   const [Role, setRole] = useHistoryState("Role", "");
 
@@ -80,7 +118,7 @@ export default function SignUp() {
   const [succcessful, setSuccessful] = useState(false);
   const [registrationComplete, setRegistrationComplete] = useState(false);
 
-  const onSubmit = (data: AgentSignUpFormInput) => {
+   const onSubmit = (data: AgentSignUpFormInput) => {
     const agentInfo: AgentInfo = new AgentInfo()
       .setNom(data.Nom)
       .setPrenom(data.Prenom)
@@ -89,18 +127,74 @@ export default function SignUp() {
       .setRole(data.Role);
     setSpinRegister(true);
     try {
-      ExistService.signUpAgent(agentInfo, null)
-        .then(async (value) => {
+      // const result = await signUp(agentInfo.getEmail(), agentInfo.getPassword())
+      // setSpinRegister(false);
+      // if (result == 1) {
+      //   setRegistrationComplete(true);
+      //   await delay(1500);
+      //   setRegistrationComplete(false);
+      //   navigate(URLExistPath.SignInPage);
+      // }else {
+      //   console.log("could not register user");
+      //   setSpinRegister(false);
+      //   setSuccessful(!succcessful);
+      // }
+      const email = agentInfo.getEmail()
+      const password = agentInfo.getPassword()
+      Auth.signUp({
+        username : email,
+        password,
+        attributes: {
+          email,
+        },
+      })
+      .then(async data => {
+        setSpinRegister(false);
+        console.log('sign up success!', data);
+        setRegistrationComplete(true);
+        await delay(1500);
+        setRegistrationComplete(false);
+
+        // Registering the agent in the backend database
+        ExistService.signUpAgent(agentInfo, null)
+        // .then(async (value) => {
+        //   // setSpinRegister(false);
+        //   if (value.getStatus() != 1) {
+        //     // setRegistrationComplete(true);
+        //     await delay(1500);
+        //     // setRegistrationComplete(false);
+        //     // navigate(URLExistPath.SignInPage);
+        //   } else {
+        //     console.log("could not register user");
+        //   }
+        // })
+        .catch((error) => {
+          console.log(`try error ${error}`);
           setSpinRegister(false);
-          if (value.getStatus() == 1) {
-            setRegistrationComplete(true);
-            await delay(1500);
-            setRegistrationComplete(false);
-            navigate(URLExistPath.SignInPage);
-          } else {
-            console.log("could not register user");
-          }
-        })
+          setSuccessful(!succcessful);
+        });
+
+        navigate(URLExistPath.ConfirmSignUpPage);
+      })
+      .catch(err => {
+        setSpinRegister(false);
+        console.log('error signing up:', err);
+        setSuccessful(!succcessful);
+      });
+
+
+      ExistService.signUpAgent(agentInfo, null)
+        // .then(async (value) => {
+        //   setSpinRegister(false);
+        //   if (value.getStatus() == 1) {
+        //     setRegistrationComplete(true);
+        //     await delay(1500);
+        //     setRegistrationComplete(false);
+        //     navigate(URLExistPath.SignInPage);
+        //   } else {
+        //     console.log("could not register user");
+        //   }
+        // })
         .catch((error) => {
           console.log(`try error ${error}`);
           setSpinRegister(false);
