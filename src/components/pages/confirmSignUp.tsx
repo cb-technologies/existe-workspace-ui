@@ -90,16 +90,6 @@ export default function VerifyCode() {
         console.log('error confirming sign up', error);
     }
   };
-//   const resendSubmit = async (data: VerificationInput) => {
-//     const username = data.UserName
-//     console.log('Arriving');
-//     try {
-//         await Auth.resendSignUp(username);
-//         console.log('code resent successfully');
-//     } catch (err) {
-//         console.log('error resending code: ', err);
-//     }
-//   };
 
   return (
     <ThemeProvider theme={theme}>
