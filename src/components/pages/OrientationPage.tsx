@@ -13,8 +13,10 @@ import Container from "@mui/material/Container";
 import AppRegistrationIcon from "@mui/icons-material/AppRegistration";
 import BrowserUpdatedIcon from "@mui/icons-material/BrowserUpdated";
 import PermIdentityIcon from "@mui/icons-material/PermIdentity";
+import ManageAccountsIcon from '@mui/icons-material/ManageAccounts';
 import { useEffect, useState } from "react";
 import { Auth } from 'aws-amplify';
+
 import {
   useNavigate,
 } from "react-router-dom"; //import the package
@@ -39,6 +41,13 @@ const tiers = [
     buttonText: "Generer carte d'identitée",
     buttonVariant: "outlined",
     icon: PermIdentityIcon,
+    page: URLExistPath.RetrieveUserInfo,
+    flag: "to_generate",
+  },
+  {
+    buttonText: "Gerer Agents",
+    buttonVariant: "outlined",
+    icon: ManageAccountsIcon,
     page: URLExistPath.RetrieveUserInfo,
     flag: "to_generate",
   },
@@ -68,11 +77,11 @@ function OrientationContent() {
     navigate(page,{ state: { flag_to_page: flag } });
   };
 
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
-
   var state = {
     isAuthenticated: false,
   }
+
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
 
   useEffect(() => {
     Auth.currentAuthenticatedUser()
@@ -126,6 +135,7 @@ function OrientationContent() {
                 sx={{
                   bgcolor: "#d3d3d3",
                 }}
+                onClick={() => {navigateTo(tier.page, tier.flag); console.log(tier.page, tier.flag)}}
               >
                 <CardHeader />
                 <CardContent

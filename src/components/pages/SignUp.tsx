@@ -18,7 +18,7 @@ import { AgentInfo } from "../../grpc/pb/message_and_service_pb";
 import useHistoryState from "../../hooks/useHistoryState";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Grid } from "@mui/material";
+import { Grid, MenuItem } from "@mui/material";
 import LoadingButton from "@mui/lab/LoadingButton";
 import SaveIcon from "@mui/icons-material/Save";
 import { Link as RouterLink } from "react-router-dom";
@@ -32,6 +32,7 @@ import { delay } from "./RegisterForm";
 
 import { Amplify, Auth } from 'aws-amplify';
 import awsconfig from '../../aws-exports';
+import { AgentRoles } from "../../constants/AgentRoles";
 Amplify.configure(awsconfig);
 
 
@@ -286,7 +287,8 @@ export default function SignUp() {
               {...register("Role")}
               variant="outlined"
               margin="normal"
-              type="text"
+              select
+              // type="text"
               label={"Role"}
               value={Role}
               onChange={(e) => setRole(e.target.value)}
@@ -294,7 +296,13 @@ export default function SignUp() {
               error={!!errors["Role"]}
               required
               fullWidth
-            />
+            >
+              {Object.getOwnPropertyNames(AgentRoles).map((value) => (
+                <MenuItem key={value} value={value}>
+                  {value}
+                </MenuItem>
+              ))}
+            </TextField>
             {!spinRegister ? (
               <Button
                 type="submit"

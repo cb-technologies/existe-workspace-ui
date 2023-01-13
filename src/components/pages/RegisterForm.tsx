@@ -1,6 +1,6 @@
 import * as React from "react";
 import Box from "@mui/material/Box";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Dayjs } from "dayjs";
 import TextField from "@mui/material/TextField";
 import Typography from "@mui/material/Typography";
@@ -38,7 +38,7 @@ import {
 import { zipCodeData } from "../../constants/zipCodeKinshasa";
 import { FieldErrorsImpl } from "react-hook-form";
 import { SexEnum } from "../../grpc/pb/message_and_service_pb";
-
+import { Auth } from 'aws-amplify';
 
 var globalDay: string;
 var globalMonth: string;
@@ -634,6 +634,18 @@ export default function RegisterForm() {
   const [showAlert, setShowAlert] = useState(false);
   const [showErrorAlert, setShowErrorAlert] = useState(false);
 
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+  useEffect(() => {
+    Auth.currentAuthenticatedUser()
+      .then(user => {
+        setIsLoggedIn(true);
+      })
+      .catch(err => {
+        setIsLoggedIn(false);
+      });
+  }, []);
+  
   const {
     register,
     handleSubmit,
@@ -677,7 +689,9 @@ export default function RegisterForm() {
   };
 
   return (
-    <Container maxWidth="sm">
+    <div>
+      {isLoggedIn ?
+      <Container maxWidth="sm">
       <Box
         component={"form"}
         onSubmit={handleSubmit(onSubmit)}
@@ -758,5 +772,9 @@ export default function RegisterForm() {
       </Box>
     
     </Container>
+      : 'Cannot load this page'
+      }
+    </div>
+    
   );
 }
