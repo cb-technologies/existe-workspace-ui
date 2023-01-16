@@ -1,6 +1,6 @@
 import * as React from "react";
 import Box from "@mui/material/Box";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { Dayjs } from "dayjs";
 import TextField from "@mui/material/TextField";
 import Typography from "@mui/material/Typography";
@@ -630,6 +630,7 @@ export function delay(milliseconds: number) {
 }
 
 export default function RegisterForm() {
+
   const [spinRegister, setSpinRegister] = useState(false);
   const [showAlert, setShowAlert] = useState(false);
   const [showErrorAlert, setShowErrorAlert] = useState(false);
@@ -649,10 +650,14 @@ export default function RegisterForm() {
   const {
     register,
     handleSubmit,
+    reset,
     formState: { errors },
   } = useForm<RegisterFormInput>({
     resolver: yupResolver(schema),
   });
+
+
+
 
   const onSubmit = (data: RegisterFormInput) => {
     var personInfoRequest = mapdata(data);
@@ -669,6 +674,30 @@ export default function RegisterForm() {
               setSpinRegister(false);
               await delay(3000);
               setShowAlert(false);
+              // clear the form
+              reset({
+                  Prenom: undefined,
+                  Nom: undefined,
+                  PostNom: undefined,
+                  Ville: undefined,
+                  Quartier: undefined,
+                  Numero: undefined, 
+                  Avenue: undefined,
+                  Commune: undefined,
+                  Reference: undefined,
+                  ProvinceAddress: undefined,
+                  Province: undefined,
+                  ChefLieu: undefined,
+                  Territoire: undefined,
+                  Secteur: undefined,
+                  Village: undefined,
+                  CodePostal: undefined,
+                  LieuDeNaissance: undefined,
+                  EyeColor: undefined,
+                  Poids: undefined,
+                  Height: undefined,
+              });
+             
             })();
           } else {
             console.log("Could not register a citizen");
