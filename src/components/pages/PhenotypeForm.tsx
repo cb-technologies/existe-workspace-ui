@@ -46,7 +46,7 @@ export default function PhenotypeForm({ register, errors, formVal }: UpdateFormP
         helperText={errors.EyeColor?.message}
         error={!!errors.EyeColor}
         required
-        value={dEyeColor}
+        value={dEyeColor.toUpperCase()}
         onChange={(e) => setDEyeColor(e.target.value)}
       />
     </div>
