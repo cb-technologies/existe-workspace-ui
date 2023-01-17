@@ -147,6 +147,7 @@ export default function SignUp() {
         password,
         attributes: {
           email,
+          'custom:role': agentInfo.getRole()
         },
       })
       .then(async data => {
@@ -157,23 +158,23 @@ export default function SignUp() {
         setRegistrationComplete(false);
 
         // Registering the agent in the backend database
-        ExistService.signUpAgent(agentInfo, null)
-        // .then(async (value) => {
-        //   // setSpinRegister(false);
-        //   if (value.getStatus() != 1) {
-        //     // setRegistrationComplete(true);
-        //     await delay(1500);
-        //     // setRegistrationComplete(false);
-        //     // navigate(URLExistPath.SignInPage);
-        //   } else {
-        //     console.log("could not register user");
-        //   }
-        // })
-        .catch((error) => {
-          console.log(`try error ${error}`);
-          setSpinRegister(false);
-          setSuccessful(!succcessful);
-        });
+        // ExistService.signUpAgent(agentInfo, null)
+        // // .then(async (value) => {
+        // //   // setSpinRegister(false);
+        // //   if (value.getStatus() != 1) {
+        // //     // setRegistrationComplete(true);
+        // //     await delay(1500);
+        // //     // setRegistrationComplete(false);
+        // //     // navigate(URLExistPath.SignInPage);
+        // //   } else {
+        // //     console.log("could not register user");
+        // //   }
+        // // })
+        // .catch((error) => {
+        //   console.log(`try error ${error}`);
+        //   setSpinRegister(false);
+        //   setSuccessful(!succcessful);
+        // });
 
         navigate(URLExistPath.ConfirmSignUpPage);
       })
@@ -184,23 +185,23 @@ export default function SignUp() {
       });
 
 
-      ExistService.signUpAgent(agentInfo, null)
-        // .then(async (value) => {
-        //   setSpinRegister(false);
-        //   if (value.getStatus() == 1) {
-        //     setRegistrationComplete(true);
-        //     await delay(1500);
-        //     setRegistrationComplete(false);
-        //     navigate(URLExistPath.SignInPage);
-        //   } else {
-        //     console.log("could not register user");
-        //   }
-        // })
-        .catch((error) => {
-          console.log(`try error ${error}`);
-          setSpinRegister(false);
-          setSuccessful(!succcessful);
-        });
+      // ExistService.signUpAgent(agentInfo, null)
+      //   // .then(async (value) => {
+      //   //   setSpinRegister(false);
+      //   //   if (value.getStatus() == 1) {
+      //   //     setRegistrationComplete(true);
+      //   //     await delay(1500);
+      //   //     setRegistrationComplete(false);
+      //   //     navigate(URLExistPath.SignInPage);
+      //   //   } else {
+      //   //     console.log("could not register user");
+      //   //   }
+      //   // })
+      //   .catch((error) => {
+      //     console.log(`try error ${error}`);
+      //     setSpinRegister(false);
+      //     setSuccessful(!succcessful);
+      //   });
     } catch (error) {
       console.log(`try error ${error}`);
       setSuccessful(!succcessful);

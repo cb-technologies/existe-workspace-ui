@@ -15,6 +15,9 @@ import AdbIcon from '@mui/icons-material/Adb';
 import styles from "../styles/carteGenerationStyle";
 import { css } from "aphrodite/no-important";
 import { Auth } from 'aws-amplify';
+import { Navigate, useNavigate } from 'react-router-dom';
+import { URLExistPath } from "../../constants/existUrlPath";
+import { useEffect, useState } from 'react';
 
 const pages = [''];
 const settings = ['Profile', 'Account', 'Orientation', 'Logout'];
@@ -59,10 +62,40 @@ function ResponsiveAppBar() {
     setAnchorElUser(null);
   };
 
+  const navigate = useNavigate();
+
+  const navigateTo = (page: string, flag: string) => {
+    navigate(page,{ state: { flag_to_page: flag } });
+  };
+  
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  // useEffect(() => {
+  //   Auth.currentAuthenticatedUser()
+  //     .then(user => {
+  //       setIsLoggedIn(true);
+  //     })
+  //     .catch(err => {
+  //       setIsLoggedIn(false);
+  //     });
+  // }, []);
+  useEffect(() => {
+    const intervalId = setInterval(async () => {
+      try {
+        await Auth.currentAuthenticatedUser();
+        setIsLoggedIn(true);
+      } catch {
+        setIsLoggedIn(false);
+      }
+    }, 1000);
+
+    return () => clearInterval(intervalId);
+  }, []);
+
   const signOut = async () => {
     // setAnchorElUser(null);
     try {
       await Auth.signOut();
+      //navigateTo(URLExistPath.SignInPage, "to_siginIn")
     } catch (error) {
         console.log('error signing out: ', error);
     }
@@ -107,7 +140,10 @@ function ResponsiveAppBar() {
             ))}
           </Box>
 
-          <Box sx={{ flexGrow: 0 }}>
+          {/* in case loggedIn */}
+          {<div>
+            {isLoggedIn?
+            <Box sx={{ flexGrow: 0 }}>
             <Tooltip title="Open settings">
               <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
                 {/* <Avatar alt="Elie Sharp" src={require("../../assets/ac0405c429c52917ebae5b1e11459baf.png")}/> */}
@@ -137,6 +173,11 @@ function ResponsiveAppBar() {
               ))}
             </Menu>
           </Box>
+            :
+            null
+            }
+            </div>}
+          
         </Toolbar>
       </Container>
     </AppBar>
