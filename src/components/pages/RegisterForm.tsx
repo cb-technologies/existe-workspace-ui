@@ -1,6 +1,6 @@
 import * as React from "react";
 import Box from "@mui/material/Box";
-import { useEffect, useState } from "react";
+import { useEffect, useState} from "react";
 import { Dayjs } from "dayjs";
 import TextField from "@mui/material/TextField";
 import Typography from "@mui/material/Typography";
@@ -114,7 +114,7 @@ function NameForm({ register, errors }) {
         label="Prenom"
         helperText={errors.Prenom?.message}
         error={!!errors.Prenom}
-        value={dfirstName}
+        value={dfirstName.toUpperCase()}
         onChange={(e) => setDFirstName(e.target.value)}
       />
       <TextField
@@ -123,7 +123,7 @@ function NameForm({ register, errors }) {
         label="Nom"
         helperText={errors.Nom?.message}
         error={!!errors.Nom}
-        value={dLastName}
+        value={dLastName.toUpperCase()}
         onChange={(e) => setDLastName(e.target.value)}
       />
       <TextField
@@ -132,7 +132,7 @@ function NameForm({ register, errors }) {
         label="Post-Nom"
         helperText={errors.PostNom?.message}
         error={!!errors.PostNom}
-        value={dMiddleNames}
+        value={dMiddleNames.toUpperCase()}
         onChange={(e) => setDMiddleNames(e.target.value)}
       />
     </div>
@@ -316,7 +316,7 @@ export function DynamicAddressForm({ register, errors}: AddressPropsType) {
           helperText={errors.Ville?.message}
           error={!!errors.Ville}
           required
-          value={dVille}
+          value={dVille.toUpperCase()}
           onChange={(e) => setDVille(e.target.value)}
         />
         <TextField
@@ -326,7 +326,7 @@ export function DynamicAddressForm({ register, errors}: AddressPropsType) {
           helperText={errors.Avenue?.message}
           error={!!errors.Avenue}
           required
-          value={dAvenue}
+          value={dAvenue.toUpperCase()}
           onChange={(e) => setDAvenue(e.target.value)}
         />
         <TextField
@@ -346,7 +346,7 @@ export function DynamicAddressForm({ register, errors}: AddressPropsType) {
           helperText={errors.Reference?.message}
           error={!!errors.Reference}
           required
-          value={dReference}
+          value={dReference.toUpperCase()}
           onChange={(e) => setDReference(e.target.value)}
       />
     </div>
@@ -371,7 +371,7 @@ function OriginForm({ register, errors }) {
         helperText={errors.Province?.message}
         error={!!errors.Province}
         required
-        value={dProvince}
+        value={dProvince.toUpperCase()}
         onChange={(e) => setDProvince(e.target.value)}
       />
       <TextField
@@ -381,7 +381,7 @@ function OriginForm({ register, errors }) {
         helperText={errors.ChefLieu?.message}
         error={!!errors.ChefLieu}
         required
-        value={dChefLieu}
+        value={dChefLieu.toUpperCase()}
         onChange={(e) => setDChefLieu(e.target.value)}
       />
       <TextField
@@ -391,7 +391,7 @@ function OriginForm({ register, errors }) {
         helperText={errors.Territoire?.message}
         error={!!errors.Territoire}
         required
-        value={dTerritoire}
+        value={dTerritoire.toUpperCase()}
         onChange={(e) => setDTerritoire(e.target.value)}
       />
       <TextField
@@ -401,7 +401,7 @@ function OriginForm({ register, errors }) {
         helperText={errors.Secteur?.message}
         error={!!errors.Secteur}
         required
-        value={dSecteur}
+        value={dSecteur.toUpperCase()}
         onChange={(e) => setDSecteur(e.target.value)}
       />
       <TextField
@@ -411,7 +411,7 @@ function OriginForm({ register, errors }) {
         helperText={errors.Village?.message}
         error={!!errors.Village}
         required
-        value={dVillage}
+        value={dVillage.toUpperCase()}
         onChange={(e) => setDVillage(e.target.value)}
       />
       <TextField
@@ -421,7 +421,7 @@ function OriginForm({ register, errors }) {
         helperText={errors.LieuDeNaissance?.message}
         error={!!errors.LieuDeNaissance}
         required
-        value={dLieuDeNaissance}
+        value={dLieuDeNaissance.toUpperCase()}
         onChange={(e) => setdDieuDeNaissance(e.target.value)}
       />
     </div>
@@ -463,7 +463,7 @@ function PhenotypeForm({ register, errors }) {
         helperText={errors.EyeColor?.message}
         error={!!errors.EyeColor}
         required
-        value={dEyeColor}
+        value={dEyeColor.toUpperCase()}
         onChange={(e) => setDEyeColor(e.target.value)}
       />
     </div>
@@ -630,6 +630,7 @@ export function delay(milliseconds: number) {
 }
 
 export default function RegisterForm() {
+
   const [spinRegister, setSpinRegister] = useState(false);
   const [showAlert, setShowAlert] = useState(false);
   const [showErrorAlert, setShowErrorAlert] = useState(false);
@@ -649,10 +650,14 @@ export default function RegisterForm() {
   const {
     register,
     handleSubmit,
+    reset,
     formState: { errors },
   } = useForm<RegisterFormInput>({
     resolver: yupResolver(schema),
   });
+
+
+
 
   const onSubmit = (data: RegisterFormInput) => {
     var personInfoRequest = mapdata(data);
@@ -669,6 +674,30 @@ export default function RegisterForm() {
               setSpinRegister(false);
               await delay(3000);
               setShowAlert(false);
+              // clear the form
+              reset({
+                  Prenom: undefined,
+                  Nom: undefined,
+                  PostNom: undefined,
+                  Ville: undefined,
+                  Quartier: undefined,
+                  Numero: undefined, 
+                  Avenue: undefined,
+                  Commune: undefined,
+                  Reference: undefined,
+                  ProvinceAddress: undefined,
+                  Province: undefined,
+                  ChefLieu: undefined,
+                  Territoire: undefined,
+                  Secteur: undefined,
+                  Village: undefined,
+                  CodePostal: undefined,
+                  LieuDeNaissance: undefined,
+                  EyeColor: undefined,
+                  Poids: undefined,
+                  Height: undefined,
+              });
+             
             })();
           } else {
             console.log("Could not register a citizen");

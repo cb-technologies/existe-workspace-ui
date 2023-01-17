@@ -125,7 +125,7 @@ export default function AddressForm({ register, errors, formVal }: UpdateFormPro
           helperText={errors.Ville?.message}
           error={!!errors.Ville}
           required
-          value={dVille}
+          value={dVille.toUpperCase()}
           onChange={(e) => setDVille(e.target.value)}
         />
         <TextField
@@ -135,7 +135,7 @@ export default function AddressForm({ register, errors, formVal }: UpdateFormPro
           helperText={errors.Avenue?.message}
           error={!!errors.Avenue}
           required
-          value={dAvenue}
+          value={dAvenue.toUpperCase()}
           onChange={(e) => setDAvenue(e.target.value)}
         />
         <TextField
@@ -155,7 +155,7 @@ export default function AddressForm({ register, errors, formVal }: UpdateFormPro
           helperText={errors.Reference?.message}
           error={!!errors.Reference}
           required
-          value={dReference}
+          value={dReference.toUpperCase()}
           onChange={(e) => setDReference(e.target.value)}
       />
     </div>

@@ -29,7 +29,7 @@ export default function NameForm({
         label="Prenom"
         helperText={errors.Prenom?.message}
         error={!!errors.Prenom}
-        value={dfirstName}
+        value={dfirstName.toUpperCase()}
         onChange={(e) => setDFirstName(e.target.value)}
       />
       <TextField
@@ -38,7 +38,7 @@ export default function NameForm({
         label="Nom"
         helperText={errors.Nom?.message}
         error={!!errors.Nom}
-        value={dLastName}
+        value={dLastName.toUpperCase()}
         onChange={(e) => setDLastName(e.target.value)}
       />
       <TextField
@@ -47,7 +47,7 @@ export default function NameForm({
         label="Post-Nom"
         helperText={errors.PostNom?.message}
         error={!!errors.PostNom}
-        value={dMiddleNames}
+        value={dMiddleNames.toUpperCase()}
         onChange={(e) => setDMiddleNames(e.target.value)}
       />
     </div>
