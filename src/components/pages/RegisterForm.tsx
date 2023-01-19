@@ -799,7 +799,6 @@ export default function RegisterForm() {
           </Alert>
         )}
       </Box>
-    
     </Container>
       : 'Cannot load this page'
       }
