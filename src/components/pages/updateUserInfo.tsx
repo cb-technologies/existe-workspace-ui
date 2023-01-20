@@ -70,11 +70,11 @@ const schema = yup.object().shape({
 function mapdata(data: UpdateUserFormInput, response: PersonInfoResponse.AsObject) {
   var personId = new NationalIDNumber().setId(response.id?.id!);
 
-  var names = new Names().setNom(data.Nom);
-  names.setPrenom(data.Prenom);
-  names.setMiddleNamesList([data.PostNom]);
+  var names = new Names().setNom(data.Nom.toUpperCase());
+  names.setPrenom(data.Prenom.toUpperCase());
+  names.setMiddleNamesList([data.PostNom.toUpperCase()]);
 
-  var phenotype = new Phenotype().setEyeColor(data.EyeColor);
+  var phenotype = new Phenotype().setEyeColor(data.EyeColor.toUpperCase());
   phenotype.setHeight(data.Taille);
   phenotype.setWeight(data.Poids);
 
@@ -89,14 +89,14 @@ function mapdata(data: UpdateUserFormInput, response: PersonInfoResponse.AsObjec
   dob.setMonth(response.dateOfBirth?.month!);
   dob.setYear(response.dateOfBirth?.year!);
 
-  var address = new Address().setAvenue(data.Avenue);
-  address.setProvince(data.ProvinceAddress);
-  address.setCommune(data.Commune);
-  address.setQuartier(data.Quartier);
+  var address = new Address().setAvenue(data.Avenue.toUpperCase());
+  address.setProvince(data.ProvinceAddress.toUpperCase());
+  address.setCommune(data.Commune.toUpperCase());
+  address.setQuartier(data.Quartier.toUpperCase());
   address.setNumber(data.Numero);
-  address.setVille(data.Ville);
+  address.setVille(data.Ville.toUpperCase());
   address.setZipCode(data.CodePostal.toString());
-  address.setReference(data.Reference);
+  address.setReference(data.Reference.toUpperCase());
 
   var sex  = new Sex().setSex(response.sex?.sex!)
 

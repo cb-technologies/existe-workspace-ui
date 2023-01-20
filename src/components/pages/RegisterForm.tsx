@@ -316,7 +316,7 @@ export function DynamicAddressForm({ register, errors}: AddressPropsType) {
           helperText={errors.Ville?.message}
           error={!!errors.Ville}
           required
-          value={dVille.toUpperCase()}
+          value={dVille}
           onChange={(e) => setDVille(e.target.value)}
         />
         <TextField
@@ -326,7 +326,7 @@ export function DynamicAddressForm({ register, errors}: AddressPropsType) {
           helperText={errors.Avenue?.message}
           error={!!errors.Avenue}
           required
-          value={dAvenue.toUpperCase()}
+          value={dAvenue}
           onChange={(e) => setDAvenue(e.target.value)}
         />
         <TextField
@@ -346,7 +346,7 @@ export function DynamicAddressForm({ register, errors}: AddressPropsType) {
           helperText={errors.Reference?.message}
           error={!!errors.Reference}
           required
-          value={dReference.toUpperCase()}
+          value={dReference}
           onChange={(e) => setDReference(e.target.value)}
       />
     </div>
@@ -371,7 +371,7 @@ function OriginForm({ register, errors }) {
         helperText={errors.Province?.message}
         error={!!errors.Province}
         required
-        value={dProvince.toUpperCase()}
+        value={dProvince}
         onChange={(e) => setDProvince(e.target.value)}
       />
       <TextField
@@ -381,7 +381,7 @@ function OriginForm({ register, errors }) {
         helperText={errors.ChefLieu?.message}
         error={!!errors.ChefLieu}
         required
-        value={dChefLieu.toUpperCase()}
+        value={dChefLieu}
         onChange={(e) => setDChefLieu(e.target.value)}
       />
       <TextField
@@ -391,7 +391,7 @@ function OriginForm({ register, errors }) {
         helperText={errors.Territoire?.message}
         error={!!errors.Territoire}
         required
-        value={dTerritoire.toUpperCase()}
+        value={dTerritoire}
         onChange={(e) => setDTerritoire(e.target.value)}
       />
       <TextField
@@ -401,7 +401,7 @@ function OriginForm({ register, errors }) {
         helperText={errors.Secteur?.message}
         error={!!errors.Secteur}
         required
-        value={dSecteur.toUpperCase()}
+        value={dSecteur}
         onChange={(e) => setDSecteur(e.target.value)}
       />
       <TextField
@@ -411,7 +411,7 @@ function OriginForm({ register, errors }) {
         helperText={errors.Village?.message}
         error={!!errors.Village}
         required
-        value={dVillage.toUpperCase()}
+        value={dVillage}
         onChange={(e) => setDVillage(e.target.value)}
       />
       <TextField
@@ -421,7 +421,7 @@ function OriginForm({ register, errors }) {
         helperText={errors.LieuDeNaissance?.message}
         error={!!errors.LieuDeNaissance}
         required
-        value={dLieuDeNaissance.toUpperCase()}
+        value={dLieuDeNaissance}
         onChange={(e) => setdDieuDeNaissance(e.target.value)}
       />
     </div>
@@ -463,7 +463,7 @@ function PhenotypeForm({ register, errors }) {
         helperText={errors.EyeColor?.message}
         error={!!errors.EyeColor}
         required
-        value={dEyeColor.toUpperCase()}
+        value={dEyeColor}
         onChange={(e) => setDEyeColor(e.target.value)}
       />
     </div>
@@ -581,14 +581,14 @@ function PhotoForm() {
 // @ts-ignore
 function mapdata(data) {
   var names = new Names().setNom(data.Nom);
-  names.setPrenom(data.Prenom);
-  names.setMiddleNamesList([data.PostNom]);
+  names.setPrenom(data.Prenom.toUpperCase());
+  names.setMiddleNamesList([data.PostNom.toUpperCase()]);
 
-  var origins = new Origin().setChefLieu(data.ChefLieu);
-  origins.setProvinceList([data.Province]);
-  origins.setLieuDeNaissance(data.LieuDeNaissance)
+  var origins = new Origin().setChefLieu(data.ChefLieu.toUpperCase());
+  origins.setProvinceList([data.Province.toUpperCase()]);
+  origins.setLieuDeNaissance(data.LieuDeNaissance.toUpperCase())
 
-  var phenotype = new Phenotype().setEyeColor(data.EyeColor);
+  var phenotype = new Phenotype().setEyeColor(data.EyeColor.toUpperCase());
   phenotype.setHeight(data.Height);
   phenotype.setWeight(data.Poids);
 
@@ -601,14 +601,14 @@ function mapdata(data) {
   dob.setMonth(globalMonth);
   dob.setYear(globalYear);
 
-  var address = new Address().setAvenue(data.Avenue);
-  address.setProvince(data.ProvinceAddress);
-  address.setCommune(data.Commune);
-  address.setQuartier(data.Quartier);
-  address.setNumber(data.Numero);
-  address.setVille(data.Ville);
+  var address = new Address().setAvenue(data.Avenue.toUpperCase());
+  address.setProvince(data.ProvinceAddress.toUpperCase());
+  address.setCommune(data.Commune.toUpperCase());
+  address.setQuartier(data.Quartier.toUpperCase());
+  address.setNumber(data.Numero.toUpperCase());
+  address.setVille(data.Ville.toUpperCase());
   address.setZipCode(data.CodePostal.toString());
-  address.setReference(data.Reference);
+  address.setReference(data.Reference.toUpperCase());
 
   var sex = new Sex().setSex(globalSex)
 
