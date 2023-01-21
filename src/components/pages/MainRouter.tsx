@@ -11,6 +11,7 @@ import RetrieveUserInfo from "./RetrieveUserInfo";
 import IDCard from "./IDCard";
 import VerifyCode from "./confirmSignUp";
 import ResendCode from "./resendVerifyCode";
+import RenderAgents from "./renderListAgents";
 
 
 function MainRouter() {
@@ -22,6 +23,7 @@ function MainRouter() {
             <Route path={URLExistPath.RegisterPage} element={<RegisterForm/>}/>
             <Route path={URLExistPath.ConfirmSignUpPage} element={<VerifyCode/>}/>
             <Route path={URLExistPath.ResendCodePage} element={<ResendCode/>}/>
+            <Route path={URLExistPath.AgentListPage} element={<RenderAgents/>}/>
             <Route
                 path={URLExistPath.GeneratedCardPage}
                 element={<IDCard/>}
