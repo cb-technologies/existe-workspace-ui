@@ -199,6 +199,7 @@ function retreiveUser(data): PersonInfoResponse {
         noValidate
         autoComplete={"off"}
       >
+        <Typography variant="h1" gutterBottom></Typography>
         <Typography variant="h6" component="h6" gutterBottom>
           1. Retrouvez l'individu
         </Typography>

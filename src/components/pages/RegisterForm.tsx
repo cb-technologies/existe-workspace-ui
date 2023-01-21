@@ -730,7 +730,7 @@ export default function RegisterForm() {
         noValidate
         autoComplete={"off"}
       >
-        <Typography variant="h3" gutterBottom></Typography>
+        <Typography variant="h1" gutterBottom></Typography>
         <Typography variant="h3" gutterBottom>
           Enregistrez l'individu
         </Typography>
