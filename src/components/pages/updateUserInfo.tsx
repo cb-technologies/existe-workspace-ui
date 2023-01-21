@@ -182,7 +182,7 @@ export default function UpdateUserForm() {
       noValidate
       autoComplete={"off"}
       >
-        <Typography variant="h3" gutterBottom></Typography>
+        <Typography variant="h1" gutterBottom></Typography>
         <Typography variant="h3" gutterBottom>
           Modifiez les informations de l'individu
         </Typography>
