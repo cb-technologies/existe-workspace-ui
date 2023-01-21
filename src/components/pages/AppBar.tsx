@@ -85,8 +85,9 @@ function ResponsiveAppBar() {
         setIsLoggedIn(true);
       } catch {
         setIsLoggedIn(false);
+        // console.log("I am ")
       }
-    }, 1000);
+    }, 100);
 
     return () => clearInterval(intervalId);
   }, []);

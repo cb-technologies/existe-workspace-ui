@@ -48,8 +48,8 @@ const tiers = [
     buttonText: "Gerer Agents",
     buttonVariant: "outlined",
     icon: ManageAccountsIcon,
-    page: URLExistPath.RetrieveUserInfo,
-    flag: "to_generate",
+    page: URLExistPath.AgentListPage,
+    flag: "to_agent_list",
   },
 ];
 
