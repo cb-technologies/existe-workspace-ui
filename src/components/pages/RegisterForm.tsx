@@ -605,7 +605,7 @@ function mapdata(data) {
   address.setProvince(data.ProvinceAddress.toUpperCase());
   address.setCommune(data.Commune.toUpperCase());
   address.setQuartier(data.Quartier.toUpperCase());
-  address.setNumber(data.Numero.toUpperCase());
+  address.setNumber(data.Numero);
   address.setVille(data.Ville.toUpperCase());
   address.setZipCode(data.CodePostal.toString());
   address.setReference(data.Reference.toUpperCase());
