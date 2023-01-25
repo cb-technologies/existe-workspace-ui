@@ -12,6 +12,7 @@ import IDCard from "./IDCard";
 import VerifyCode from "./confirmSignUp";
 import ResendCode from "./resendVerifyCode";
 import RenderAgents from "./renderListAgents";
+import UserProfilePage from "./UserProfilePage";
 
 
 function MainRouter() {
@@ -28,6 +29,7 @@ function MainRouter() {
                 path={URLExistPath.GeneratedCardPage}
                 element={<IDCard/>}
             />
+            <Route path={URLExistPath.GeneratedCardPage} element={<IDCard/>}/>
             <Route path={URLExistPath.RetrieveUserInfo} element={<RetrieveUserInfo/>}/>
             <Route path={URLExistPath.OrientationPage} element={<Orientation/>}/>
             <Route path={URLExistPath.UpdateUserInfoForm} element={<UpdateUserForm/>}/>
