@@ -668,7 +668,7 @@ function mapdata(data) {
   var urlHead = secret.URLHead;
   var urlBodyNames = data.Nom.toUpperCase() + "$" + data.Prenom.toUpperCase() + "$" + data.PostNom.toUpperCase();
   var urlBodyDOB = + globalDay + "$" + globalMonth + "$" + globalYear;
-  var encryptedQRCodeUrl = encrypt(urlBodyNames + "/" + urlBodyDOB, secret.QRCodeSecret);
+  var encryptedQRCodeUrl = encrypt(urlBodyNames + "/" + urlBodyDOB+  "/" + globalSex.toString(), secret.QRCodeSecret);
   var completeUrl = urlHead + "/" + encryptedQRCodeUrl
   var qrcode = new QRCode().setQrcode(completeUrl)
 
