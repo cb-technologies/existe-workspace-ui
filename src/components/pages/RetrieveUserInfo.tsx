@@ -26,10 +26,7 @@ import {
 import { ExistService } from "../../store/exist_api_call";
 import useHistoryState from "../../hooks/useHistoryState";
 import Container from "@mui/material/Container";
-import {
-  useNavigate,
-  useLocation,
-} from "react-router-dom"; //import the package
+import { useNavigate, useLocation } from "react-router-dom"; //import the package
 
 var globalDay: string;
 var globalMonth: string;
@@ -42,12 +39,11 @@ interface RetrieveFormInput {
 }
 
 const schema = yup.object().shape({
-  //requirement for the inputs
-  Nom: yup.string().required("Le Nom ne peut être vide").min(2).max(30),
-  Prenom: yup.string().required("Le Prenom ne peut  être vide").min(2).max(30),
+  Nom: yup.string().required("Nom non valide").min(2).max(30),
+  Prenom: yup.string().required("Prenom non valide").min(2).max(30),
   PostNom: yup
     .string()
-    .required("Le Post-Nom ne peut être vide")
+    .required("Postnom non valide")
     .min(2)
     .max(30),
 });
@@ -104,7 +100,7 @@ function SexForm() {
 // @ts-ignore
 function DateOfBirthForm({ register }) {
   const [value, setValue] = React.useState<Dayjs | null>(null);
-  console.log("debug dob")
+  console.log("debug dob");
   return (
     <LocalizationProvider dateAdapter={AdapterDayjs}>
       <Stack spacing={1}>
@@ -140,9 +136,9 @@ function retreivemapdata(data) {
   var retreivePersonInfoParameters =
     new RetreivePersonInfoParameters().setNames(names);
   retreivePersonInfoParameters.setDateOfBirth(dob);
-  console.log("names are", names)
-  console.log("date of birth ", dob)
-  console.log("finaly the personInput is", retreivePersonInfoParameters)
+  console.log("names are", names);
+  console.log("date of birth ", dob);
+  console.log("finaly the personInput is", retreivePersonInfoParameters);
 
   return retreivePersonInfoParameters;
 }
@@ -157,24 +153,29 @@ export default function RetrieveUserInfo() {
   });
   const navigate = useNavigate();
   const location = useLocation();
-  const flag = location.state.flag_to_page
+  const flag = location.state.flag_to_page;
   // @ts-ignore
-//   function retreiveUser(data): PersonInfoResponse {
-function retreiveUser(data): PersonInfoResponse {
+  //   function retreiveUser(data): PersonInfoResponse {
+  function retreiveUser(data): PersonInfoResponse {
     var retreivePersonInfoParameters = retreivemapdata(data);
-    console.log("Person Parameter",retreivePersonInfoParameters)
-    
+    console.log("Person Parameter", retreivePersonInfoParameters);
+
     ExistService.retreiveUserBasedOnField(
       retreivePersonInfoParameters,
       null
     ).then((userInfo) => {
-        const userInfoObject = userInfo.toObject()
-        console.log("Petage", userInfo.getBiometrics()?.getPhotos_asB64())
-        console.log("AnotherPetage", userInfo.getBiometrics()?.getPhotoType())
-        if (flag == "to_generate") {
-      navigate(URLExistPath.GeneratedCardPage, { state: { cardInfo: userInfoObject } });}
-        else {
-            navigate(URLExistPath.UpdateUserInfoForm, { state: { cardInfo: userInfoObject } })};
+      const userInfoObject = userInfo.toObject();
+      console.log("Petage", userInfo.getBiometrics()?.getPhotos_asB64());
+      console.log("AnotherPetage", userInfo.getBiometrics()?.getPhotoType());
+      if (flag == "to_generate") {
+        navigate(URLExistPath.GeneratedCardPage, {
+          state: { cardInfo: userInfoObject },
+        });
+      } else {
+        navigate(URLExistPath.UpdateUserInfoForm, {
+          state: { cardInfo: userInfoObject },
+        });
+      }
     });
   }
 
@@ -218,7 +219,7 @@ function retreiveUser(data): PersonInfoResponse {
           color="primary"
           onClick={handleSubmit(onSubmit)}
         >
-            Retrouvez le citoyen
+          Retrouvez le citoyen
           {/* <Route path="/updateUserInfo" element={<UpdateUserForm  UpdateUserFormProps ={dataResposnse} />} /> */}
         </Button>
       </Box>
