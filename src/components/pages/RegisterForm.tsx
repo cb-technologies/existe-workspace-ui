@@ -646,7 +646,7 @@ function mapdata(data) {
   phenotype.setHeight(data.Height);
   phenotype.setWeight(data.Poids);
 
-  var biometric = new Biometric().setFingerPrint("bbbbbbbbbbb");
+  var biometric = new Biometric().setFingerPrint("bbbbbbbbbbbxxxxx");
   biometric.setPhotos(globalPicture);
   biometric.setPhotoType(globalPhotoType);
 
