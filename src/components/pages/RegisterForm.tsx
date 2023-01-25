@@ -1,6 +1,6 @@
 import * as React from "react";
 import Box from "@mui/material/Box";
-import { useEffect, useState} from "react";
+import { useEffect, useState } from "react";
 import { Dayjs } from "dayjs";
 import TextField from "@mui/material/TextField";
 import Typography from "@mui/material/Typography";
@@ -22,7 +22,7 @@ import {
   Names,
   PersonInfoRequest,
   Phenotype,
-  Sex
+  Sex,
 } from "../../grpc/pb/message_and_service_pb";
 import { ExistService } from "../../store/exist_api_call";
 import useHistoryState from "../../hooks/useHistoryState";
@@ -31,14 +31,11 @@ import SaveIcon from "@mui/icons-material/Save";
 import LoadingButton from "@mui/lab/LoadingButton";
 import Alert from "@mui/material/Alert";
 import AlertTitle from "@mui/material/AlertTitle";
-import {
-  MenuItem,
-  Stack,
-} from "@mui/material";
+import { MenuItem, Stack } from "@mui/material";
 import { zipCodeData } from "../../constants/zipCodeKinshasa";
 import { FieldErrorsImpl } from "react-hook-form";
 import { SexEnum } from "../../grpc/pb/message_and_service_pb";
-import { Auth } from 'aws-amplify';
+import { Auth } from "aws-amplify";
 
 var globalDay: string;
 var globalMonth: string;
@@ -47,8 +44,7 @@ var globalYear: string;
 var globalSex = SexEnum.UNKNOWN;
 
 var globalPicture: string;
-var globalPhotoType: string
-
+var globalPhotoType: string;
 
 interface RegisterFormInput {
   Prenom: string;
@@ -62,7 +58,7 @@ interface RegisterFormInput {
   Numero: number;
   CodePostal: number;
   Reference: string;
-  ProvinceAddress: string
+  ProvinceAddress: string;
 
   Province: string;
   ChefLieu: string;
@@ -77,27 +73,45 @@ interface RegisterFormInput {
 }
 
 const schema = yup.object().shape({
-  Nom: yup.string().required().min(2).max(30),
-  Prenom: yup.string().required().min(2).max(30),
-  PostNom: yup.string().required().min(2).max(30),
+  Nom: yup.string().required("Nom non valide").min(2).max(30),
+  Prenom: yup.string().required("Prenom non valide").min(2).max(30),
+  PostNom: yup.string().required("Postnom non valide").min(2).max(30),
 
-  Ville: yup.string().required().min(2).max(30),
-  Avenue: yup.string().required().min(2).max(30),
-  Numero: yup.number().required("Numero cannot be empty"),
-  Reference: yup.string().required().min(2).max(30),
-  CodePostal: yup.number().required("Numero cannot be empty"),
-  ProvinceAddress: yup.string().required().min(2).max(30),
+  Ville: yup.string().required("Ville non valide").min(2).max(30),
+  Avenue: yup.string().required("Ville non valide").min(2).max(30),
+  Numero: yup
+    .number()
+    .typeError("Numero non valide")
+    .required("Numero non valide"),
+  Reference: yup.string().required("Reference non valide").min(2).max(30),
+  CodePostal: yup
+    .number()
+    .typeError("Code Postal non valide")
+    .required("Code Postal non valide"),
+  ProvinceAddress: yup.string().required("Province non valide").min(2).max(30),
 
-  Province: yup.string().required().min(2).max(30),
-  ChefLieu: yup.string().required().min(2).max(30),
-  Territoire: yup.string().required().min(2).max(30),
-  Secteur: yup.string().required().min(2).max(30),
-  Village: yup.string().required().min(2).max(30),
-  LieuDeNaissance: yup.string().required().min(2).max(30),
+  Province: yup.string().required("Province non valide").min(2).max(30),
+  ChefLieu: yup.string().required("Chef lieu non valide").min(2).max(30),
+  Territoire: yup.string().required("Territoire non valide").min(2).max(30),
+  Secteur: yup.string().required("Secteur non valide").min(2).max(30),
+  Village: yup.string().required("Village non valide").min(2).max(30),
+  Commune: yup.string().required("Commune non valide").min(2).max(30),
+  Quartier: yup.string().required("Quartier non valide").min(2).max(30), 
+  LieuDeNaissance: yup
+    .string()
+    .required("Lieu de naissance non valide")
+    .min(2)
+    .max(30),
 
-  Height: yup.number().required("Taille cannot be empty"),
-  Poids: yup.number().required("Poids cannot be empty"),
-  EyeColor: yup.string().required().min(2).max(30),
+  Height: yup
+    .number()
+    .typeError("Taille non valide")
+    .required("Taille non valide"),
+  Poids: yup
+    .number()
+    .typeError("Poids non valide")
+    .required("Poids non valide"),
+  EyeColor: yup.string().required("Couleur des yeux non valide").min(2).max(30),
 });
 
 // @ts-ignore
@@ -140,26 +154,30 @@ function NameForm({ register, errors }) {
 }
 
 function SexForm() {
-
   const [checkedHomme, setCheckedHomme] = useHistoryState("Homme", false);
   const [checkedFemme, setCheckedFemme] = useHistoryState("Femme", false);
 
-  const [disabledHomme, setDisabledHomme] = useHistoryState("HommeDisabled", false);
-  const [disabledFemme, setDisabledFemme] = useHistoryState("FemmeDisabled", false);
-
+  const [disabledHomme, setDisabledHomme] = useHistoryState(
+    "HommeDisabled",
+    false
+  );
+  const [disabledFemme, setDisabledFemme] = useHistoryState(
+    "FemmeDisabled",
+    false
+  );
 
   const handleChangeHomme = (event: React.ChangeEvent<HTMLInputElement>) => {
     setCheckedHomme(event.target.checked);
     setDisabledFemme(event.target.checked);
-    globalSex = SexEnum.HOMME
+    globalSex = SexEnum.HOMME;
   };
 
   const handleChangeFemme = (event: React.ChangeEvent<HTMLInputElement>) => {
     setCheckedFemme(event.target.checked);
     setDisabledHomme(event.target.checked);
-    globalSex = SexEnum.FEMME
+    globalSex = SexEnum.FEMME;
   };
-  
+
   return (
     <FormGroup>
       <div>
@@ -170,7 +188,7 @@ function SexForm() {
               onChange={handleChangeHomme}
               disabled={disabledHomme}
             />
-          } 
+          }
           label="Homme"
         />
         <FormControlLabel
@@ -179,13 +197,14 @@ function SexForm() {
               checked={checkedFemme}
               onChange={handleChangeFemme}
               disabled={disabledFemme}
-            />}
-          label="Femme" />
+            />
+          }
+          label="Femme"
+        />
       </div>
     </FormGroup>
   );
 }
-
 
 export type PartialErrorRegisterForm = Partial<
   FieldErrorsImpl<{
@@ -200,7 +219,7 @@ export type PartialErrorRegisterForm = Partial<
     Numero: number;
     CodePostal: string;
     Reference: string;
-    ProvinceAddress: string
+    ProvinceAddress: string;
 
     Province: string;
     ChefLieu: string;
@@ -216,65 +235,75 @@ export type PartialErrorRegisterForm = Partial<
 >;
 
 type AddressPropsType = {
-  register: any,
-  errors: PartialErrorRegisterForm
-}
-export function DynamicAddressForm({ register, errors}: AddressPropsType) {
-  const [selectedProvince, setProvince] = useHistoryState("SelectedProvince","");
+  register: any;
+  errors: PartialErrorRegisterForm;
+};
+export function DynamicAddressForm({ register, errors }: AddressPropsType) {
+  const [selectedProvince, setProvince] = useHistoryState(
+    "SelectedProvince",
+    ""
+  );
   const [selectedCommune, setCommune] = useHistoryState("SelectedCommune", "");
-  const [selectedQuartier, setQuartier] = useHistoryState("SelectedQuartier","");
+  const [selectedQuartier, setQuartier] = useHistoryState(
+    "SelectedQuartier",
+    ""
+  );
   const [selectedZipCode, setZipCode] = useHistoryState("CodePostal", "");
   const [dVille, setDVille] = useHistoryState("Ville", "");
   const [dAvenue, setDAvenue] = useHistoryState("Avenue", "");
   const [dNumero, setDNumero] = useHistoryState("Numero", "");
   const [dReference, setDReference] = useHistoryState("Reference", "");
-  
 
-  
   return (
     <div>
       <TextField
         {...register("ProvinceAddress")}
-      select
-      value={selectedProvince}
-      onChange={(e) => {
-        setProvince(e.target.value)
-      }}
-      label="Province"
-      id="select-province"
-    >
-      {Object.getOwnPropertyNames(zipCodeData).map((value) => (
-        <MenuItem key={value} value={value}>
-          {value}
-        </MenuItem>
-      ))}
-    </TextField>
+        select
+        value={selectedProvince}
+        helperText={errors.ProvinceAddress?.message}
+        error={!!errors.ProvinceAddress}
+        onChange={(e) => {
+          setProvince(e.target.value);
+        }}
+        label="Province"
+        id="select-province"
+      >
+        {Object.getOwnPropertyNames(zipCodeData).map((value) => (
+          <MenuItem key={value} value={value}>
+            {value}
+          </MenuItem>
+        ))}
+      </TextField>
       <TextField
         {...register("Commune")}
-      select
-      value={selectedCommune}
-      label="Commune"
-      onChange={(e) => {
-                setCommune(e.target.value)
-              }}
-    >
-      {selectedProvince &&
-        Object.getOwnPropertyNames(zipCodeData[selectedProvince]!).map(
-          (value) => (
-            <MenuItem key={value} value={value}>
-              {value}
-            </MenuItem>
-          )
-        )}
-    </TextField>
+        select
+        value={selectedCommune}
+        helperText={errors.Commune?.message}
+        error={!!errors.Commune}
+        label="Commune"
+        onChange={(e) => {
+          setCommune(e.target.value);
+        }}
+      >
+        {selectedProvince &&
+          Object.getOwnPropertyNames(zipCodeData[selectedProvince]!).map(
+            (value) => (
+              <MenuItem key={value} value={value}>
+                {value}
+              </MenuItem>
+            )
+          )}
+      </TextField>
       <TextField
         {...register("Quartier")}
-      select
+        select
         value={selectedQuartier}
+        helperText={errors.Quartier?.message}
+        error={!!errors.Quartier}
         label="Quartier"
         onChange={(e) => {
-                setQuartier(e.target.value)
-              }}
+          setQuartier(e.target.value);
+        }}
       >
         {selectedCommune &&
           selectedProvince &&
@@ -289,65 +318,72 @@ export function DynamicAddressForm({ register, errors}: AddressPropsType) {
       <TextField
         {...register("CodePostal")}
         select
-          value={selectedZipCode}
+        helperText={errors.CodePostal?.message}
+        error={!!errors.CodePostal}
+        value={selectedZipCode}
         label="Code Postal"
         onChange={(e) => {
-                setZipCode(e.target.value)
-              }}
-    
-        >
-          {selectedCommune && selectedProvince && selectedQuartier && (
-            <MenuItem
-              key={
-                zipCodeData[selectedProvince]![selectedCommune]![selectedQuartier]
-              }
-              value={
-                zipCodeData[selectedProvince]![selectedCommune]![selectedQuartier]!
-              }
-            >
-              {zipCodeData[selectedProvince]![selectedCommune]![selectedQuartier]!}
-            </MenuItem>
-          )}
-        </TextField>
-        <TextField
-          {...register("Ville")}
-          id="outlined-ville-input"
-          label="Ville"
-          helperText={errors.Ville?.message}
-          error={!!errors.Ville}
-          required
-          value={dVille}
-          onChange={(e) => setDVille(e.target.value)}
-        />
-        <TextField
-          {...register("Avenue")}
-          id="outlined-avenue-input"
-          label="Avenue"
-          helperText={errors.Avenue?.message}
-          error={!!errors.Avenue}
-          required
-          value={dAvenue}
-          onChange={(e) => setDAvenue(e.target.value)}
-        />
-        <TextField
-          {...register("Numero")}
-          id="outlined-numero-input"
-          label="Numero"
-          helperText={errors.Numero?.message}
-          error={!!errors.Numero}
-          required
-          value={dNumero}
-          onChange={(e) => setDNumero(e.target.value)}
-        />
-        <TextField
+          setZipCode(e.target.value);
+        }}
+      >
+        {selectedCommune && selectedProvince && selectedQuartier && (
+          <MenuItem
+            key={
+              zipCodeData[selectedProvince]![selectedCommune]![selectedQuartier]
+            }
+            value={
+              zipCodeData[selectedProvince]![selectedCommune]![
+                selectedQuartier
+              ]!
+            }
+          >
+            {
+              zipCodeData[selectedProvince]![selectedCommune]![
+                selectedQuartier
+              ]!
+            }
+          </MenuItem>
+        )}
+      </TextField>
+      <TextField
+        {...register("Ville")}
+        id="outlined-ville-input"
+        label="Ville"
+        helperText={errors.Ville?.message}
+        error={!!errors.Ville}
+        required
+        value={dVille}
+        onChange={(e) => setDVille(e.target.value)}
+      />
+      <TextField
+        {...register("Avenue")}
+        id="outlined-avenue-input"
+        label="Avenue"
+        helperText={errors.Avenue?.message}
+        error={!!errors.Avenue}
+        required
+        value={dAvenue}
+        onChange={(e) => setDAvenue(e.target.value)}
+      />
+      <TextField
+        {...register("Numero")}
+        id="outlined-numero-input"
+        label="Numero"
+        helperText={errors.Numero?.message}
+        error={!!errors.Numero}
+        required
+        value={dNumero}
+        onChange={(e) => setDNumero(e.target.value)}
+      />
+      <TextField
         {...register("Reference")}
-          id="outlined-reference-input"
-          label="Reference"
-          helperText={errors.Reference?.message}
-          error={!!errors.Reference}
-          required
-          value={dReference}
-          onChange={(e) => setDReference(e.target.value)}
+        id="outlined-reference-input"
+        label="Reference"
+        helperText={errors.Reference?.message}
+        error={!!errors.Reference}
+        required
+        value={dReference}
+        onChange={(e) => setDReference(e.target.value)}
       />
     </div>
   );
@@ -360,7 +396,10 @@ function OriginForm({ register, errors }) {
   const [dTerritoire, setDTerritoire] = useHistoryState("Territoire", "");
   const [dSecteur, setDSecteur] = useHistoryState("Secteur", "");
   const [dVillage, setDVillage] = useHistoryState("Village", "");
-  const [dLieuDeNaissance, setdDieuDeNaissance] = useHistoryState("LieuDeNaissance", "");
+  const [dLieuDeNaissance, setdDieuDeNaissance] = useHistoryState(
+    "LieuDeNaissance",
+    ""
+  );
 
   return (
     <div>
@@ -440,8 +479,8 @@ function PhenotypeForm({ register, errors }) {
         {...register("Height")}
         id="outlined-taille-input"
         label="Taille (cm)"
-        helperText={errors.Taille?.message}
-        error={!!errors.Taille}
+        helperText={errors.Height?.message}
+        error={!!errors.Height}
         required
         value={dHeight}
         onChange={(e) => setDHeight(e.target.value)}
@@ -498,7 +537,6 @@ function DateOfBirthForm({ register }) {
   );
 }
 
-
 function PhotoForm() {
   const [file, setFile] = useState(null);
   const [fileDataURL, setFileDataURL] = useState("");
@@ -517,47 +555,46 @@ function PhotoForm() {
     });
   };
 
-  const changeHandler = async (e:any) => {
-    const { files } = e.target
+  const changeHandler = async (e: any) => {
+    const { files } = e.target;
     const file = files[0];
     setFile(file);
     const base64 = await convertToBase64(file);
     setImageBase64(base64 as string);
     var temp = base64 as string;
-    var splitedPhotoData = temp.split(",")
-    globalPhotoType = splitedPhotoData[0]
-    globalPicture = splitedPhotoData[1]
-    
-
-  }
+    var splitedPhotoData = temp.split(",");
+    globalPhotoType = splitedPhotoData[0];
+    globalPicture = splitedPhotoData[1];
+  };
 
   React.useEffect(() => {
-    let fileReader: FileReader, isCancel = false;
-    if(file) {
+    let fileReader: FileReader,
+      isCancel = false;
+    if (file) {
       fileReader = new FileReader();
       fileReader.onload = (e) => {
-        const result  = e.target?.result;
+        const result = e.target?.result;
         if (result && !isCancel) {
-          setFileDataURL(result as string)
+          setFileDataURL(result as string);
         }
-      }
-      fileReader.readAsDataURL(file)
+      };
+      fileReader.readAsDataURL(file);
     }
     return () => {
       isCancel = true;
-      if(fileReader && fileReader.readyState === 1) {
+      if (fileReader && fileReader.readyState === 1) {
         fileReader.abort();
       }
-    }
+    };
   }, [file]);
 
   return (
     <div>
       <Box
-      sx={{
-        width: 400,
-        maxWidth: '70%',
-      }}
+        sx={{
+          width: 400,
+          maxWidth: "70%",
+        }}
       >
         <input
           id="photo-upload"
@@ -565,16 +602,20 @@ function PhotoForm() {
           accept="image/*"
           onChange={changeHandler}
           required
-      />
-      {fileDataURL ?
-      <p className="img-preview-wrapper">
-        {
-          <img style={{ width: 250, height: 300 }} src={fileDataURL} alt="preview" />
-        }
-      </p> : null}
-    </Box>
-       </div>
-    
+        />
+        {fileDataURL ? (
+          <p className="img-preview-wrapper">
+            {
+              <img
+                style={{ width: 250, height: 300 }}
+                src={fileDataURL}
+                alt="preview"
+              />
+            }
+          </p>
+        ) : null}
+      </Box>
+    </div>
   );
 }
 
@@ -586,7 +627,7 @@ function mapdata(data) {
 
   var origins = new Origin().setChefLieu(data.ChefLieu.toUpperCase());
   origins.setProvinceList([data.Province.toUpperCase()]);
-  origins.setLieuDeNaissance(data.LieuDeNaissance.toUpperCase())
+  origins.setLieuDeNaissance(data.LieuDeNaissance.toUpperCase());
 
   var phenotype = new Phenotype().setEyeColor(data.EyeColor.toUpperCase());
   phenotype.setHeight(data.Height);
@@ -610,7 +651,7 @@ function mapdata(data) {
   address.setZipCode(data.CodePostal.toString());
   address.setReference(data.Reference.toUpperCase());
 
-  var sex = new Sex().setSex(globalSex)
+  var sex = new Sex().setSex(globalSex);
 
   var personInfoRequest = new PersonInfoRequest().setNames(names);
   personInfoRequest.setAddress(address);
@@ -630,7 +671,6 @@ export function delay(milliseconds: number) {
 }
 
 export default function RegisterForm() {
-
   const [spinRegister, setSpinRegister] = useState(false);
   const [showAlert, setShowAlert] = useState(false);
   const [showErrorAlert, setShowErrorAlert] = useState(false);
@@ -639,14 +679,14 @@ export default function RegisterForm() {
 
   useEffect(() => {
     Auth.currentAuthenticatedUser()
-      .then(user => {
+      .then((user) => {
         setIsLoggedIn(true);
       })
-      .catch(err => {
+      .catch((err) => {
         setIsLoggedIn(false);
       });
   }, []);
-  
+
   const {
     register,
     handleSubmit,
@@ -656,12 +696,9 @@ export default function RegisterForm() {
     resolver: yupResolver(schema),
   });
 
-
-
-
   const onSubmit = (data: RegisterFormInput) => {
     var personInfoRequest = mapdata(data);
-    console.log(personInfoRequest)
+    console.log(personInfoRequest);
     setSpinRegister(true);
     try {
       setShowErrorAlert(false);
@@ -676,28 +713,27 @@ export default function RegisterForm() {
               setShowAlert(false);
               // clear the form
               reset({
-                  Prenom: undefined,
-                  Nom: undefined,
-                  PostNom: undefined,
-                  Ville: undefined,
-                  Quartier: undefined,
-                  Numero: undefined, 
-                  Avenue: undefined,
-                  Commune: undefined,
-                  Reference: undefined,
-                  ProvinceAddress: undefined,
-                  Province: undefined,
-                  ChefLieu: undefined,
-                  Territoire: undefined,
-                  Secteur: undefined,
-                  Village: undefined,
-                  CodePostal: undefined,
-                  LieuDeNaissance: undefined,
-                  EyeColor: undefined,
-                  Poids: undefined,
-                  Height: undefined,
+                Prenom: undefined,
+                Nom: undefined,
+                PostNom: undefined,
+                Ville: undefined,
+                Quartier: undefined,
+                Numero: undefined,
+                Avenue: undefined,
+                Commune: undefined,
+                Reference: undefined,
+                ProvinceAddress: undefined,
+                Province: undefined,
+                ChefLieu: undefined,
+                Territoire: undefined,
+                Secteur: undefined,
+                Village: undefined,
+                CodePostal: undefined,
+                LieuDeNaissance: undefined,
+                EyeColor: undefined,
+                Poids: undefined,
+                Height: undefined,
               });
-             
             })();
           } else {
             console.log("Could not register a citizen");
@@ -708,101 +744,99 @@ export default function RegisterForm() {
           console.log(`try error ${error}`);
           setSpinRegister(false);
           setShowErrorAlert(true);
-           
         });
     } catch (error) {
       console.log(`try error ${error}`);
       setShowErrorAlert(true);
-       
     }
   };
 
   return (
     <div>
-      {isLoggedIn ?
-      <Container maxWidth="sm">
-      <Box
-        component={"form"}
-        onSubmit={handleSubmit(onSubmit)}
-        sx={{
-          "& .MuiTextField-root": { m: 1, width: "25ch" },
-        }}
-        noValidate
-        autoComplete={"off"}
-      >
-        <Typography variant="h1" gutterBottom></Typography>
-        <Typography variant="h3" gutterBottom>
-          Enregistrez l'individu
-        </Typography>
-        <Typography variant="h6" component="h6" gutterBottom>
-          1. Entrez les Noms de l'individu
-        </Typography>
-        <NameForm register={register} errors={errors}></NameForm>
-        <Typography variant="h6" component="h6" gutterBottom>
-          2. Entrez le Sexe l'individu
-        </Typography>
-        <SexForm></SexForm>
-        <Typography variant="h6" component="h6" gutterBottom>
-          3. Entrez la Date de Naissance de l'individu
-        </Typography>
-        <DateOfBirthForm register={register}></DateOfBirthForm>
-        <Typography variant="h6" component="h6" gutterBottom>
-          4. Entrez l'Adresse de l'individu
-        </Typography>
-        <DynamicAddressForm
-          register={register}
-          errors={errors}
-        ></DynamicAddressForm>
-        <Typography variant="h6" component="h6" gutterBottom>
-          5. Entrez les Origines de l'individu
-        </Typography>
-        <OriginForm register={register} errors={errors}></OriginForm>
-        <Typography variant="h6" component="h6" gutterBottom>
-          6. Entrez les Phénotypes de l'individu
-        </Typography>
-        <PhenotypeForm register={register} errors={errors}></PhenotypeForm>
-        <Typography variant="h6" component="h6" gutterBottom>
-          7. Importez la photo de l'individu
-        </Typography>
-        <PhotoForm></PhotoForm>
-        {!spinRegister ? (
-          <Button
-            type="submit"
-            fullWidth
-            variant="contained"
-            sx={{ mt: 3, mb: 2 }}
+      {isLoggedIn ? (
+        <Container maxWidth="sm">
+          <Box
+            component={"form"}
+            onSubmit={handleSubmit(onSubmit)}
+            sx={{
+              "& .MuiTextField-root": { m: 1, width: "25ch" },
+            }}
+            noValidate
+            autoComplete={"off"}
           >
-            Enregistrez l'individu
-          </Button>
-        ) : (
-          <LoadingButton
-            loading
-            fullWidth
-            loadingPosition="start"
-            startIcon={<SaveIcon />}
-            variant="contained"
-            sx={{ mt: 3, mb: 2 }}
-          >
-            Enregistrez l'individu
-          </LoadingButton>
-        )}
-        {showAlert && (
-          <Alert severity="success">
-            <AlertTitle>Enregistrement réussite</AlertTitle>
-            Enregistrement réussite — <strong>ok!</strong>
-          </Alert>
-        )}
-        {showErrorAlert && (
-          <Alert severity="error">
-            <AlertTitle>L'enregistrement a échoué</AlertTitle>
-            L'enregistrement a échoué — <strong>réessayez</strong>
-          </Alert>
-        )}
-      </Box>
-    </Container>
-      : 'Cannot load this page'
-      }
+            <Typography variant="h1" gutterBottom></Typography>
+            <Typography variant="h3" gutterBottom>
+              Enregistrez l'individu
+            </Typography>
+            <Typography variant="h6" component="h6" gutterBottom>
+              1. Entrez les Noms de l'individu
+            </Typography>
+            <NameForm register={register} errors={errors}></NameForm>
+            <Typography variant="h6" component="h6" gutterBottom>
+              2. Entrez le Sexe l'individu
+            </Typography>
+            <SexForm></SexForm>
+            <Typography variant="h6" component="h6" gutterBottom>
+              3. Entrez la Date de Naissance de l'individu
+            </Typography>
+            <DateOfBirthForm register={register}></DateOfBirthForm>
+            <Typography variant="h6" component="h6" gutterBottom>
+              4. Entrez l'Adresse de l'individu
+            </Typography>
+            <DynamicAddressForm
+              register={register}
+              errors={errors}
+            ></DynamicAddressForm>
+            <Typography variant="h6" component="h6" gutterBottom>
+              5. Entrez les Origines de l'individu
+            </Typography>
+            <OriginForm register={register} errors={errors}></OriginForm>
+            <Typography variant="h6" component="h6" gutterBottom>
+              6. Entrez les Phénotypes de l'individu
+            </Typography>
+            <PhenotypeForm register={register} errors={errors}></PhenotypeForm>
+            <Typography variant="h6" component="h6" gutterBottom>
+              7. Importez la photo de l'individu
+            </Typography>
+            <PhotoForm></PhotoForm>
+            {!spinRegister ? (
+              <Button
+                type="submit"
+                fullWidth
+                variant="contained"
+                sx={{ mt: 3, mb: 2 }}
+              >
+                Enregistrez l'individu
+              </Button>
+            ) : (
+              <LoadingButton
+                loading
+                fullWidth
+                loadingPosition="start"
+                startIcon={<SaveIcon />}
+                variant="contained"
+                sx={{ mt: 3, mb: 2 }}
+              >
+                Enregistrez l'individu
+              </LoadingButton>
+            )}
+            {showAlert && (
+              <Alert severity="success">
+                <AlertTitle>Enregistrement réussite</AlertTitle>
+                Enregistrement réussite — <strong>ok!</strong>
+              </Alert>
+            )}
+            {showErrorAlert && (
+              <Alert severity="error">
+                <AlertTitle>L'enregistrement a échoué</AlertTitle>
+                L'enregistrement a échoué — <strong>réessayez</strong>
+              </Alert>
+            )}
+          </Box>
+        </Container>
+      ) : (
+        "Cannot load this page"
+      )}
     </div>
-    
   );
 }
