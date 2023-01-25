@@ -647,7 +647,6 @@ function mapdata(data) {
   phenotype.setWeight(data.Poids);
 
   var biometric = new Biometric().setFingerPrint("bbbbbbbbbbb");
-  console.log(globalPicture);
   biometric.setPhotos(globalPicture);
   biometric.setPhotoType(globalPhotoType);
 
@@ -682,7 +681,6 @@ function mapdata(data) {
   personInfoRequest.setSex(sex);
   personInfoRequest.setQrcode(qrcode);
 
-  console.log(qrcode);
 
   console.log(personInfoRequest);
 
