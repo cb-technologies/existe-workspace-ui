@@ -53,14 +53,6 @@ const tiers = [
   },
 ];
 
-// async componentDidMount() {
-//   try {
-//     const user = await Auth.currentAuthenticatedUser();
-//     this.setState({ isLoggedIn: true, isLoading: false });
-//   } catch (err) {
-//     this.setState({ isLoggedIn: false, isLoading: false });
-//   }
-// }
 function PrivateComponent() {
   return (
     <div>
@@ -84,17 +76,16 @@ function OrientationContent() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
 
   useEffect(() => {
-    const intervalId = setInterval(async () => {
+    async function checkAuth() {
       try {
-        await Auth.currentAuthenticatedUser();
+        const session = await Auth.currentSession();
         setIsLoggedIn(true);
       } catch {
         setIsLoggedIn(false);
-        navigateTo(URLExistPath.SignInPage, "to_signIn");
+        navigateTo(URLExistPath.SignInPage, "to_sign_in");
       }
-    }, 1000);
-
-    return () => clearInterval(intervalId);
+    }
+    checkAuth();
   }, []);
 
   if (isLoggedIn) {
@@ -171,8 +162,7 @@ function OrientationContent() {
         </Container>
       </React.Fragment>
     );
-  }else {
-    
+  }else{
     return(
       <div>
       'Cannot load this page'
