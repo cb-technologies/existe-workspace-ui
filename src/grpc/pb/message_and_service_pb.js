@@ -4018,7 +4018,8 @@ proto.pb.AgentInfo.toObject = function(includeInstance, msg) {
     prenom: jspb.Message.getFieldWithDefault(msg, 2, ""),
     email: jspb.Message.getFieldWithDefault(msg, 3, ""),
     password: jspb.Message.getFieldWithDefault(msg, 4, ""),
-    role: jspb.Message.getFieldWithDefault(msg, 5, "")
+    phonenumber: jspb.Message.getFieldWithDefault(msg, 5, ""),
+    role: jspb.Message.getFieldWithDefault(msg, 6, "")
   };
 
   if (includeInstance) {
@@ -4072,6 +4073,10 @@ proto.pb.AgentInfo.deserializeBinaryFromReader = function(msg, reader) {
       msg.setPassword(value);
       break;
     case 5:
+      var value = /** @type {string} */ (reader.readString());
+      msg.setPhonenumber(value);
+      break;
+    case 6:
       var value = /** @type {string} */ (reader.readString());
       msg.setRole(value);
       break;
@@ -4132,10 +4137,17 @@ proto.pb.AgentInfo.serializeBinaryToWriter = function(message, writer) {
       f
     );
   }
-  f = message.getRole();
+  f = message.getPhonenumber();
   if (f.length > 0) {
     writer.writeString(
       5,
+      f
+    );
+  }
+  f = message.getRole();
+  if (f.length > 0) {
+    writer.writeString(
+      6,
       f
     );
   }
@@ -4215,10 +4227,10 @@ proto.pb.AgentInfo.prototype.setPassword = function(value) {
 
 
 /**
- * optional string Role = 5;
+ * optional string phonenumber = 5;
  * @return {string}
  */
-proto.pb.AgentInfo.prototype.getRole = function() {
+proto.pb.AgentInfo.prototype.getPhonenumber = function() {
   return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 5, ""));
 };
 
@@ -4227,8 +4239,26 @@ proto.pb.AgentInfo.prototype.getRole = function() {
  * @param {string} value
  * @return {!proto.pb.AgentInfo} returns this
  */
-proto.pb.AgentInfo.prototype.setRole = function(value) {
+proto.pb.AgentInfo.prototype.setPhonenumber = function(value) {
   return jspb.Message.setProto3StringField(this, 5, value);
+};
+
+
+/**
+ * optional string Role = 6;
+ * @return {string}
+ */
+proto.pb.AgentInfo.prototype.getRole = function() {
+  return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 6, ""));
+};
+
+
+/**
+ * @param {string} value
+ * @return {!proto.pb.AgentInfo} returns this
+ */
+proto.pb.AgentInfo.prototype.setRole = function(value) {
+  return jspb.Message.setProto3StringField(this, 6, value);
 };
 
 
