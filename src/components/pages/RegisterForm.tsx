@@ -22,7 +22,8 @@ import {
   Names,
   PersonInfoRequest,
   Phenotype,
-  Sex,
+  QRCode,
+  Sex
 } from "../../grpc/pb/message_and_service_pb";
 import { ExistService } from "../../store/exist_api_call";
 import useHistoryState from "../../hooks/useHistoryState";
@@ -33,9 +34,11 @@ import Alert from "@mui/material/Alert";
 import AlertTitle from "@mui/material/AlertTitle";
 import { MenuItem, Stack } from "@mui/material";
 import { zipCodeData } from "../../constants/zipCodeKinshasa";
+import { secret } from "../../constants/encryptionSecrets";
 import { FieldErrorsImpl } from "react-hook-form";
 import { SexEnum } from "../../grpc/pb/message_and_service_pb";
-import { Auth } from "aws-amplify";
+import { Auth } from 'aws-amplify';
+import { encrypt } from 'n-krypta';
 
 var globalDay: string;
 var globalMonth: string;
@@ -254,46 +257,61 @@ export function DynamicAddressForm({ register, errors }: AddressPropsType) {
   const [dNumero, setDNumero] = useHistoryState("Numero", "");
   const [dReference, setDReference] = useHistoryState("Reference", "");
 
+  const handleProvinceChange = (e: any) => {
+    setProvince(e.target.value)
+    setCommune("")
+    setQuartier("")
+    setZipCode("")
+  }
+
+  const handleCommuneChange = (e: any) => {
+    setCommune(e.target.value)
+    setQuartier("")
+    setZipCode("")
+  }
+  
+  const handleQuartierChange = (e: any) => {
+    setQuartier(e.target.value)
+    setZipCode("")
+  }
+
+  
   return (
     <div>
       <TextField
         {...register("ProvinceAddress")}
-        select
+      select
         value={selectedProvince}
-        helperText={errors.ProvinceAddress?.message}
-        error={!!errors.ProvinceAddress}
-        onChange={(e) => {
-          setProvince(e.target.value);
-        }}
-        label="Province"
-        id="select-province"
-      >
-        {Object.getOwnPropertyNames(zipCodeData).map((value) => (
-          <MenuItem key={value} value={value}>
-            {value}
-          </MenuItem>
-        ))}
-      </TextField>
+      onChange={(e) => {
+        handleProvinceChange(e)
+      }}
+      label="Province"
+      id="select-province"
+    >
+      {zipCodeData && Object.getOwnPropertyNames(zipCodeData!).map((value) => (
+        <MenuItem key={value} value={value}>
+          {value}
+        </MenuItem>
+      ))}
+    </TextField>
       <TextField
         {...register("Commune")}
-        select
-        value={selectedCommune}
-        helperText={errors.Commune?.message}
-        error={!!errors.Commune}
-        label="Commune"
-        onChange={(e) => {
-          setCommune(e.target.value);
-        }}
-      >
-        {selectedProvince &&
-          Object.getOwnPropertyNames(zipCodeData[selectedProvince]!).map(
-            (value) => (
-              <MenuItem key={value} value={value}>
-                {value}
-              </MenuItem>
-            )
-          )}
-      </TextField>
+      select
+      value={selectedCommune}
+      label="Commune"
+      onChange={(e) => {
+                handleCommuneChange(e)
+              }}
+    >
+      {selectedProvince &&
+        Object.getOwnPropertyNames(zipCodeData![selectedProvince]!).map(
+          (value) => (
+            <MenuItem key={value} value={value}>
+              {value}
+            </MenuItem>
+          )
+        )}
+    </TextField>
       <TextField
         {...register("Quartier")}
         select
@@ -302,13 +320,13 @@ export function DynamicAddressForm({ register, errors }: AddressPropsType) {
         error={!!errors.Quartier}
         label="Quartier"
         onChange={(e) => {
-          setQuartier(e.target.value);
-        }}
+                handleQuartierChange(e)
+              }}
       >
         {selectedCommune &&
           selectedProvince &&
           Object.getOwnPropertyNames(
-            zipCodeData[selectedProvince]![selectedCommune]!
+            zipCodeData![selectedProvince]![selectedCommune]!
           ).map((value) => (
             <MenuItem key={value} value={value}>
               {value}
@@ -323,59 +341,54 @@ export function DynamicAddressForm({ register, errors }: AddressPropsType) {
         value={selectedZipCode}
         label="Code Postal"
         onChange={(e) => {
-          setZipCode(e.target.value);
-        }}
-      >
-        {selectedCommune && selectedProvince && selectedQuartier && (
-          <MenuItem
-            key={
-              zipCodeData[selectedProvince]![selectedCommune]![selectedQuartier]
-            }
-            value={
-              zipCodeData[selectedProvince]![selectedCommune]![
-                selectedQuartier
-              ]!
-            }
-          >
-            {
-              zipCodeData[selectedProvince]![selectedCommune]![
-                selectedQuartier
-              ]!
-            }
-          </MenuItem>
-        )}
-      </TextField>
-      <TextField
-        {...register("Ville")}
-        id="outlined-ville-input"
-        label="Ville"
-        helperText={errors.Ville?.message}
-        error={!!errors.Ville}
-        required
-        value={dVille}
-        onChange={(e) => setDVille(e.target.value)}
-      />
-      <TextField
-        {...register("Avenue")}
-        id="outlined-avenue-input"
-        label="Avenue"
-        helperText={errors.Avenue?.message}
-        error={!!errors.Avenue}
-        required
-        value={dAvenue}
-        onChange={(e) => setDAvenue(e.target.value)}
-      />
-      <TextField
-        {...register("Numero")}
-        id="outlined-numero-input"
-        label="Numero"
-        helperText={errors.Numero?.message}
-        error={!!errors.Numero}
-        required
-        value={dNumero}
-        onChange={(e) => setDNumero(e.target.value)}
-      />
-      <TextField
+                setZipCode(e.target.value)
+              }}
+    
+        >
+          {selectedCommune && selectedProvince && selectedQuartier && (
+            <MenuItem
+              key={
+                zipCodeData![selectedProvince]![selectedCommune]![selectedQuartier]!
+              }
+              value={
+                zipCodeData![selectedProvince]![selectedCommune]![selectedQuartier]!
+              }
+            >
+              {zipCodeData![selectedProvince]![selectedCommune]![selectedQuartier]!}
+            </MenuItem>
+          )}
+        </TextField>
+        <TextField
+          {...register("Ville")}
+          id="outlined-ville-input"
+          label="Ville"
+          helperText={errors.Ville?.message}
+          error={!!errors.Ville}
+          required
+          value={dVille}
+          onChange={(e) => setDVille(e.target.value)}
+        />
+        <TextField
+          {...register("Avenue")}
+          id="outlined-avenue-input"
+          label="Avenue"
+          helperText={errors.Avenue?.message}
+          error={!!errors.Avenue}
+          required
+          value={dAvenue}
+          onChange={(e) => setDAvenue(e.target.value)}
+        />
+        <TextField
+          {...register("Numero")}
+          id="outlined-numero-input"
+          label="Numero"
+          helperText={errors.Numero?.message}
+          error={!!errors.Numero}
+          required
+          value={dNumero}
+          onChange={(e) => setDNumero(e.target.value)}
+        />
+        <TextField
         {...register("Reference")}
         id="outlined-reference-input"
         label="Reference"
@@ -621,7 +634,7 @@ function PhotoForm() {
 
 // @ts-ignore
 function mapdata(data) {
-  var names = new Names().setNom(data.Nom);
+  var names = new Names().setNom(data.Nom.toUpperCase());
   names.setPrenom(data.Prenom.toUpperCase());
   names.setMiddleNamesList([data.PostNom.toUpperCase()]);
 
@@ -651,7 +664,14 @@ function mapdata(data) {
   address.setZipCode(data.CodePostal.toString());
   address.setReference(data.Reference.toUpperCase());
 
-  var sex = new Sex().setSex(globalSex);
+  var sex = new Sex().setSex(globalSex)
+
+  var urlHead = secret.URLHead;
+  var urlBodyNames = data.Nom.toUpperCase() + "$" + data.Prenom.toUpperCase() + "$" + data.PostNom.toUpperCase();
+  var urlBodyDOB = + globalDay + "$" + globalMonth + "$" + globalYear;
+  var encryptedQRCodeUrl = encrypt(urlBodyNames + "/" + urlBodyDOB, secret.QRCodeSecret);
+  var completeUrl = urlHead + "/" + encryptedQRCodeUrl
+  var qrcode = new QRCode().setQrcode(completeUrl)
 
   var personInfoRequest = new PersonInfoRequest().setNames(names);
   personInfoRequest.setAddress(address);
@@ -660,6 +680,9 @@ function mapdata(data) {
   personInfoRequest.setOrigins(origins);
   personInfoRequest.setPhenotypes(phenotype);
   personInfoRequest.setSex(sex);
+  personInfoRequest.setQrcode(qrcode);
+
+  console.log(qrcode);
 
   console.log(personInfoRequest);
 

@@ -27,6 +27,7 @@
     "dayjs": "^1.11.6",
     "google-protobuf": "^3.21.2",
     "grpc-web": "^1.4.2",
+    "n-krypta": "^1.0.6",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-hook-form": "^7.38.0",
