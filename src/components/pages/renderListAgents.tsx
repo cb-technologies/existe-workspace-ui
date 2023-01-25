@@ -123,7 +123,6 @@ export default function CustomizedTables() {
             );
             setRows(holder_array)
             console.log(rows.length);
-
         }
 
         // setUsers(data.Users)
@@ -149,6 +148,7 @@ export default function CustomizedTables() {
       <Table sx={{ minWidth: 700 }} aria-label="customized table">
         <TableHead>
         <TableRow>
+            
             {/* <StyledTableCell>
                 <Typography variant="h6">Title</Typography>
             </StyledTableCell> */}

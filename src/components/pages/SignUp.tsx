@@ -107,6 +107,7 @@ export default function SignUp() {
   const [Prenom, setPrenom] = useHistoryState("Prenom", "");
   const [Email, setEmail] = useHistoryState<any>("Email", '');
   const [Password, setPassword] = useHistoryState("Password", "");
+  const [PhoneNumber, setPhoneNumber] = useHistoryState("1234565", "");
   const [Role, setRole] = useHistoryState("Role", "");
 
   React.useEffect(() => {
@@ -125,6 +126,7 @@ export default function SignUp() {
       .setPrenom(data.Prenom)
       .setEmail(data.Email)
       .setPassword(data.Password)
+      .setPhonenumber(data.Phonenumber)
       .setRole(data.Role);
     setSpinRegister(true);
     try {
@@ -142,12 +144,28 @@ export default function SignUp() {
       // }
       const email = agentInfo.getEmail()
       const password = agentInfo.getPassword()
+
+      let phonenumber =  agentInfo.getPhonenumber()
+      let nom =  agentInfo.getNom()
+      let prenom = agentInfo.getPrenom()
+      let role =  agentInfo.getRole()
+      // const customAttributes = {
+      //   phonenumber: agentInfo.getPhonenumber(),
+      //   nom: agentInfo.getNom(),
+      //   prenom: agentInfo.getPrenom(),
+      //   role: agentInfo.getRole()
+      // };
+
       Auth.signUp({
         username : email,
         password,
         attributes: {
           email,
-          'custom:role': agentInfo.getRole()
+          // ...customAttributes
+          'custom:role': role,
+          'custom:phonenumber': phonenumber,
+          'custom:nom': nom,
+          'custom:prenom': prenom
         },
       })
       .then(async data => {
@@ -183,7 +201,6 @@ export default function SignUp() {
         console.log('error signing up:', err);
         setSuccessful(!succcessful);
       });
-
 
       // ExistService.signUpAgent(agentInfo, null)
       //   // .then(async (value) => {
@@ -285,6 +302,18 @@ export default function SignUp() {
               fullWidth
             />
             <TextField
+              {...register("Phonenumber")}
+              variant="outlined"
+              margin="normal"
+              type="text"
+              label={"Phonenumber"}
+              value={PhoneNumber}
+              onChange={(e) => setPhoneNumber(e.target.value)}
+              helperText={errors.Phonenumber?.message}
+              error={!!errors["Phonenumber"]}
+              fullWidth
+            />
+            <TextField
               {...register("Role")}
               variant="outlined"
               margin="normal"
@@ -325,11 +354,11 @@ export default function SignUp() {
                 S'enregister
               </LoadingButton>
             )}
-            <Grid item>
+            {/* <Grid item>
               <RouterLink to={URLExistPath.SignInPage}>
                 {"Deja enregistré? Connecter vous"}
               </RouterLink>
-            </Grid>
+            </Grid> */}
             {succcessful && (
               <Alert severity="error">
                 <AlertTitle>Erreur!</AlertTitle>
