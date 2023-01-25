@@ -20,7 +20,7 @@ import { URLExistPath } from "../../constants/existUrlPath";
 import { useEffect, useState } from 'react';
 
 const pages = [''];
-const settings = ['Profile', 'Account', 'Orientation', 'Logout'];
+const settings = ['Logout'];
 // const settings = [
 //   {
 //     title: "Profile",
@@ -69,15 +69,7 @@ function ResponsiveAppBar() {
   };
   
   const [isLoggedIn, setIsLoggedIn] = useState(false);
-  // useEffect(() => {
-  //   Auth.currentAuthenticatedUser()
-  //     .then(user => {
-  //       setIsLoggedIn(true);
-  //     })
-  //     .catch(err => {
-  //       setIsLoggedIn(false);
-  //     });
-  // }, []);
+
   useEffect(() => {
     const intervalId = setInterval(async () => {
       try {
@@ -85,7 +77,6 @@ function ResponsiveAppBar() {
         setIsLoggedIn(true);
       } catch {
         setIsLoggedIn(false);
-        // console.log("I am ")
       }
     }, 100);
 
@@ -93,10 +84,9 @@ function ResponsiveAppBar() {
   }, []);
 
   const signOut = async () => {
-    // setAnchorElUser(null);
     try {
       await Auth.signOut();
-      //navigateTo(URLExistPath.SignInPage, "to_siginIn")
+      navigate(URLExistPath.HomePage);
     } catch (error) {
         console.log('error signing out: ', error);
     }
