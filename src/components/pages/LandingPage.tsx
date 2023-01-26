@@ -1,5 +1,7 @@
 import * as React from 'react';
 import Header from "./Header";
+import {CssBaseline, ThemeProvider} from "@mui/material";
+import theme from "../../Theme";
 
 const styles = {
     div: {
@@ -13,7 +15,13 @@ const styles = {
 
 const LandingPage = () => {
     return (
-        <div style={styles.div}><Header/></div>
+        <ThemeProvider theme={theme}>
+            <div style={styles.div}>
+                <CssBaseline/>
+                <Header/>
+            </div>
+        </ThemeProvider>
+
     );
 }
 
