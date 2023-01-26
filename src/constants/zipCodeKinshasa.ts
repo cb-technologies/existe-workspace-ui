@@ -481,7 +481,7 @@ export const zipCodeData: {
         "YAKUBA BELE-BELE": 8310412,
     }
   },
-  "NORD-KIVU": {
+  'NORD-KIVU': {
     GOMA: {
       "LES VOLCANS": 6110101,
       "HIMBI": 6110102,
