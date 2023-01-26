@@ -511,6 +511,12 @@ export class AgentInfo extends jspb.Message {
   getPassword(): string;
   setPassword(value: string): AgentInfo;
 
+  getPhonenumber(): string;
+  setPhonenumber(value: string): AgentInfo;
+
+  getRole(): string;
+  setRole(value: string): AgentInfo;
+
   serializeBinary(): Uint8Array;
   toObject(includeInstance?: boolean): AgentInfo.AsObject;
   static toObject(includeInstance: boolean, msg: AgentInfo): AgentInfo.AsObject;
@@ -525,6 +531,8 @@ export namespace AgentInfo {
     prenom: string,
     email: string,
     password: string,
+    phonenumber: string,
+    role: string,
   }
 }
 
