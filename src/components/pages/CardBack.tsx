@@ -21,6 +21,9 @@ export default function CardBack({ userInfo }: CarteGenerationProps) {
             level="H"
         />
     );
+import QRCode from "qrcode.react";
+import {PersonInfoResponse} from "../../grpc/pb/message_and_service_pb";
+
 
 
     return (
