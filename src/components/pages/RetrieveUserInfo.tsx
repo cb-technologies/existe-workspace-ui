@@ -26,7 +26,7 @@ import {
 import { ExistService } from "../../store/exist_api_call";
 import useHistoryState from "../../hooks/useHistoryState";
 import Container from "@mui/material/Container";
-import { useNavigate, useLocation } from "react-router-dom"; //import the package
+import { useNavigate, useLocation } from "react-router-dom";
 
 var globalDay: string;
 var globalMonth: string;
@@ -190,6 +190,8 @@ export default function RetrieveUserInfo() {
     // console.log(data)
   };
 
+  const [encryptionKey, setEncryptionKey] = useState('');
+
   return (
     <Container maxWidth="sm">
       <Box
@@ -222,6 +224,22 @@ export default function RetrieveUserInfo() {
           Retrouvez le citoyen
           {/* <Route path="/updateUserInfo" element={<UpdateUserForm  UpdateUserFormProps ={dataResposnse} />} /> */}
         </Button>
+      </Box>
+      <div>
+        ----------------------------------------------------------------------------------------------------
+      </div>
+
+      <Box>
+        <Typography textAlign="center" variant="h6" component="h6" gutterBottom>
+          Entrez le QR code encrypté:
+        </Typography>
+        <TextField fullWidth value={encryptionKey} onChange={(e) => setEncryptionKey(e.target.value)}></TextField>
+        <div>
+
+        </div>
+        <Button sx={{mt: 1, ml: 1, mr: 20}} variant="contained" color="primary"> Générer la carte </Button>
+
+        <Button sx={{mt: 1, ml: 1}}  variant="contained" color="primary"> Vérifier la carte </Button>
       </Box>
     </Container>
   );
