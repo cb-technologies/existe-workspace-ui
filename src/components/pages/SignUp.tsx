@@ -149,6 +149,7 @@ export default function SignUp() {
       let nom =  agentInfo.getNom()
       let prenom = agentInfo.getPrenom()
       let role =  agentInfo.getRole()
+      
       // const customAttributes = {
       //   phonenumber: agentInfo.getPhonenumber(),
       //   nom: agentInfo.getNom(),
