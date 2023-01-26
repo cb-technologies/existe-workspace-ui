@@ -91,19 +91,6 @@ export default function SignIn() {
           setError("Email", {message:ExistPrompts.WRONG_EMAIL_OR_PASSWORD})
           setError("Password", {message:ExistPrompts.WRONG_EMAIL_OR_PASSWORD})
         });
-      // signIn(agentSignInInfo)
-      // ExistService.signInAgent(agentSignInInfo, null)
-      //   .then((value) => {
-      //     setSpinRegister(false);
-      //     if (value.getStatus() === 1) {
-      //       navigate(URLExistPath.OrientationPage);
-      //     }
-      //   })
-      //   .catch(() => {
-      //     setSpinRegister(false);
-      //     setError("Email", {message:ExistPrompts.WRONG_EMAIL_OR_PASSWORD})
-      //     setError("Password", {message:ExistPrompts.WRONG_EMAIL_OR_PASSWORD})
-      //   });
     } catch (error) {
       setSpinRegister(true);
       setError("Email", {message:ExistPrompts.WRONG_EMAIL_OR_PASSWORD})

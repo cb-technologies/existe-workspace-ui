@@ -48,19 +48,11 @@ const tiers = [
     buttonText: "Gerer Agents",
     buttonVariant: "outlined",
     icon: ManageAccountsIcon,
-    page: URLExistPath.RetrieveUserInfo,
-    flag: "to_generate",
+    page: URLExistPath.AgentListPage,
+    flag: "to_agent_list",
   },
 ];
 
-// async componentDidMount() {
-//   try {
-//     const user = await Auth.currentAuthenticatedUser();
-//     this.setState({ isLoggedIn: true, isLoading: false });
-//   } catch (err) {
-//     this.setState({ isLoggedIn: false, isLoading: false });
-//   }
-// }
 function PrivateComponent() {
   return (
     <div>
@@ -84,93 +76,101 @@ function OrientationContent() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
 
   useEffect(() => {
-    Auth.currentAuthenticatedUser()
-      .then(user => {
+    async function checkAuth() {
+      try {
+        const session = await Auth.currentSession();
         setIsLoggedIn(true);
-      })
-      .catch(err => {
+      } catch {
         setIsLoggedIn(false);
-      });
+        navigateTo(URLExistPath.SignInPage, "to_sign_in");
+      }
+    }
+    checkAuth();
   }, []);
 
-  return (
-    <div>
-      {isLoggedIn ?
-      <React.Fragment>
-      <GlobalStyles
-        styles={{ ul: { margin: 0, padding: 0, listStyle: "none" } }}
-      />
-      <CssBaseline />
-      <AppBar position="static" color="default" elevation={0}></AppBar>
-
-      <Container
-        disableGutters
-        maxWidth="sm"
-        component="main"
-        sx={{ pt: 8, pb: 6 }}
-      >
-        <Typography
-          variant="h3"
-          align="center"
-          color="text.secondary"
-          component="p"
+  if (isLoggedIn) {
+    return (
+        <React.Fragment>
+        <GlobalStyles
+          styles={{ ul: { margin: 0, padding: 0, listStyle: "none" } }}
+        />
+        <CssBaseline />
+        <AppBar position="static" color="default" elevation={0}></AppBar>
+  
+        <Container
+          disableGutters
+          maxWidth="sm"
+          component="main"
+          sx={{ pt: 8, pb: 6 }}
         >
-          Bienvenue sur le site officiel d'identificantion en RDC
-        </Typography>
-      </Container>
-      <Container disableGutters maxWidth="md" component="main">
-        <Grid container alignItems="center" justifyContent={"center"}>
-          {tiers.map((tier, index) => (
-            <Grid
-              item
-              xs={12}
-              sm={6}
-              md={4}
-              sx={{
-                padding: 1.5,
-              }}
-              key={index}
-            >
-              <Card
+          <Typography
+            variant="h3"
+            align="center"
+            color="text.secondary"
+            component="p"
+          >
+            Bienvenue sur le site officiel d'identificantion en RDC
+          </Typography>
+        </Container>
+        <Container disableGutters maxWidth="md" component="main">
+          <Grid container alignItems="center" justifyContent={"center"}>
+            {tiers.map((tier, index) => (
+              <Grid
+                item
+                xs={12}
+                sm={6}
+                md={4}
                 sx={{
-                  bgcolor: "#d3d3d3",
+                  padding: 1.5,
                 }}
-                onClick={() => {navigateTo(tier.page, tier.flag); console.log(tier.page, tier.flag)}}
+                key={index}
               >
-                <CardHeader />
-                <CardContent
+                <Card
                   sx={{
-                    textAlign: "center",
+                    bgcolor: "#d3d3d3",
                   }}
+                  onClick={() => {navigateTo(tier.page, tier.flag); console.log(tier.page, tier.flag)}}
                 >
-                  <ul>
-                    <tier.icon
-                      style={{ fontSize: 100, alignItems: "center" }}
-                    />
-                  </ul>
-                </CardContent>
-                <CardActions>
-                  <Button
-                    fullWidth
+                  <CardHeader />
+                  <CardContent
                     sx={{
-                      "&.MuiButton-text": { color: "#1E0909" },
+                      textAlign: "center",
                     }}
-                    value={tier.page}
-                    onClick={() => {navigateTo(tier.page, tier.flag); console.log(tier.page, tier.flag)}}
                   >
-                    {tier.buttonText}
-                  </Button>
-                </CardActions>
-              </Card>
-            </Grid>
-          ))}
-        </Grid>
-      </Container>
-    </React.Fragment>
-       : 'Cannot load this page'}
+                    <ul>
+                      <tier.icon
+                        style={{ fontSize: 100, alignItems: "center" }}
+                      />
+                    </ul>
+                  </CardContent>
+                  <CardActions>
+                    <Button
+                      fullWidth
+                      sx={{
+                        "&.MuiButton-text": { color: "#1E0909" },
+                      }}
+                      value={tier.page}
+                      onClick={() => {navigateTo(tier.page, tier.flag); console.log(tier.page, tier.flag)}}
+                    >
+                      {tier.buttonText}
+                    </Button>
+                  </CardActions>
+                </Card>
+              </Grid>
+            ))}
+          </Grid>
+        </Container>
+      </React.Fragment>
+    );
+  }else{
+    return(
+      <div>
+      'Cannot load this page'
     </div>
+    );
     
-  );
+  }
+  
 }
 export default function Orientation() {
 

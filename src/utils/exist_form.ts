@@ -19,5 +19,6 @@ export interface AgentSignUpFormInput{
     Prenom: string;
     Email: string;
     Password: string;
+    Phonenumber: string;
     Role: string; 
 }

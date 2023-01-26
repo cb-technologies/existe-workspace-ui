@@ -10,5 +10,6 @@ export const URLExistPath = {
     ConfirmSignUpPage: "/confirmSignUpPage",
     ResendCodePage: "/resendCodePage",
     UserProfilePage: "/userProfilePage",
+    AgentListPage: "/listAgent",
     UndefinedPage: "*"
 } as const;

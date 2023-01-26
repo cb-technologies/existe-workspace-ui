@@ -103,13 +103,13 @@ const Header = () => {
                                 Se Connecter
 
                             </Button>
-                            <Button style={{width: '200px', height: '100px', marginTop: '150px'}}
+                            {/* <Button style={{width: '200px', height: '100px', marginTop: '150px'}}
                                     color="success"
                                     variant="contained"
                                     size="large"
                                     onClick={signUpRouteChange}>
                                 Créer un nouveau compte
-                            </Button>
+                            </Button> */}
 
                         </div>
                     </Box>
