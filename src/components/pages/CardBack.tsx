@@ -1,5 +1,5 @@
 import React from "react";
-import { css } from "aphrodite/no-important";
+import {css} from "aphrodite/no-important";
 import cn from "classnames";
 import styles from "../styles/cardBackStyle";
 import QRCode from 'qrcode.react';
