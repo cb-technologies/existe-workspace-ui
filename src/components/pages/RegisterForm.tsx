@@ -665,12 +665,11 @@ function mapdata(data) {
 
   var sex = new Sex().setSex(globalSex)
 
-  var urlHead = secret.URLHead;
+
   var urlBodyNames = data.Nom.toUpperCase() + "$" + data.Prenom.toUpperCase() + "$" + data.PostNom.toUpperCase();
   var urlBodyDOB = + globalDay + "$" + globalMonth + "$" + globalYear;
   var encryptedQRCodeUrl = encrypt(urlBodyNames + "/" + urlBodyDOB+  "/" + globalSex.toString(), secret.QRCodeSecret);
-  var completeUrl = urlHead + "/" + encryptedQRCodeUrl
-  var qrcode = new QRCode().setQrcode(completeUrl)
+  var qrcode = new QRCode().setQrcode(encryptedQRCodeUrl)
 
   var personInfoRequest = new PersonInfoRequest().setNames(names);
   personInfoRequest.setAddress(address);
