@@ -157,30 +157,6 @@ export default function RetrieveUserInfo() {
   const flag = location.state.flag_to_page;
   // @ts-ignore
   //   function retreiveUser(data): PersonInfoResponse {
-
-
-  // useEffect(() => {
-  //   console.log("arriviO yeba tseng")
-  //   console.log(isLoggedIn)
-  //   async function checkAuth() {
-  //     try {
-  //       const user = await Auth.currentUserInfo();
-  //       console.log("arriving")
-  //       setIsLoggedIn(true);
-  //       setRole(user.attributes['custom:role'])
-  //       setNom(user.attributes['custom:nom'])
-  //       setPrenom(user.attributes['custom:prenom'])
-  //       setPhoneNumber(user.attributes['custom:phonenumber'])
-        
-  //     } catch {
-  //       console.log("Petage")
-  //       setIsLoggedIn(false);
-  //       navigateTo(URLExistPath.SignInPage, "to_sign_in");
-  //     }
-  //   }
-  //   checkAuth();
-  // }, [isLoggedIn]);
-
   function retreiveUser(data): PersonInfoResponse {
     var retreivePersonInfoParameters = retreivemapdata(data);
     console.log("Person Parameter", retreivePersonInfoParameters);
@@ -229,7 +205,7 @@ export default function RetrieveUserInfo() {
     }
     checkAuth();
   }, [isLoggedIn]);
-  
+
 
   const onSubmit = (data: RetrieveFormInput) => {
     setJson(JSON.stringify(data));
@@ -282,5 +258,58 @@ export default function RetrieveUserInfo() {
     </div>
     );
   }
-  
+
+  const [encryptionKey, setEncryptionKey] = useState('');
+
+  return (
+    <Container maxWidth="sm">
+      <Box
+        component={"form"}
+        sx={{
+          "& .MuiTextField-root": { m: 1, width: "25ch" },
+        }}
+        noValidate
+        autoComplete={"off"}
+      >
+        <Typography variant="h1" gutterBottom></Typography>
+        <Typography variant="h6" component="h6" gutterBottom>
+          1. Retrouvez l'individu
+        </Typography>
+        <NameForm register={register} errors={errors}></NameForm>
+        <Typography variant="h6" component="h6" gutterBottom>
+          2. Entrez le Sexe l'individu
+        </Typography>
+        <SexForm></SexForm>
+        <Typography variant="h6" component="h6" gutterBottom>
+          3. Entrez la Date de Naissance de l'individu
+        </Typography>
+        <DateOfBirthForm register={register}></DateOfBirthForm>
+        <Button
+          fullWidth
+          variant="contained"
+          color="primary"
+          onClick={handleSubmit(onSubmit)}
+        >
+          Retrouvez le citoyen
+          {/* <Route path="/updateUserInfo" element={<UpdateUserForm  UpdateUserFormProps ={dataResposnse} />} /> */}
+        </Button>
+      </Box>
+      <div>
+        ----------------------------------------------------------------------------------------------------
+      </div>
+
+      <Box>
+        <Typography textAlign="center" variant="h6" component="h6" gutterBottom>
+          Entrez le QR code encrypté:
+        </Typography>
+        <TextField fullWidth value={encryptionKey} onChange={(e) => setEncryptionKey(e.target.value)}></TextField>
+        <div>
+
+        </div>
+        <Button sx={{mt: 1, ml: 1, mr: 20}} variant="contained" color="primary"> Générer la carte </Button>
+
+        <Button sx={{mt: 1, ml: 1}}  variant="contained" color="primary"> Vérifier la carte </Button>
+      </Box>
+    </Container>
+  );
 }
