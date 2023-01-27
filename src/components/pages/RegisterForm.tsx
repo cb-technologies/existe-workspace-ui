@@ -22,7 +22,7 @@ import {
   Names,
   PersonInfoRequest,
   Phenotype,
-  QRCode,
+  QRCode as QRCodeGrpc,
   Sex
 } from "../../grpc/pb/message_and_service_pb";
 import { ExistService } from "../../store/exist_api_call";
@@ -669,7 +669,7 @@ function mapdata(data) {
   var urlBodyNames = data.Nom.toUpperCase() + "$" + data.Prenom.toUpperCase() + "$" + data.PostNom.toUpperCase();
   var urlBodyDOB = + globalDay + "$" + globalMonth + "$" + globalYear;
   var encryptedQRCodeUrl = encrypt(urlBodyNames + "/" + urlBodyDOB+  "/" + globalSex.toString(), secret.QRCodeSecret);
-  var qrcode = new QRCode().setQrcode(encryptedQRCodeUrl)
+  var qrcodeValue = new QRCodeGrpc().setQrcode(encryptedQRCodeUrl)
 
   var personInfoRequest = new PersonInfoRequest().setNames(names);
   personInfoRequest.setAddress(address);
@@ -678,7 +678,7 @@ function mapdata(data) {
   personInfoRequest.setOrigins(origins);
   personInfoRequest.setPhenotypes(phenotype);
   personInfoRequest.setSex(sex);
-  personInfoRequest.setQrcode(qrcode);
+  personInfoRequest.setQrcode(qrcodeValue);
 
 
   console.log(personInfoRequest);
