@@ -44,14 +44,16 @@ const settings = ['Logout'];
 // ];
 
 
+
+
 function ResponsiveAppBar() {
   const [anchorElNav, setAnchorElNav] = React.useState<null | HTMLElement>(null);
   const [anchorElUser, setAnchorElUser] = React.useState<null | HTMLElement>(null);
 
-
-    const handleOpenUserMenu = (event: React.MouseEvent<HTMLElement>) => {
-        setAnchorElUser(event.currentTarget);
-    };
+  
+  const handleOpenUserMenu = (event: React.MouseEvent<HTMLElement>) => {
+    setAnchorElUser(event.currentTarget);
+  };
 
   const handleCloseNavMenu = () => {
     setAnchorElNav(null);
@@ -65,7 +67,7 @@ function ResponsiveAppBar() {
   const navigateTo = (page: string, flag: string) => {
     navigate(page,{ state: { flag_to_page: flag } });
   };
-
+  
   const [isLoggedIn, setIsLoggedIn] = useState(false);
 
   useEffect(() => {
@@ -90,32 +92,32 @@ function ResponsiveAppBar() {
     }
   };
 
-    return (
-        <AppBar position="static" sx={{color: 'primary.main'}}>
-            <Container maxWidth="xl">
-                <Toolbar disableGutters>
-                    <img
-                        className={css(styles.image15)}
-                        src={require("../../assets/6fc2bb1d52c3f170192b1e6b518914ae.png")}
-                        alt="alt text"
-                    />
-                    <Typography
-                        variant="h6"
-                        noWrap
-                        component="a"
-                        href="/"
-                        sx={{
-                            mr: 2,
-                            display: {xs: 'none', md: 'flex'},
-                            fontFamily: 'monospace',
-                            fontWeight: 700,
-                            letterSpacing: '.3rem',
-                            color: '#FAFAFA',
-                            textDecoration: 'none',
-                        }}
-                    >
-                        REPUBLIQUE DEMOCRATIQUE DU CONGO
-                    </Typography>
+  return (
+    <AppBar position="static" color='transparent'>
+      <Container maxWidth="xl">
+        <Toolbar disableGutters>
+          <img
+                className={css(styles.image15)}
+                src={require("../../assets/6fc2bb1d52c3f170192b1e6b518914ae.png")}
+                alt="alt text"
+              />
+          <Typography
+            variant="h6"
+            noWrap
+            component="a"
+            href="/"
+            sx={{
+              mr: 2,
+              display: { xs: 'none', md: 'flex' },
+              fontFamily: 'monospace',
+              fontWeight: 700,
+              letterSpacing: '.3rem',
+              color: 'inherit',
+              textDecoration: 'none',
+            }}
+          >
+            REPUBLIQUE DEMOCRATIQUE DU CONGO
+          </Typography>
 
           <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>
             {pages.map((page) => (
@@ -166,7 +168,7 @@ function ResponsiveAppBar() {
             null
             }
             </div>}
-
+          
         </Toolbar>
       </Container>
     </AppBar>
