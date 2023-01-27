@@ -1,22 +1,21 @@
 import React from "react";
-import {css} from "aphrodite/no-important";
+import { css } from "aphrodite/no-important";
 import cn from "classnames";
 import styles from "../styles/cardBackStyle";
 import QRCode from "qrcode.react";
 import {PersonInfoResponse} from "../../grpc/pb/message_and_service_pb";
 
-
 type CarteGenerationProps = {
     userInfo: PersonInfoResponse.AsObject;
 };
 
-export default function CardBack({userInfo}: CarteGenerationProps) {
+export default function CardBack({ userInfo }: CarteGenerationProps) {
 
     const qrCode = (
         <QRCode
             id="qrCodeId"
             size={100}
-            value={"https://existedrc.com&=" + userInfo.names?.nom + userInfo.names?.middleNamesList + userInfo.names?.prenom + userInfo.dateOfBirth}
+            value={String(userInfo?.qrcode?.qrcode)}
             bgColor="white"
             fgColor="black"
             level="H"
@@ -81,7 +80,6 @@ export default function CardBack({userInfo}: CarteGenerationProps) {
                     alt="alt text"
                 />
             </div>
-z
             <div className={css(styles.col)}>
                 <div className={css(styles.col__item)}>
                     {/*<img*/}
