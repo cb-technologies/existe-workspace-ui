@@ -13,6 +13,8 @@ export default function CardGenerationPage() {
     <Container >
       <Box sx={{ my: 8, width: 300}}>
         <CarteGeneration userInfo={userInfo} />
+      </Box>
+      <Box>
         <Link to="/" style={{ textDecoration: "none" }}>
           <Button variant="contained">Go Back</Button>
         </Link>

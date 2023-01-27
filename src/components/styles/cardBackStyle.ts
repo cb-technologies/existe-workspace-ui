@@ -119,8 +119,8 @@ const styles = StyleSheet.create({
     objectFit: "contain",
     objectPosition: "center top",
     position: "absolute",
-    top: 76,
-    left: 78,
+    top: 100,
+    left: 100,
   },
   col: {
     display: "flex",
