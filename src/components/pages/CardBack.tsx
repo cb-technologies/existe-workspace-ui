@@ -22,35 +22,35 @@ export default function CardBack({ userInfo }: CarteGenerationProps) {
         />
     );
 
-export default function CardBack() {
-  return (
-    <div className={cn(css(styles.root), "back")}>
-      <img
-        className={css(styles.decorator)}
-        src={require("../../assets/card_generation/3197f071edab45bd1a2c78e6f5977627.png")}
-        alt="alt text"
-      />
-      <img
-        className={css(styles.image2)}
-        src={require("../../assets/card_generation/9c8cd3bee56ae6c3dfb50886f3cf5958.png")}
-        alt="alt text"
-      />
-      <img
-        className={css(styles.content_box)}
-        src={require("../../assets/card_generation/e0c59cb92ee3b13dcee2a69663ef2b61.png")}
-        alt="alt text"
-      />
-      <img
-        className={css(styles.image3)}
-        src={require("../../assets/card_generation/9b7a198a28de8feae8d977a364964327.png")}
-        alt="alt text"
-      />
-      {/* <h5 className={css(styles.highlights1_box)}> */}
-      <h5>
-        <div className={css(styles.highlights1)}>
-          <span className={css(styles.highlights1_span0)}>Existe LLC </span>
-          <span className={css(styles.highlights1_span1)}>
-            <br />
+
+    return (
+        <div className={cn(css(styles.root), "back")}>
+            <img
+                className={css(styles.decorator)}
+                src={require("../../assets/card_generation/3197f071edab45bd1a2c78e6f5977627.png")}
+                alt="alt text"
+            />
+            <img
+                className={css(styles.image2)}
+                src={require("../../assets/card_generation/9c8cd3bee56ae6c3dfb50886f3cf5958.png")}
+                alt="alt text"
+            />
+            <img
+                className={css(styles.content_box)}
+                src={require("../../assets/card_generation/e0c59cb92ee3b13dcee2a69663ef2b61.png")}
+                alt="alt text"
+            />
+            <img
+                className={css(styles.image3)}
+                src={require("../../assets/card_generation/9b7a198a28de8feae8d977a364964327.png")}
+                alt="alt text"
+            />
+            {/* <h5 className={css(styles.highlights1_box)}> */}
+            <h5>
+                <div className={css(styles.highlights1)}>
+                    <span className={css(styles.highlights1_span0)}>Existe LLC </span>
+                    <span className={css(styles.highlights1_span1)}>
+            <br/>
             Rep. Dem du Congo
             <br/>
             2025
@@ -80,6 +80,7 @@ export default function CardBack() {
                     alt="alt text"
                 />
             </div>
+
             <div className={css(styles.col)}>
                 <div className={css(styles.col__item)}>
                     {/*<img*/}
