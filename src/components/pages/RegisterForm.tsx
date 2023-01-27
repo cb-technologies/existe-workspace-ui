@@ -669,7 +669,7 @@ function mapdata(data) {
   var urlBodyNames = data.Nom.toUpperCase() + "$" + data.Prenom.toUpperCase() + "$" + data.PostNom.toUpperCase();
   var urlBodyDOB = + globalDay + "$" + globalMonth + "$" + globalYear;
   var encryptedQRCodeUrl = encrypt(urlBodyNames + "/" + urlBodyDOB+  "/" + globalSex.toString(), secret.QRCodeSecret);
-  var qrcodeValue = new QRCodeGrpc().setQrcode(encryptedQRCodeUrl)
+  var qrcodeValue = new QRCodeGrpc().setQrcode(encryptedQRCodeUrl);
 
   var personInfoRequest = new PersonInfoRequest().setNames(names);
   personInfoRequest.setAddress(address);
