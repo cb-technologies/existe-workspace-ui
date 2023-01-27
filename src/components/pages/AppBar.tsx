@@ -97,12 +97,12 @@ function ResponsiveAppBar() {
 
           {/* in case loggedIn */}
           {<div>
-            {authContext.isAuthenticated?
+            {isLoggedIn?
             <Box sx={{ flexGrow: 0 }}>
             <Tooltip title="Open settings">
               <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
                 {/* <Avatar alt="Elie Sharp" src={require("../../assets/ac0405c429c52917ebae5b1e11459baf.png")}/> */}
-                <Avatar alt={nom} src="/static/images/avatar/1.jpg"/>
+                <Avatar alt="Elie Sharp" src="/static/images/avatar/1.jpg"/>
               </IconButton>
             </Tooltip>
             <Menu
@@ -122,7 +122,7 @@ function ResponsiveAppBar() {
               onClose={handleCloseUserMenu}
             >
               {settings.map((setting) => (
-                <MenuItem key={setting} onClick={authContext.logout}>
+                <MenuItem key={setting} onClick={signOut}>
                   <Typography textAlign="center">{setting}</Typography>
                 </MenuItem>
               ))}
@@ -133,9 +133,9 @@ function ResponsiveAppBar() {
             }
             </div>}
 
-        </Toolbar>
-      </Container>
-    </AppBar>
+          </Toolbar>
+        </Container>
+      </AppBar>
   );
 }
 export default ResponsiveAppBar;
