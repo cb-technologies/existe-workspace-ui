@@ -20,7 +20,7 @@ const pages = [''];
 const settings = ['Logout'];
 
 function ResponsiveAppBar() {
-  const setAnchorElNav = React.useState<null | HTMLElement>(null);
+  const [anchorElNav, setAnchorElNav] = React.useState<null | HTMLElement>(null);
   const [anchorElUser, setAnchorElUser] = React.useState<null | HTMLElement>(null);
 
   
@@ -37,7 +37,7 @@ function ResponsiveAppBar() {
 
   const authContext = React.useContext(AuthContext);
 
-  const nom = useState(authContext.user?.attributes['custom:nom']);
+  const [nom] = useState(authContext.user?.attributes['custom:nom']);
 
 
   return (
