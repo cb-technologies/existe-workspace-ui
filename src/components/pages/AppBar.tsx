@@ -18,7 +18,6 @@ import { Auth } from 'aws-amplify';
 import { Navigate, useNavigate } from 'react-router-dom';
 import { URLExistPath } from "../../constants/existUrlPath";
 import { useEffect, useState } from 'react';
-import {CssBaseline} from "@mui/material";
 
 const pages = [''];
 const settings = ['Logout'];
@@ -51,7 +50,7 @@ function ResponsiveAppBar() {
   const [anchorElNav, setAnchorElNav] = React.useState<null | HTMLElement>(null);
   const [anchorElUser, setAnchorElUser] = React.useState<null | HTMLElement>(null);
 
-
+  
   const handleOpenUserMenu = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorElUser(event.currentTarget);
   };
@@ -70,110 +69,154 @@ function ResponsiveAppBar() {
   };
   
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [role, setRole] = useState("");
+  const [phoneNumber, setPhoneNumber] = useState("");
+  const [nom, setNom] = useState("");
+  const [prenom, setPrenom] = useState("");
+  const [user, setUser] = useState(null);
+
+  // Auth.currentAuthenticatedUser().then(user => setUser(user))
+  //   .catch(() => setUser(null));
+
+  // Auth.onAuthUIStateChange((nextAuthState, authData) => {
+  //     if (nextAuthState === 'signedIn') {
+  //       // the user is signed in
+  //       setUser(authData.user)
+  //     } else if (nextAuthState === 'signedOut') {
+  //       // the user is signed out
+  //       setUser(null)
+  //     }
+  // });
+
+  // Auth.currentAuthenticatedUser()
+  // .then(user => {
+  //   console.log(user)
+  //   setIsLoggedIn(true);
+  //   setRole(user.attributes['custom:role'])
+  //   setNom(user.attributes['custom:nom'])
+  //   setPrenom(user.attributes['custom:prenom'])
+  //   setPhoneNumber(user.attributes['custom:phonenumber'])
+  // })
+  // .catch(err => {
+  //   console.log(err)
+  //   console.log("Petage")
+  //   setIsLoggedIn(false);
+  //   navigateTo(URLExistPath.SignInPage, "to_sign_in");
+  // });
+
+  // Auth.onAuthStateChange(user => {
+  //   if (user) {
+  //     console.log('User is signed in')
+  //   } else {
+  //     console.log('User is signed out')
+  //   }
+  // })
 
   useEffect(() => {
-    const intervalId = setInterval(async () => {
+    console.log("arriviO yeba tseng")
+    console.log(isLoggedIn)
+    async function checkAuth() {
       try {
-        await Auth.currentAuthenticatedUser();
+        const user = await Auth.currentUserInfo();
+        console.log("arriving")
         setIsLoggedIn(true);
       } catch {
+        console.log("Petage")
         setIsLoggedIn(false);
       }
-    }, 100);
-
-    return () => clearInterval(intervalId);
-  }, []);
+    }
+    checkAuth();
+  }, [isLoggedIn]);
 
   const signOut = async () => {
     try {
       await Auth.signOut();
       navigate(URLExistPath.HomePage);
     } catch (error) {
-      console.log('error signing out: ', error);
+        console.log('error signing out: ', error);
     }
   };
 
   return (
-      <AppBar position="static" color='transparent'>
-        <CssBaseline/>
-        <Container maxWidth="xl">
-          <Toolbar disableGutters>
-            <img
+    <AppBar position="static" color='transparent'>
+      <Container maxWidth="xl">
+        <Toolbar disableGutters>
+          <img
                 className={css(styles.image15)}
                 src={require("../../assets/6fc2bb1d52c3f170192b1e6b518914ae.png")}
                 alt="alt text"
-            />
-            <Typography
-                variant="h6"
-                noWrap
-                component="a"
-                href="/"
-                sx={{
-                  mr: 2,
-                  display: { xs: 'none', md: 'flex' },
-                  fontFamily: 'monospace',
-                  fontWeight: 700,
-                  letterSpacing: '.3rem',
-                  color: 'inherit',
-                  textDecoration: 'none',
-                }}
+              />
+          <Typography
+            variant="h6"
+            noWrap
+            component="a"
+            href="/"
+            sx={{
+              mr: 2,
+              display: { xs: 'none', md: 'flex' },
+              fontFamily: 'monospace',
+              fontWeight: 700,
+              letterSpacing: '.3rem',
+              color: 'inherit',
+              textDecoration: 'none',
+            }}
+          >
+            REPUBLIQUE DEMOCRATIQUE DU CONGO
+          </Typography>
+
+          <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>
+            {pages.map((page) => (
+              <Button
+                key={page}
+                onClick={handleCloseNavMenu}
+                sx={{ my: 2, color: 'white', display: 'block' }}
+              >
+                {page}
+              </Button>
+            ))}
+          </Box>
+
+          {/* in case loggedIn */}
+          {<div>
+            {isLoggedIn?
+            <Box sx={{ flexGrow: 0 }}>
+            <Tooltip title="Open settings">
+              <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
+                {/* <Avatar alt="Elie Sharp" src={require("../../assets/ac0405c429c52917ebae5b1e11459baf.png")}/> */}
+                <Avatar alt={nom} src="/static/images/avatar/1.jpg"/>
+              </IconButton>
+            </Tooltip>
+            <Menu
+              sx={{ mt: '45px' }}
+              id="menu-appbar"
+              anchorEl={anchorElUser}
+              anchorOrigin={{
+                vertical: 'top',
+                horizontal: 'right',
+              }}
+              keepMounted
+              transformOrigin={{
+                vertical: 'top',
+                horizontal: 'right',
+              }}
+              open={Boolean(anchorElUser)}
+              onClose={handleCloseUserMenu}
             >
-              REPUBLIQUE DEMOCRATIQUE DU CONGO
-            </Typography>
-
-            <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>
-              {pages.map((page) => (
-                  <Button
-                      key={page}
-                      onClick={handleCloseNavMenu}
-                      sx={{ my: 2, color: 'white', display: 'block' }}
-                  >
-                    {page}
-                  </Button>
+              {settings.map((setting) => (
+                <MenuItem key={setting} onClick={signOut}>
+                  <Typography textAlign="center">{setting}</Typography>
+                </MenuItem>
               ))}
-            </Box>
-
-            {/* in case loggedIn */}
-            {<div>
-              {isLoggedIn?
-                  <Box sx={{ flexGrow: 0 }}>
-                    <Tooltip title="Open settings">
-                      <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
-                        {/* <Avatar alt="Elie Sharp" src={require("../../assets/ac0405c429c52917ebae5b1e11459baf.png")}/> */}
-                        <Avatar alt="Elie Sharp" src="/static/images/avatar/1.jpg"/>
-                      </IconButton>
-                    </Tooltip>
-                    <Menu
-                        sx={{ mt: '45px' }}
-                        id="menu-appbar"
-                        anchorEl={anchorElUser}
-                        anchorOrigin={{
-                          vertical: 'top',
-                          horizontal: 'right',
-                        }}
-                        keepMounted
-                        transformOrigin={{
-                          vertical: 'top',
-                          horizontal: 'right',
-                        }}
-                        open={Boolean(anchorElUser)}
-                        onClose={handleCloseUserMenu}
-                    >
-                      {settings.map((setting) => (
-                          <MenuItem key={setting} onClick={signOut}>
-                            <Typography textAlign="center">{setting}</Typography>
-                          </MenuItem>
-                      ))}
-                    </Menu>
-                  </Box>
-                  :
-                  null
-              }
+            </Menu>
+          </Box>
+            :
+            null
+            }
             </div>}
-
-          </Toolbar>
-        </Container>
-      </AppBar>
+          
+        </Toolbar>
+      </Container>
+    </AppBar>
   );
 }
 export default ResponsiveAppBar;

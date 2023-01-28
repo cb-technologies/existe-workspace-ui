@@ -684,11 +684,20 @@ export default function RegisterForm() {
     navigate(page,{ state: { flag_to_page: flag } });
   };
 
+  const [role, setRole] = useState("");
+  const [phoneNumber, setPhoneNumber] = useState("");
+  const [prenom, setPrenom] = useState("");
+  const [user, setUser] = useState(null);
+  const [nom, setNom] = useState("");
 
   useEffect(() => {
-    Auth.currentAuthenticatedUser()
+    Auth.currentUserInfo()
       .then((user) => {
         setIsLoggedIn(true);
+        setRole(user.attributes['custom:role'])
+        setNom(user.attributes['custom:nom'])
+        setPrenom(user.attributes['custom:prenom'])
+        setPhoneNumber(user.attributes['custom:phonenumber'])
       })
       .catch((err) => {
         setIsLoggedIn(false);
@@ -762,7 +771,7 @@ export default function RegisterForm() {
 
   return (
     <div>
-      {isLoggedIn ? (
+      {isLoggedIn && (role === "Admin" || role === "Registrator") ? (
         <Container maxWidth="sm">
           <Box
             component={"form"}
@@ -844,7 +853,7 @@ export default function RegisterForm() {
           </Box>
         </Container>
       ) : (
-        ""
+        "Desolé, vous n'avez pas acces a cette page."
       )}
     </div>
   );
