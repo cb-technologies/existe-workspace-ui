@@ -83,7 +83,12 @@ export default function SignIn() {
     const email = agentSignInInfo.getEmail();
     const password = agentSignInInfo.getPassword();
     setSpinRegister(true);
-    await authContext.login(email, password);
+    try {
+      await authContext.login(email, password);
+    } catch {
+      setWrongCred(true);
+      setSpinRegister(false);
+    }
     setSpinRegister(false);
     setWrongCred(authContext.wrongCredentials);
     setAuthenticated(authContext.isAuthenticated);
