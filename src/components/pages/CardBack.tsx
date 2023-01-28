@@ -83,11 +83,6 @@ export default function CardBack({ userInfo }: CarteGenerationProps) {
 
             <div className={css(styles.col)}>
                 <div className={css(styles.col__item)}>
-                    {/*<img*/}
-                    {/*  className={css(styles.content_box1)}*/}
-                    {/*  src={require("../../assets/card_generation/8c3449701ef96ed7da2e6f121fb0d9ad.png")}*/}
-                    {/*  alt="alt text"*/}
-                    {/*/>*/}
                     {qrCode}
                 </div>
                 <h5 className={css(styles.highlights11)}>
