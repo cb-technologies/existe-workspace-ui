@@ -168,7 +168,6 @@ function OrientationContent() {
       'Cannot load this page'
     </div>
     );
-    
   }
   
 }

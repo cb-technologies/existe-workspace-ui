@@ -1,5 +1,6 @@
 import * as React from 'react';
 import Header from "./Header";
+import {CssBaseline} from "@mui/material";
 
 const styles = {
     div: {
@@ -8,12 +9,14 @@ const styles = {
         backgroundRepeat: 'no-repeat',
         backgroundSize: 'cover'
     }
-
 }
 
 const LandingPage = () => {
     return (
-        <div style={styles.div}><Header/></div>
+        <div style={styles.div}>
+            <CssBaseline/>
+            <Header/>
+        </div>
     );
 }
 

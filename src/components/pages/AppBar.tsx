@@ -19,6 +19,7 @@ import { Navigate, useNavigate } from 'react-router-dom';
 import { URLExistPath } from "../../constants/existUrlPath";
 import { useEffect, useState } from 'react';
 import { AuthContext } from '../../store/auth_context';
+import {CssBaseline} from "@mui/material";
 
 const pages = [''];
 const settings = ['Logout'];
@@ -103,6 +104,7 @@ function ResponsiveAppBar() {
 
   return (
     <AppBar position="static" color='transparent'>
+      <CssBaseline/>
       <Container maxWidth="xl">
         <Toolbar disableGutters>
           <img

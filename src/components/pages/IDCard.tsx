@@ -17,7 +17,7 @@ export default function IDCard() {
         </Box>
       </Container>
       <Box sx={{ my: 8, width: "80%", boxShadow: 15, borderRadius: 3 }}>
-        <CardBack />
+        <CardBack userInfo={userInfo} />
         <Link to="/" style={{ textDecoration: "none" }}>
           <Button variant="contained">Go Back</Button>
         </Link>
