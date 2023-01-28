@@ -853,7 +853,10 @@ export default function RegisterForm() {
           </Box>
         </Container>
       ) : (
-        "Desolé, vous n'avez pas acces a cette page."
+          <Alert severity="error">
+                <AlertTitle>Accès refusé</AlertTitle>
+                "Désolé, vous n'êtes pas autorisé à accéder à cette page" — <strong>Accès refusé</strong>
+          </Alert>
       )}
     </div>
   );
