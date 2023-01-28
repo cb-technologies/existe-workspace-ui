@@ -27,6 +27,8 @@ import { ExistService } from "../../store/exist_api_call";
 import useHistoryState from "../../hooks/useHistoryState";
 import Container from "@mui/material/Container";
 import { useNavigate, useLocation } from "react-router-dom";
+import { decrypt } from 'n-krypta';
+import { secret } from "../../constants/encryptionSecrets";
 
 var globalDay: string;
 var globalMonth: string;
@@ -36,6 +38,7 @@ interface RetrieveFormInput {
   Prenom: string;
   Nom: string;
   PostNom: string;
+  QRCodeEncrypt: string;
 }
 
 const schema = yup.object().shape({
@@ -46,6 +49,7 @@ const schema = yup.object().shape({
     .required("Postnom non valide")
     .min(2)
     .max(30),
+  QRCodeEncrypt: yup.string().required("QRCode Encrypted String").min(0).max(1000),
 });
 
 // @ts-ignore
@@ -143,6 +147,11 @@ function retreivemapdata(data) {
   return retreivePersonInfoParameters;
 }
 
+function retreiveQRCodemapdata(data){
+  var QrCodeEncrypt = data.QRCodeEncrypt;
+  return QrCodeEncrypt;
+}
+
 export default function RetrieveUserInfo() {
   const {
     register,
@@ -158,6 +167,7 @@ export default function RetrieveUserInfo() {
   //   function retreiveUser(data): PersonInfoResponse {
   function retreiveUser(data): PersonInfoResponse {
     var retreivePersonInfoParameters = retreivemapdata(data);
+    // var qrCodeStr =  retreiveQRCodemapdata(data);
     console.log("Person Parameter", retreivePersonInfoParameters);
 
     ExistService.retreiveUserBasedOnField(
@@ -179,6 +189,13 @@ export default function RetrieveUserInfo() {
     });
   }
 
+  function retreiveUserFromQRCode(data) {
+    var qrCodeStr =  retreiveQRCodemapdata(data);
+    console.log("The qr code str is ", qrCodeStr);
+    return qrCodeStr
+
+  }
+
   const [json, setJson] = useState<string>();
   const [dataResposnse, setDataResponse] = useState<PersonInfoResponse>();
 
@@ -191,6 +208,15 @@ export default function RetrieveUserInfo() {
   };
 
   const [encryptionKey, setEncryptionKey] = useState('');
+
+  const onSubmitEncrypt = (data: RetrieveFormInput) => {
+    // setJson(JSON.stringify(data));
+    setJson(retreiveUserFromQRCode(data));
+    // console.log(dataResposnse);
+    // console.log(flag)
+    // console.log(data)
+  };
+
 
   return (
     <Container maxWidth="sm">
@@ -237,7 +263,7 @@ export default function RetrieveUserInfo() {
         <div>
 
         </div>
-        <Button sx={{mt: 1, ml: 1, mr: 20}} variant="contained" color="primary"> Générer la carte </Button>
+        <Button sx={{mt: 1, ml: 1, mr: 20}} variant="contained" color="primary" onClick={handleSubmit(onSubmitEncrypt)}> Générer la carte </Button>
 
         <Button sx={{mt: 1, ml: 1}}  variant="contained" color="primary"> Vérifier la carte </Button>
       </Box>
