@@ -13,7 +13,6 @@ import * as yup from "yup"; // to validate the form input
 import { useForm } from "react-hook-form"; // to handle the form's submission and error states
 import { yupResolver } from "@hookform/resolvers/yup";
 import { Link as RouterLink, useNavigate } from "react-router-dom"; //import the package
-import { ExistService } from "../../store/exist_api_call";
 import { AgentSignInInfo } from "../../grpc/pb/message_and_service_pb";
 import useHistoryState from "../../hooks/useHistoryState";
 import { Stack } from "@mui/system";
@@ -23,9 +22,7 @@ import LoadingButton from "@mui/lab/LoadingButton";
 import SaveIcon from "@mui/icons-material/Save";
 import { ExistPrompts } from "../../constants/existPrompts";
 import { Auth } from "aws-amplify";
-import { AgentInfo } from "../../grpc/pb/message_and_service_pb";
 import { AuthContext } from "../../store/auth_context";
-import AWS from "aws-sdk";
 
 interface SignInInput {
   Email: string;
@@ -46,16 +43,6 @@ const schema = yup.object().shape({
 
 const theme = createTheme();
 
-// async function signIn(agentInfo : AgentSignInInfo) {
-//   try {
-//       const username = agentInfo.getEmail()
-//       const password = agentInfo.getPassword()
-//       const user = await Auth.signIn(username, password);
-//   } catch (error) {
-//       console.log('error signing in', error);
-//   }
-// }
-
 export default function SignIn() {
   const {
     register,
@@ -72,51 +59,35 @@ export default function SignIn() {
   const [spinRegister, setSpinRegister] = useState(false);
   const navigate = useNavigate();
 
-  const [wrongCred, setWrongCred] = useState(false);
-  const [authenticated, setAuthenticated] = useState(false);
-
   const authContext = React.useContext(AuthContext);
 
   const onSubmit = async (data: SignInInput) => {
     const agentSignInInfo: AgentSignInInfo = new AgentSignInInfo()
       .setEmail(data.Email)
       .setPassword(data.Password);
-    const email = agentSignInInfo.getEmail();
-    const password = agentSignInInfo.getPassword();
-    setSpinRegister(true);
-    await authContext.login(email, password);
-    setSpinRegister(false);
-    setWrongCred(authContext.wrongCredentials);
-    setAuthenticated(authContext.isAuthenticated);
-    if (wrongCred) {
-      console.log("wrong credentials");
-      setError("Email", { message: ExistPrompts.WRONG_EMAIL_OR_PASSWORD });
-      setError("Password", { message: ExistPrompts.WRONG_EMAIL_OR_PASSWORD });
+    try {
+      const email = agentSignInInfo.getEmail();
+      const password = agentSignInInfo.getPassword();
+      setSpinRegister(true);
+      Auth.signIn(email, password)
+        .then(user => {
+          console.log('sign in success!', user);
+          setSpinRegister(false);
+          authContext.setIsAuthenticatedAndUser(true, user);
+          localStorage.setItem("user", JSON.stringify(user));
+          navigate(URLExistPath.OrientationPage);
+        })
+        .catch(err => {
+          setSpinRegister(false);
+          console.log('error signing in:', err);
+          setError("Email", {message:ExistPrompts.WRONG_EMAIL_OR_PASSWORD})
+          setError("Password", {message:ExistPrompts.WRONG_EMAIL_OR_PASSWORD})
+        });
+    } catch (error) {
+      setSpinRegister(true);
+      setError("Email", {message:ExistPrompts.WRONG_EMAIL_OR_PASSWORD})
+      setError("Password", {message:ExistPrompts.WRONG_EMAIL_OR_PASSWORD})
     }
-    if (authenticated) {
-      navigate(URLExistPath.OrientationPage);
-    }
-    // try {
-    //   const email = agentSignInInfo.getEmail();
-    //   const password = agentSignInInfo.getPassword();
-
-    //   // Auth.signIn(email, password)
-    //   //   .then(user => {
-    //   //     console.log('sign in success!', user);
-    //   //     setSpinRegister(false);
-    //   //     navigate(URLExistPath.OrientationPage);
-    //   //   })
-    //   //   .catch(err => {
-    //   //     setSpinRegister(false);
-    //   //     console.log('error signing in:', err);
-    //   //     setError("Email", {message:ExistPrompts.WRONG_EMAIL_OR_PASSWORD})
-    //   //     setError("Password", {message:ExistPrompts.WRONG_EMAIL_OR_PASSWORD})
-    //   //   });
-    // } catch (error) {
-    //   setSpinRegister(true);
-    //   setError("Email", {message:ExistPrompts.WRONG_EMAIL_OR_PASSWORD})
-    //   setError("Password", {message:ExistPrompts.WRONG_EMAIL_OR_PASSWORD})
-    // }
   };
 
   return (

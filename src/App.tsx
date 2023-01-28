@@ -14,6 +14,5 @@ import config from './aws-exports'
 export default function App() {
     return (
         <MainRouter/>
-        // <LandingPage></LandingPage>
     );
 }

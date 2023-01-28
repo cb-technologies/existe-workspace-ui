@@ -73,6 +73,16 @@ function OrientationContent() {
 
   const authContext = React.useContext(AuthContext);
   const [isLoggedIn, setIsLoggedIn] = useState(authContext.isAuthenticated);
+  const [user, setUser] = useState(authContext.user);
+
+  useEffect(() => {
+    const storedUser = JSON.parse(localStorage.getItem('user')!);
+    if (storedUser) {
+      setIsLoggedIn(true);
+      setUser(storedUser);
+      authContext.setIsAuthenticatedAndUser(true, storedUser);
+    }
+  });
 
 
   if (isLoggedIn) {
