@@ -16,8 +16,7 @@ import { useForm } from "react-hook-form"; // to handle the form's submission an
 import { yupResolver } from "@hookform/resolvers/yup";
 import Button from "@mui/material/Button";
 import { URLExistPath } from "../../constants/existUrlPath";
-import Alert from '@mui/material/Alert';
-import AlertTitle from '@mui/material/AlertTitle';
+
 import {
   DateOfBirth,
   RetreivePersonInfoParameters,
@@ -29,7 +28,6 @@ import useHistoryState from "../../hooks/useHistoryState";
 import Container from "@mui/material/Container";
 import { useNavigate, useLocation } from "react-router-dom"; //import the package
 import { Auth } from "aws-amplify";
-//import { useNavigate, useLocation } from "react-router-dom";
 
 var globalDay: string;
 var globalMonth: string;
@@ -210,31 +208,25 @@ export default function RetrieveUserInfo() {
   const [dataResposnse, setDataResponse] = useState<PersonInfoResponse>();
 
   const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [role, setRole] = useState("");
-  
+
+  // const navigate = useNavigate();
+
   const navigateTo = (page: string, flag: string) => {
     navigate(page,{ state: { flag_to_page: flag } });
   };
 
-  const [phoneNumber, setPhoneNumber] = useState("");
-  const [prenom, setPrenom] = useState("");
-  const [user, setUser] = useState(null);
-  const [nom, setNom] = useState("");
-
   useEffect(() => {
-    Auth.currentUserInfo()
-      .then((user) => {
+    async function checkAuth() {
+      try {
+        const session = await Auth.currentSession();
         setIsLoggedIn(true);
-        setRole(user.attributes['custom:role'])
-        setNom(user.attributes['custom:nom'])
-        setPrenom(user.attributes['custom:prenom'])
-        setPhoneNumber(user.attributes['custom:phonenumber'])
-      })
-      .catch((err) => {
+      } catch {
         setIsLoggedIn(false);
         navigateTo(URLExistPath.SignInPage, "to_sign_in");
-      });
-  }, []);
+      }
+    }
+    checkAuth();
+  }, [isLoggedIn]);
   
 
   const onSubmit = (data: RetrieveFormInput) => {
@@ -245,9 +237,7 @@ export default function RetrieveUserInfo() {
     // console.log(data)
   };
 
-  const [encryptionKey, setEncryptionKey] = useState('');
-
-  if (isLoggedIn && (role === "Admin" || role === "Registrator")) {
+  if (isLoggedIn) {
     return (
       <Container maxWidth="sm">
         <Box
@@ -281,32 +271,14 @@ export default function RetrieveUserInfo() {
             {/* <Route path="/updateUserInfo" element={<UpdateUserForm  UpdateUserFormProps ={dataResposnse} />} /> */}
           </Button>
         </Box>
-        <div>
-          ----------------------------------------------------------------------------------------------------
-        </div>
-  
-        <Box>
-          <Typography textAlign="center" variant="h6" component="h6" gutterBottom>
-            Entrez le QR code encrypté:
-          </Typography>
-          <TextField fullWidth value={encryptionKey} onChange={(e) => setEncryptionKey(e.target.value)}></TextField>
-          <div>
-  
-          </div>
-          <Button sx={{mt: 1, ml: 1, mr: 20}} variant="contained" color="primary"> Générer la carte </Button>
-  
-          <Button sx={{mt: 1, ml: 1}}  variant="contained" color="primary"> Vérifier la carte </Button>
-        </Box>
       </Container>
     );
   }else {
     return(
       <div>
-      <Alert severity="error">
-                <AlertTitle>Accès refusé</AlertTitle>
-                "Désolé, vous n'êtes pas autorisé à accéder à cette page" — <strong>Accès refusé</strong>
-          </Alert>
+      'Cannot load this page'
     </div>
     );
-  }  
+  }
+  
 }
