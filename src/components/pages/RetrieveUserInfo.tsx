@@ -217,6 +217,8 @@ export default function RetrieveUserInfo() {
 
   if (isLoggedIn && (role === "Admin" || role === "Printer")) {
     return (
+  if (isLoggedIn) {
+    return (
       <Container maxWidth="sm">
         <Box
           component={"form"}
@@ -240,10 +242,10 @@ export default function RetrieveUserInfo() {
           </Typography>
           <DateOfBirthForm register={register}></DateOfBirthForm>
           <Button
-            fullWidth
-            variant="contained"
-            color="primary"
-            onClick={handleSubmit(onSubmit)}
+              fullWidth
+              variant="contained"
+              color="primary"
+              onClick={handleSubmit(onSubmit)}
           >
             Retrouvez le citoyen
             {/* <Route path="/updateUserInfo" element={<UpdateUserForm  UpdateUserFormProps ={dataResposnse} />} /> */}

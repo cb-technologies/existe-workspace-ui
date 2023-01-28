@@ -704,6 +704,12 @@ export default function RegisterForm() {
     navigate(page,{ state: { flag_to_page: flag } });
   };
 
+  const navigate = useNavigate();
+  
+  const navigateTo = (page: string, flag: string) => {
+    navigate(page,{ state: { flag_to_page: flag } });
+  };
+
   const [role, setRole] = useState("");
   const [phoneNumber, setPhoneNumber] = useState("");
   const [prenom, setPrenom] = useState("");
