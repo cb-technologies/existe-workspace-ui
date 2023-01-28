@@ -18,6 +18,7 @@ import { useNavigate } from 'react-router-dom';
 import { Auth } from 'aws-amplify';
 import Alert from '@mui/material/Alert';
 import AlertTitle from '@mui/material/AlertTitle';
+import { AuthContext } from '../../store/auth_context';
 // import { TableHead, TableRow, Typography, Button } from '@mui/material';
 
 
@@ -95,17 +96,16 @@ export default function CustomizedTables() {
 
   const [rows, setRows] = useState([createData('ntuala2@illinois.ed', 'CONFIRMED', '0819367845', 'Jan 8, 2023 5:22:53 PM', "Jan 8, 2023 4:56:26 PM")]);
   const [my_region, setRegion] = useState("eu-west-3")
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
   //const navigate = useNavigate();
   
   const navigateTo = (page: string, flag: string) => {
     navigate(page,{ state: { flag_to_page: flag } });
   };
 
-  const [role, setRole] = useState("");
-  const [phoneNumber, setPhoneNumber] = useState("");
-  const [nom, setNom] = useState("");
-  const [prenom, setPrenom] = useState("");
+  const authContext = React.useContext(AuthContext);
+  
+  const [role, setRole] = useState(authContext.user.attributes['custom:role']);
+  const [isLoggedIn, setIsLoggedIn] = useState(authContext.isAuthenticated);
   
   useEffect(() => {
     console.log("Being refreshed")
@@ -113,19 +113,6 @@ export default function CustomizedTables() {
       region: my_region,
       credentials: new AWS.Credentials('AKIAWUW6U5W6ZK7ONRM3', 'pCRg/LHoJ89b5VK2/s6J+KE7VwfviueChlxzPAFV')
     });
-    Auth.currentUserInfo()
-      .then((user) => {
-        setIsLoggedIn(true);
-        setRole(user.attributes['custom:role'])
-        setNom(user.attributes['custom:nom'])
-        setPrenom(user.attributes['custom:prenom'])
-        setPhoneNumber(user.attributes['custom:phonenumber'])
-      })
-      .catch((err) => {
-        setIsLoggedIn(false);
-        navigateTo(URLExistPath.SignInPage, "to_sign_in");
-      });
-
 
     getAllUsers().then(data => {
         if(data && data.Users) {

@@ -41,6 +41,7 @@ import { Auth } from "aws-amplify";
 import { useNavigate } from "react-router-dom";
 import { URLExistPath } from "../../constants/existUrlPath";
 import { encrypt } from 'n-krypta';
+import { AuthContext } from "../../store/auth_context";
 
 var globalDay: string;
 var globalMonth: string;
@@ -697,33 +698,17 @@ export default function RegisterForm() {
   const [showAlert, setShowAlert] = useState(false);
   const [showErrorAlert, setShowErrorAlert] = useState(false);
 
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  
   const navigate = useNavigate();
   
   const navigateTo = (page: string, flag: string) => {
     navigate(page,{ state: { flag_to_page: flag } });
   };
 
-  const [role, setRole] = useState("");
-  const [phoneNumber, setPhoneNumber] = useState("");
-  const [prenom, setPrenom] = useState("");
-  const [user, setUser] = useState(null);
-  const [nom, setNom] = useState("");
-
-  useEffect(() => {
-    Auth.currentUserInfo()
-      .then((user) => {
-        setIsLoggedIn(true);
-        setRole(user.attributes['custom:role'])
-        setNom(user.attributes['custom:nom'])
-        setPrenom(user.attributes['custom:prenom'])
-        setPhoneNumber(user.attributes['custom:phonenumber'])
-      })
-      .catch((err) => {
-        setIsLoggedIn(false);
-        navigateTo(URLExistPath.SignInPage, "to_sign_in");
-      });
-  }, []);
+  const authContext = React.useContext(AuthContext);
+  
+  const [role, setRole] = useState(authContext.user.attributes['custom:role']);
+  const [isLoggedIn, setIsLoggedIn] = useState(authContext.isAuthenticated);
 
   const {
     register,
