@@ -222,6 +222,24 @@ export namespace NationalIDNumber {
   }
 }
 
+export class QRCode extends jspb.Message {
+  getQrcode(): string;
+  setQrcode(value: string): QRCode;
+
+  serializeBinary(): Uint8Array;
+  toObject(includeInstance?: boolean): QRCode.AsObject;
+  static toObject(includeInstance: boolean, msg: QRCode): QRCode.AsObject;
+  static serializeBinaryToWriter(message: QRCode, writer: jspb.BinaryWriter): void;
+  static deserializeBinary(bytes: Uint8Array): QRCode;
+  static deserializeBinaryFromReader(message: QRCode, reader: jspb.BinaryReader): QRCode;
+}
+
+export namespace QRCode {
+  export type AsObject = {
+    qrcode: string,
+  }
+}
+
 export class Date extends jspb.Message {
   getYear(): number;
   setYear(value: number): Date;
@@ -310,6 +328,11 @@ export class PersonInfoRequest extends jspb.Message {
   hasSex(): boolean;
   clearSex(): PersonInfoRequest;
 
+  getQrcode(): QRCode | undefined;
+  setQrcode(value?: QRCode): PersonInfoRequest;
+  hasQrcode(): boolean;
+  clearQrcode(): PersonInfoRequest;
+
   serializeBinary(): Uint8Array;
   toObject(includeInstance?: boolean): PersonInfoRequest.AsObject;
   static toObject(includeInstance: boolean, msg: PersonInfoRequest): PersonInfoRequest.AsObject;
@@ -327,6 +350,7 @@ export namespace PersonInfoRequest {
     phenotypes?: Phenotype.AsObject,
     dateOfBirth?: DateOfBirth.AsObject,
     sex?: Sex.AsObject,
+    qrcode?: QRCode.AsObject,
   }
 }
 
@@ -376,6 +400,11 @@ export class PersonInfoResponse extends jspb.Message {
   hasSex(): boolean;
   clearSex(): PersonInfoResponse;
 
+  getQrcode(): QRCode | undefined;
+  setQrcode(value?: QRCode): PersonInfoResponse;
+  hasQrcode(): boolean;
+  clearQrcode(): PersonInfoResponse;
+
   serializeBinary(): Uint8Array;
   toObject(includeInstance?: boolean): PersonInfoResponse.AsObject;
   static toObject(includeInstance: boolean, msg: PersonInfoResponse): PersonInfoResponse.AsObject;
@@ -395,6 +424,7 @@ export namespace PersonInfoResponse {
     cardValidity?: CardValidity.AsObject,
     id?: NationalIDNumber.AsObject,
     sex?: Sex.AsObject,
+    qrcode?: QRCode.AsObject,
   }
 }
 
