@@ -70,19 +70,70 @@ function ResponsiveAppBar() {
   };
   
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [role, setRole] = useState("");
+  const [phoneNumber, setPhoneNumber] = useState("");
+  const [nom, setNom] = useState("");
+  const [prenom, setPrenom] = useState("");
+  const [user, setUser] = useState(null);
+
+  // Auth.currentAuthenticatedUser().then(user => setUser(user))
+  //   .catch(() => setUser(null));
+
+  // Auth.onAuthUIStateChange((nextAuthState, authData) => {
+  //     if (nextAuthState === 'signedIn') {
+  //       // the user is signed in
+  //       setUser(authData.user)
+  //     } else if (nextAuthState === 'signedOut') {
+  //       // the user is signed out
+  //       setUser(null)
+  //     }
+  // });
+
+  // Auth.currentAuthenticatedUser()
+  // .then(user => {
+  //   console.log(user)
+  //   setIsLoggedIn(true);
+  //   setRole(user.attributes['custom:role'])
+  //   setNom(user.attributes['custom:nom'])
+  //   setPrenom(user.attributes['custom:prenom'])
+  //   setPhoneNumber(user.attributes['custom:phonenumber'])
+  // })
+  // .catch(err => {
+  //   console.log(err)
+  //   console.log("Petage")
+  //   setIsLoggedIn(false);
+  //   navigateTo(URLExistPath.SignInPage, "to_sign_in");
+  // });
+
+  // Auth.onAuthStateChange(user => {
+  //   if (user) {
+  //     console.log('User is signed in')
+  //   } else {
+  //     console.log('User is signed out')
+  //   }
+  // })
 
   useEffect(() => {
-    const intervalId = setInterval(async () => {
+    // console.log("arriviO yeba tseng")
+    // console.log(isLoggedIn)
+    async function checkAuth() {
       try {
-        await Auth.currentAuthenticatedUser();
+        const user = await Auth.currentUserInfo();
+        //console.log("arriving")
         setIsLoggedIn(true);
+        setRole(user.attributes['custom:role'])
+        setNom(user.attributes['custom:nom'])
+        setPrenom(user.attributes['custom:prenom'])
+        setPhoneNumber(user.attributes['custom:phonenumber'])
+        
       } catch {
+        console.log("Petage")
         setIsLoggedIn(false);
+        navigateTo(URLExistPath.SignInPage, "to_sign_in");
       }
-    }, 100);
-
-    return () => clearInterval(intervalId);
-  }, []);
+    }
+    checkAuth();
+  }, [isLoggedIn]);
 
   const signOut = async () => {
     try {
@@ -140,7 +191,7 @@ function ResponsiveAppBar() {
             <Tooltip title="Open settings">
               <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
                 {/* <Avatar alt="Elie Sharp" src={require("../../assets/ac0405c429c52917ebae5b1e11459baf.png")}/> */}
-                <Avatar alt="Elie Sharp" src="/static/images/avatar/1.jpg"/>
+                <Avatar alt={nom} src="/static/images/avatar/1.jpg"/>
               </IconButton>
             </Tooltip>
             <Menu

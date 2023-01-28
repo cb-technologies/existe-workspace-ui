@@ -37,7 +37,9 @@ import { zipCodeData } from "../../constants/zipCodeKinshasa";
 import { secret } from "../../constants/encryptionSecrets";
 import { FieldErrorsImpl } from "react-hook-form";
 import { SexEnum } from "../../grpc/pb/message_and_service_pb";
-import { Auth } from 'aws-amplify';
+import { Auth } from "aws-amplify";
+import { useNavigate } from "react-router-dom";
+import { URLExistPath } from "../../constants/existUrlPath";
 import { encrypt } from 'n-krypta';
 
 var globalDay: string;
@@ -696,14 +698,30 @@ export default function RegisterForm() {
   const [showErrorAlert, setShowErrorAlert] = useState(false);
 
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const navigate = useNavigate();
+  
+  const navigateTo = (page: string, flag: string) => {
+    navigate(page,{ state: { flag_to_page: flag } });
+  };
+
+  const [role, setRole] = useState("");
+  const [phoneNumber, setPhoneNumber] = useState("");
+  const [prenom, setPrenom] = useState("");
+  const [user, setUser] = useState(null);
+  const [nom, setNom] = useState("");
 
   useEffect(() => {
-    Auth.currentAuthenticatedUser()
+    Auth.currentUserInfo()
       .then((user) => {
         setIsLoggedIn(true);
+        setRole(user.attributes['custom:role'])
+        setNom(user.attributes['custom:nom'])
+        setPrenom(user.attributes['custom:prenom'])
+        setPhoneNumber(user.attributes['custom:phonenumber'])
       })
       .catch((err) => {
         setIsLoggedIn(false);
+        navigateTo(URLExistPath.SignInPage, "to_sign_in");
       });
   }, []);
 
@@ -773,7 +791,7 @@ export default function RegisterForm() {
 
   return (
     <div>
-      {isLoggedIn ? (
+      {isLoggedIn && (role === "Admin" || role === "Registrator") ? (
         <Container maxWidth="sm">
           <Box
             component={"form"}
@@ -855,7 +873,7 @@ export default function RegisterForm() {
           </Box>
         </Container>
       ) : (
-        "Cannot load this page"
+        "Desolé, vous n'avez pas acces a cette page."
       )}
     </div>
   );

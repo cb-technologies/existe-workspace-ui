@@ -86,7 +86,7 @@ function OrientationContent() {
       }
     }
     checkAuth();
-  }, []);
+  }, [isLoggedIn]);
 
   if (isLoggedIn) {
     return (
@@ -168,7 +168,6 @@ function OrientationContent() {
       'Cannot load this page'
     </div>
     );
-    
   }
   
 }
