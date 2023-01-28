@@ -16,7 +16,8 @@ import { useForm } from "react-hook-form"; // to handle the form's submission an
 import { yupResolver } from "@hookform/resolvers/yup";
 import Button from "@mui/material/Button";
 import { URLExistPath } from "../../constants/existUrlPath";
-
+import Alert from '@mui/material/Alert';
+import AlertTitle from '@mui/material/AlertTitle';
 import {
   DateOfBirth,
   RetreivePersonInfoParameters,
@@ -210,26 +211,30 @@ export default function RetrieveUserInfo() {
 
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [role, setRole] = useState("");
-
-  // const navigate = useNavigate();
-
+  
   const navigateTo = (page: string, flag: string) => {
     navigate(page,{ state: { flag_to_page: flag } });
   };
 
+  const [phoneNumber, setPhoneNumber] = useState("");
+  const [prenom, setPrenom] = useState("");
+  const [user, setUser] = useState(null);
+  const [nom, setNom] = useState("");
+
   useEffect(() => {
-    async function checkAuth() {
-      try {
-        const user = await Auth.currentUserInfo();
-        setRole(user.attributes['custom:role'])
+    Auth.currentUserInfo()
+      .then((user) => {
         setIsLoggedIn(true);
-      } catch {
+        setRole(user.attributes['custom:role'])
+        setNom(user.attributes['custom:nom'])
+        setPrenom(user.attributes['custom:prenom'])
+        setPhoneNumber(user.attributes['custom:phonenumber'])
+      })
+      .catch((err) => {
         setIsLoggedIn(false);
         navigateTo(URLExistPath.SignInPage, "to_sign_in");
-      }
-    }
-    checkAuth();
-  }, [isLoggedIn]);
+      });
+  }, []);
   
 
   const onSubmit = (data: RetrieveFormInput) => {
@@ -242,7 +247,7 @@ export default function RetrieveUserInfo() {
 
   const [encryptionKey, setEncryptionKey] = useState('');
 
-  if (isLoggedIn && (role === "Admin" || role === "Printer")) {
+  if (isLoggedIn && (role === "Admin" || role === "Registrator")) {
     return (
       <Container maxWidth="sm">
         <Box
@@ -297,12 +302,11 @@ export default function RetrieveUserInfo() {
   }else {
     return(
       <div>
-      'Cannot load this page'
+      <Alert severity="error">
+                <AlertTitle>Accès refusé</AlertTitle>
+                "Désolé, vous n'êtes pas autorisé à accéder à cette page" — <strong>Accès refusé</strong>
+          </Alert>
     </div>
     );
-  }
-  
-  
-
-  
+  }  
 }
