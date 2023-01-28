@@ -18,60 +18,9 @@ import { useNavigate } from 'react-router-dom';
 
 // import { TableHead, TableRow, Typography, Button } from '@mui/material';
 
-const cognito = new AWS.CognitoIdentityServiceProvider();
 
-AWS.config.update({
-    region: 'eu-west-3',
-    credentials: new AWS.Credentials('AKIAWUW6U5W6ZK7ONRM3', 'pCRg/LHoJ89b5VK2/s6J+KE7VwfviueChlxzPAFV')
-  });
 
-function getAllUsers() {
-    const params = {
-      UserPoolId: 'eu-west-3_KTB7W3mWQ',
-    //   Limit: 10
-    };
-    return cognito.listUsers(params).promise();
-}
 
-const StyledTableCell = styled(TableCell)(({ theme }) => ({
-  [`&.${tableCellClasses.head}`]: {
-    backgroundColor: theme.palette.info.dark,
-    color: theme.palette.common.white,
-  },
-  [`&.${tableCellClasses.body}`]: {
-    fontSize: 14,
-  },
-}));
-
-const StyledFirstRowCell = styled(TableCell)(({ theme }) => ({
-    [`&.${tableCellClasses.head}`]: {
-      backgroundColor: theme.palette.common.white,
-      color: theme.palette.common.white,
-    },
-    [`&.${tableCellClasses.body}`]: {
-      fontSize: 14,
-    },
-  }));
-
-const StyledTableRow = styled(TableRow)(({ theme }) => ({
-  '&:nth-of-type(odd)': {
-    backgroundColor: theme.palette.action.hover,
-  },
-  // hide last border
-  '&:last-child td, &:last-child th': {
-    border: 0,
-  },
-}));
-
-function createData(
-  email: string,
-  accountStatus: string,
-  phoneNumber: string,
-  updated: string,
-  created: string,
-) {
-  return { email, accountStatus, phoneNumber, updated, created };
-}
 
 //  rows = [
 //   createData('ntuala2@illinois.ed', 'CONFIRMED', '0819367845', 'Jan 8, 2023 5:22:53 PM', "Jan 8, 2023 4:56:26 PM"),
@@ -83,10 +32,73 @@ function createData(
 
 export default function CustomizedTables() {
 //   const [users, setUsers] = useState<UsersListType>();
+
   const navigate = useNavigate();
 
+  const StyledTableCell = styled(TableCell)(({ theme }) => ({
+    [`&.${tableCellClasses.head}`]: {
+      backgroundColor: theme.palette.info.dark,
+      color: theme.palette.common.white,
+    },
+    [`&.${tableCellClasses.body}`]: {
+      fontSize: 14,
+    },
+  }));
+  
+  const StyledFirstRowCell = styled(TableCell)(({ theme }) => ({
+      [`&.${tableCellClasses.head}`]: {
+        backgroundColor: theme.palette.common.white,
+        color: theme.palette.common.white,
+      },
+      [`&.${tableCellClasses.body}`]: {
+        fontSize: 14,
+      },
+    }));
+  
+  const StyledTableRow = styled(TableRow)(({ theme }) => ({
+    '&:nth-of-type(odd)': {
+      backgroundColor: theme.palette.action.hover,
+    },
+    // hide last border
+    '&:last-child td, &:last-child th': {
+      border: 0,
+    },
+  }));
+  
+  function createData(
+    email: string,
+    accountStatus: string,
+    phoneNumber: string,
+    updated: string,
+    created: string,
+  ) {
+    return { email, accountStatus, phoneNumber, updated, created };
+  }
+
+  const cognito = new AWS.CognitoIdentityServiceProvider();
+
+  AWS.config.update({
+      region: 'eu-west-3',
+      credentials: new AWS.Credentials('AKIAWUW6U5W6ZK7ONRM3', 'pCRg/LHoJ89b5VK2/s6J+KE7VwfviueChlxzPAFV')
+    });
+
+  function getAllUsers() {
+      const params = {
+        UserPoolId: 'eu-west-3_KTB7W3mWQ',
+      //   Limit: 10
+      
+      };
+      return cognito.listUsers(params).promise();
+  }
+
   const [rows, setRows] = useState([createData('ntuala2@illinois.ed', 'CONFIRMED', '0819367845', 'Jan 8, 2023 5:22:53 PM', "Jan 8, 2023 4:56:26 PM")]);
+  const [my_region, setRegion] = useState("eu-west-3")
   useEffect(() => {
+    console.log("Being refreshed")
+    AWS.config.update({
+      region: my_region,
+      credentials: new AWS.Credentials('AKIAWUW6U5W6ZK7ONRM3', 'pCRg/LHoJ89b5VK2/s6J+KE7VwfviueChlxzPAFV')
+    });
     getAllUsers().then(data => {
         if(data && data.Users) {
             // console.log("Arriving")
@@ -115,7 +127,7 @@ export default function CustomizedTables() {
                         }
                     }
                     )
-                    console.log(user_email)
+                    //console.log(user_email)
                     holder_array.push(createData(user_email, status, '0819367845', updated, created))
                     //rows.push(createData(user_email, status, '0819367845', updated, created))
                     //setRows([...rows, createData(user_email, status, '0819367845', updated, created)])

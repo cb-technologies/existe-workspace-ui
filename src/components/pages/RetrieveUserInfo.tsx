@@ -1,6 +1,6 @@
 import * as React from "react";
 import Box from "@mui/material/Box";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Dayjs } from "dayjs";
 import TextField from "@mui/material/TextField";
 import Typography from "@mui/material/Typography";
@@ -26,7 +26,8 @@ import {
 import { ExistService } from "../../store/exist_api_call";
 import useHistoryState from "../../hooks/useHistoryState";
 import Container from "@mui/material/Container";
-import { useNavigate, useLocation } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom"; //import the package
+import { Auth } from "aws-amplify";
 
 var globalDay: string;
 var globalMonth: string;
@@ -42,10 +43,10 @@ const schema = yup.object().shape({
   Nom: yup.string().required("Nom non valide").min(2).max(30),
   Prenom: yup.string().required("Prenom non valide").min(2).max(30),
   PostNom: yup
-      .string()
-      .required("Postnom non valide")
-      .min(2)
-      .max(30),
+    .string()
+    .required("Postnom non valide")
+    .min(2)
+    .max(30),
 });
 
 // @ts-ignore
@@ -55,46 +56,46 @@ function NameForm({ register, errors }) {
   const [dMiddleNames, setDMiddleNames] = useHistoryState("MiddleName", "");
 
   return (
-      <div>
-        <TextField
-            {...register("Prenom")}
-            id="outlined-prenom-input"
-            label="Prenom"
-            helperText={errors.Prenom?.message}
-            error={!!errors.Prenom}
-            value={dfirstName.toUpperCase()}
-            onChange={(e) => setDFirstName(e.target.value)}
-        />
-        <TextField
-            {...register("Nom")}
-            id="outlined-nom-input"
-            label="Nom"
-            helperText={errors.Nom?.message}
-            error={!!errors.Nom}
-            value={dLastName.toUpperCase()}
-            onChange={(e) => setDLastName(e.target.value)}
-        />
-        <TextField
-            {...register("PostNom")}
-            id="outlined-postnom-input"
-            label="Post-Nom"
-            helperText={errors.PostNom?.message}
-            error={!!errors.PostNom}
-            value={dMiddleNames.toUpperCase()}
-            onChange={(e) => setDMiddleNames(e.target.value)}
-        />
-      </div>
+    <div>
+      <TextField
+        {...register("Prenom")}
+        id="outlined-prenom-input"
+        label="Prenom"
+        helperText={errors.Prenom?.message}
+        error={!!errors.Prenom}
+        value={dfirstName.toUpperCase()}
+        onChange={(e) => setDFirstName(e.target.value)}
+      />
+      <TextField
+        {...register("Nom")}
+        id="outlined-nom-input"
+        label="Nom"
+        helperText={errors.Nom?.message}
+        error={!!errors.Nom}
+        value={dLastName.toUpperCase()}
+        onChange={(e) => setDLastName(e.target.value)}
+      />
+      <TextField
+        {...register("PostNom")}
+        id="outlined-postnom-input"
+        label="Post-Nom"
+        helperText={errors.PostNom?.message}
+        error={!!errors.PostNom}
+        value={dMiddleNames.toUpperCase()}
+        onChange={(e) => setDMiddleNames(e.target.value)}
+      />
+    </div>
   );
 }
 
 function SexForm() {
   return (
-      <FormGroup>
-        <div>
-          <FormControlLabel control={<Checkbox />} label="Homme" />
-          <FormControlLabel control={<Checkbox />} label="Femme" />
-        </div>
-      </FormGroup>
+    <FormGroup>
+      <div>
+        <FormControlLabel control={<Checkbox />} label="Homme" />
+        <FormControlLabel control={<Checkbox />} label="Femme" />
+      </div>
+    </FormGroup>
   );
 }
 // @ts-ignore
@@ -102,26 +103,26 @@ function DateOfBirthForm({ register }) {
   const [value, setValue] = React.useState<Dayjs | null>(null);
   console.log("debug dob");
   return (
-      <LocalizationProvider dateAdapter={AdapterDayjs}>
-        <Stack spacing={1}>
-          <DatePicker
-              views={["day", "month", "year"]}
-              label="Date de naissance"
-              value={value}
-              onAccept={(newValue?: Dayjs | null) => {
-                globalYear = newValue!.year().toString();
-                globalMonth = (newValue!.month() + 1).toString();
-                globalDay = newValue!.date().toString();
-              }}
-              onChange={(newValue?: any) => {
-                setValue(newValue);
-              }}
-              renderInput={(params?: any) => (
-                  <TextField {...params} helperText={null} />
-              )}
-          />
-        </Stack>
-      </LocalizationProvider>
+    <LocalizationProvider dateAdapter={AdapterDayjs}>
+      <Stack spacing={1}>
+        <DatePicker
+          views={["day", "month", "year"]}
+          label="Date de naissance"
+          value={value}
+          onAccept={(newValue?: Dayjs | null) => {
+            globalYear = newValue!.year().toString();
+            globalMonth = (newValue!.month() + 1).toString();
+            globalDay = newValue!.date().toString();
+          }}
+          onChange={(newValue?: any) => {
+            setValue(newValue);
+          }}
+          renderInput={(params?: any) => (
+            <TextField {...params} helperText={null} />
+          )}
+        />
+      </Stack>
+    </LocalizationProvider>
   );
 }
 
@@ -134,7 +135,7 @@ function retreivemapdata(data) {
   dob.setMonth(globalMonth);
   dob.setYear(globalYear);
   var retreivePersonInfoParameters =
-      new RetreivePersonInfoParameters().setNames(names);
+    new RetreivePersonInfoParameters().setNames(names);
   retreivePersonInfoParameters.setDateOfBirth(dob);
   console.log("names are", names);
   console.log("date of birth ", dob);
@@ -156,13 +157,37 @@ export default function RetrieveUserInfo() {
   const flag = location.state.flag_to_page;
   // @ts-ignore
   //   function retreiveUser(data): PersonInfoResponse {
+
+
+  // useEffect(() => {
+  //   console.log("arriviO yeba tseng")
+  //   console.log(isLoggedIn)
+  //   async function checkAuth() {
+  //     try {
+  //       const user = await Auth.currentUserInfo();
+  //       console.log("arriving")
+  //       setIsLoggedIn(true);
+  //       setRole(user.attributes['custom:role'])
+  //       setNom(user.attributes['custom:nom'])
+  //       setPrenom(user.attributes['custom:prenom'])
+  //       setPhoneNumber(user.attributes['custom:phonenumber'])
+        
+  //     } catch {
+  //       console.log("Petage")
+  //       setIsLoggedIn(false);
+  //       navigateTo(URLExistPath.SignInPage, "to_sign_in");
+  //     }
+  //   }
+  //   checkAuth();
+  // }, [isLoggedIn]);
+
   function retreiveUser(data): PersonInfoResponse {
     var retreivePersonInfoParameters = retreivemapdata(data);
     console.log("Person Parameter", retreivePersonInfoParameters);
 
     ExistService.retreiveUserBasedOnField(
-        retreivePersonInfoParameters,
-        null
+      retreivePersonInfoParameters,
+      null
     ).then((userInfo) => {
       const userInfoObject = userInfo.toObject();
       console.log("Petage", userInfo.getBiometrics()?.getPhotos_asB64());
@@ -182,6 +207,28 @@ export default function RetrieveUserInfo() {
   const [json, setJson] = useState<string>();
   const [dataResposnse, setDataResponse] = useState<PersonInfoResponse>();
 
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+  // const navigate = useNavigate();
+
+  const navigateTo = (page: string, flag: string) => {
+    navigate(page,{ state: { flag_to_page: flag } });
+  };
+
+  useEffect(() => {
+    async function checkAuth() {
+      try {
+        const session = await Auth.currentSession();
+        setIsLoggedIn(true);
+      } catch {
+        setIsLoggedIn(false);
+        navigateTo(URLExistPath.SignInPage, "to_sign_in");
+      }
+    }
+    checkAuth();
+  }, [isLoggedIn]);
+  
+
   const onSubmit = (data: RetrieveFormInput) => {
     setJson(JSON.stringify(data));
     setDataResponse(retreiveUser(data));
@@ -190,17 +237,16 @@ export default function RetrieveUserInfo() {
     // console.log(data)
   };
 
-  const [encryptionKey, setEncryptionKey] = useState('');
-
-  return (
+  if (isLoggedIn) {
+    return (
       <Container maxWidth="sm">
         <Box
-            component={"form"}
-            sx={{
-              "& .MuiTextField-root": { m: 1, width: "25ch" },
-            }}
-            noValidate
-            autoComplete={"off"}
+          component={"form"}
+          sx={{
+            "& .MuiTextField-root": { m: 1, width: "25ch" },
+          }}
+          noValidate
+          autoComplete={"off"}
         >
           <Typography variant="h1" gutterBottom></Typography>
           <Typography variant="h6" component="h6" gutterBottom>
@@ -216,31 +262,23 @@ export default function RetrieveUserInfo() {
           </Typography>
           <DateOfBirthForm register={register}></DateOfBirthForm>
           <Button
-              fullWidth
-              variant="contained"
-              color="primary"
-              onClick={handleSubmit(onSubmit)}
+            fullWidth
+            variant="contained"
+            color="primary"
+            onClick={handleSubmit(onSubmit)}
           >
             Retrouvez le citoyen
             {/* <Route path="/updateUserInfo" element={<UpdateUserForm  UpdateUserFormProps ={dataResposnse} />} /> */}
           </Button>
         </Box>
-        <div>
-          ----------------------------------------------------------------------------------------------------
-        </div>
-
-        <Box>
-          <Typography textAlign="center" variant="h6" component="h6" gutterBottom>
-            Entrez le QR code encrypté:
-          </Typography>
-          <TextField fullWidth value={encryptionKey} onChange={(e) => setEncryptionKey(e.target.value)}></TextField>
-          <div>
-
-          </div>
-          <Button sx={{mt: 1, ml: 1, mr: 20}} variant="contained" color="primary"> Générer la carte </Button>
-
-          <Button sx={{mt: 1, ml: 1}}  variant="contained" color="primary"> Vérifier la carte </Button>
-        </Box>
       </Container>
-  );
+    );
+  }else {
+    return(
+      <div>
+      'Cannot load this page'
+    </div>
+    );
+  }
+  
 }
