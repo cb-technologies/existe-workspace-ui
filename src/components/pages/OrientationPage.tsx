@@ -86,7 +86,7 @@ function OrientationContent() {
       }
     }
     checkAuth();
-  }, []);
+  }, [isLoggedIn]);
 
   if (isLoggedIn) {
     return (

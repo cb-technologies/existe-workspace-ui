@@ -1,6 +1,6 @@
 import * as React from "react";
 import Box from "@mui/material/Box";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Dayjs } from "dayjs";
 import TextField from "@mui/material/TextField";
 import Typography from "@mui/material/Typography";
@@ -27,6 +27,7 @@ import { ExistService } from "../../store/exist_api_call";
 import useHistoryState from "../../hooks/useHistoryState";
 import Container from "@mui/material/Container";
 import { useNavigate, useLocation } from "react-router-dom"; //import the package
+import { Auth } from "aws-amplify";
 
 var globalDay: string;
 var globalMonth: string;
@@ -156,6 +157,30 @@ export default function RetrieveUserInfo() {
   const flag = location.state.flag_to_page;
   // @ts-ignore
   //   function retreiveUser(data): PersonInfoResponse {
+
+
+  // useEffect(() => {
+  //   console.log("arriviO yeba tseng")
+  //   console.log(isLoggedIn)
+  //   async function checkAuth() {
+  //     try {
+  //       const user = await Auth.currentUserInfo();
+  //       console.log("arriving")
+  //       setIsLoggedIn(true);
+  //       setRole(user.attributes['custom:role'])
+  //       setNom(user.attributes['custom:nom'])
+  //       setPrenom(user.attributes['custom:prenom'])
+  //       setPhoneNumber(user.attributes['custom:phonenumber'])
+        
+  //     } catch {
+  //       console.log("Petage")
+  //       setIsLoggedIn(false);
+  //       navigateTo(URLExistPath.SignInPage, "to_sign_in");
+  //     }
+  //   }
+  //   checkAuth();
+  // }, [isLoggedIn]);
+
   function retreiveUser(data): PersonInfoResponse {
     var retreivePersonInfoParameters = retreivemapdata(data);
     console.log("Person Parameter", retreivePersonInfoParameters);
@@ -182,6 +207,28 @@ export default function RetrieveUserInfo() {
   const [json, setJson] = useState<string>();
   const [dataResposnse, setDataResponse] = useState<PersonInfoResponse>();
 
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+  // const navigate = useNavigate();
+
+  const navigateTo = (page: string, flag: string) => {
+    navigate(page,{ state: { flag_to_page: flag } });
+  };
+
+  useEffect(() => {
+    async function checkAuth() {
+      try {
+        const session = await Auth.currentSession();
+        setIsLoggedIn(true);
+      } catch {
+        setIsLoggedIn(false);
+        navigateTo(URLExistPath.SignInPage, "to_sign_in");
+      }
+    }
+    checkAuth();
+  }, [isLoggedIn]);
+  
+
   const onSubmit = (data: RetrieveFormInput) => {
     setJson(JSON.stringify(data));
     setDataResponse(retreiveUser(data));
@@ -190,39 +237,48 @@ export default function RetrieveUserInfo() {
     // console.log(data)
   };
 
-  return (
-    <Container maxWidth="sm">
-      <Box
-        component={"form"}
-        sx={{
-          "& .MuiTextField-root": { m: 1, width: "25ch" },
-        }}
-        noValidate
-        autoComplete={"off"}
-      >
-        <Typography variant="h1" gutterBottom></Typography>
-        <Typography variant="h6" component="h6" gutterBottom>
-          1. Retrouvez l'individu
-        </Typography>
-        <NameForm register={register} errors={errors}></NameForm>
-        <Typography variant="h6" component="h6" gutterBottom>
-          2. Entrez le Sexe l'individu
-        </Typography>
-        <SexForm></SexForm>
-        <Typography variant="h6" component="h6" gutterBottom>
-          3. Entrez la Date de Naissance de l'individu
-        </Typography>
-        <DateOfBirthForm register={register}></DateOfBirthForm>
-        <Button
-          fullWidth
-          variant="contained"
-          color="primary"
-          onClick={handleSubmit(onSubmit)}
+  if (isLoggedIn) {
+    return (
+      <Container maxWidth="sm">
+        <Box
+          component={"form"}
+          sx={{
+            "& .MuiTextField-root": { m: 1, width: "25ch" },
+          }}
+          noValidate
+          autoComplete={"off"}
         >
-          Retrouvez le citoyen
-          {/* <Route path="/updateUserInfo" element={<UpdateUserForm  UpdateUserFormProps ={dataResposnse} />} /> */}
-        </Button>
-      </Box>
-    </Container>
-  );
+          <Typography variant="h1" gutterBottom></Typography>
+          <Typography variant="h6" component="h6" gutterBottom>
+            1. Retrouvez l'individu
+          </Typography>
+          <NameForm register={register} errors={errors}></NameForm>
+          <Typography variant="h6" component="h6" gutterBottom>
+            2. Entrez le Sexe l'individu
+          </Typography>
+          <SexForm></SexForm>
+          <Typography variant="h6" component="h6" gutterBottom>
+            3. Entrez la Date de Naissance de l'individu
+          </Typography>
+          <DateOfBirthForm register={register}></DateOfBirthForm>
+          <Button
+            fullWidth
+            variant="contained"
+            color="primary"
+            onClick={handleSubmit(onSubmit)}
+          >
+            Retrouvez le citoyen
+            {/* <Route path="/updateUserInfo" element={<UpdateUserForm  UpdateUserFormProps ={dataResposnse} />} /> */}
+          </Button>
+        </Box>
+      </Container>
+    );
+  }else {
+    return(
+      <div>
+      'Cannot load this page'
+    </div>
+    );
+  }
+  
 }
