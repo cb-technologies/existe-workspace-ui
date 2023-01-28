@@ -11,39 +11,17 @@ import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
 import Tooltip from '@mui/material/Tooltip';
 import MenuItem from '@mui/material/MenuItem';
-import AdbIcon from '@mui/icons-material/Adb';
 import styles from "../styles/carteGenerationStyle";
 import { css } from "aphrodite/no-important";
-import { Auth } from 'aws-amplify';
+
 import { Navigate, useNavigate } from 'react-router-dom';
-import { URLExistPath } from "../../constants/existUrlPath";
 import { useEffect, useState } from 'react';
 import { AuthContext } from '../../store/auth_context';
 import {CssBaseline} from "@mui/material";
 
 const pages = [''];
 const settings = ['Logout'];
-// const settings = [
-//   {
-//     title: "Profile",
-//     page: URLExistPath.RegisterPage,
-//     flag: "to_register",
-//   },
-//   {
-//     buttonText: "Actualiser Un Citoyen",
-//     buttonVariant: "outlined",
-//     icon: BrowserUpdatedIcon,
-//     page: URLExistPath.RetrieveUserInfo,
-//     flag: "to_update",
-//   },
-//   {
-//     buttonText: "Generer carte d'identitée",
-//     buttonVariant: "outlined",
-//     icon: PermIdentityIcon,
-//     page: URLExistPath.RetrieveUserInfo,
-//     flag: "to_generate",
-//   },
-// ];
+
 function ResponsiveAppBar() {
   const [anchorElNav, setAnchorElNav] = React.useState<null | HTMLElement>(null);
   const [anchorElUser, setAnchorElUser] = React.useState<null | HTMLElement>(null);
@@ -70,37 +48,7 @@ function ResponsiveAppBar() {
   const [prenom, setPrenom] = useState("");
   const [user, setUser] = useState(null);
 
-  // useEffect(() => {
-  //   console.log(isLoggedIn)
-  //   async function checkAuth() {
-  //     try {
-  //       const user = await Auth.currentUserInfo();
-  //       setIsLoggedIn(true);
-  //       setRole(user.attributes['custom:role'])
-  //       setNom(user.attributes['custom:nom'])
-  //       setPrenom(user.attributes['custom:prenom'])
-  //       setPhoneNumber(user.attributes['custom:phonenumber'])
-        
-  //     } catch {
-  //       console.log("Petage")
-  //       setIsLoggedIn(false);
-  //       navigateTo(URLExistPath.SignInPage, "to_sign_in");
-  //     }
-  //   }
-  //   checkAuth();
-  // }, [isLoggedIn]);
-
   const authContext = React.useContext(AuthContext);
-
-
-  // const signOut = async () => {
-  //   try {
-  //     await Auth.signOut();
-  //     navigate(URLExistPath.HomePage);
-  //   } catch (error) {
-  //       console.log('error signing out: ', error);
-  //   }
-  // };
 
   return (
     <AppBar position="static" color='transparent'>
