@@ -29,6 +29,7 @@ import useHistoryState from "../../hooks/useHistoryState";
 import Container from "@mui/material/Container";
 import { useNavigate, useLocation } from "react-router-dom"; //import the package
 import { Auth } from "aws-amplify";
+import { AuthContext } from "../../store/auth_context";
 //import { useNavigate, useLocation } from "react-router-dom";
 
 var globalDay: string;
@@ -208,41 +209,22 @@ export default function RetrieveUserInfo() {
 
   const [json, setJson] = useState<string>();
   const [dataResposnse, setDataResponse] = useState<PersonInfoResponse>();
-
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [role, setRole] = useState("");
   
   const navigateTo = (page: string, flag: string) => {
     navigate(page,{ state: { flag_to_page: flag } });
   };
 
-  const [phoneNumber, setPhoneNumber] = useState("");
-  const [prenom, setPrenom] = useState("");
-  const [user, setUser] = useState(null);
-  const [nom, setNom] = useState("");
 
-  useEffect(() => {
-    Auth.currentUserInfo()
-      .then((user) => {
-        setIsLoggedIn(true);
-        setRole(user.attributes['custom:role'])
-        setNom(user.attributes['custom:nom'])
-        setPrenom(user.attributes['custom:prenom'])
-        setPhoneNumber(user.attributes['custom:phonenumber'])
-      })
-      .catch((err) => {
-        setIsLoggedIn(false);
-        navigateTo(URLExistPath.SignInPage, "to_sign_in");
-      });
-  }, []);
+  const authContext = React.useContext(AuthContext);
+  
+  const [role, setRole] = useState(authContext.user.attributes['custom:role']);
+  const [isLoggedIn, setIsLoggedIn] = useState(authContext.isAuthenticated);
+
   
 
   const onSubmit = (data: RetrieveFormInput) => {
     setJson(JSON.stringify(data));
     setDataResponse(retreiveUser(data));
-    // console.log(dataResposnse);
-    // console.log(flag)
-    // console.log(data)
   };
 
   const [encryptionKey, setEncryptionKey] = useState('');

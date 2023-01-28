@@ -2,9 +2,10 @@ import React, { useEffect, useState } from "react";
 import { css } from "aphrodite/no-important";
 import styles from "../styles/carteGenerationStyle";
 import { Link, useLocation } from "react-router-dom";
-import { Container, Box, Button } from "@mui/material";
+import { Container, Box, Button, Alert, AlertTitle } from "@mui/material";
 import { PersonInfoResponse } from "../../grpc/pb/message_and_service_pb";
 import { Auth } from 'aws-amplify';
+import { AuthContext } from "../../store/auth_context";
 
 export default function CardGenerationPage() {
   const location = useLocation();
@@ -27,17 +28,8 @@ type CarteGenerationProps = {
 
 function CarteGeneration({ userInfo }: CarteGenerationProps) {
 
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
-
-  useEffect(() => {
-    Auth.currentAuthenticatedUser()
-      .then(user => {
-        setIsLoggedIn(true);
-      })
-      .catch(err => {
-        setIsLoggedIn(false);
-      });
-  }, []);
+  const authContext = React.useContext(AuthContext);
+  const [isLoggedIn, setIsLoggedIn] = useState(authContext.isAuthenticated);
 
 
   return (
@@ -195,7 +187,10 @@ function CarteGeneration({ userInfo }: CarteGenerationProps) {
           </div>
         </div>
       </div>
-       : 'Cannot load this page'}
+       : <Alert severity="error">
+       <AlertTitle>Accès refusé</AlertTitle>
+       "Désolé, vous n'êtes pas autorisé à accéder à cette page" — <strong>Accès refusé</strong>
+ </Alert>}
     </div>
     
   );

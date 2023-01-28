@@ -3,7 +3,7 @@ import { createContext } from 'react';
 export interface AuthContextState {
   isAuthenticated: boolean;
   wrongCredentials: boolean;
-  user: object | null;
+  user: any;
 }
 
 

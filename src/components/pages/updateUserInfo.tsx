@@ -27,6 +27,7 @@ import LoadingButton from '@mui/lab/LoadingButton';
 import SaveIcon from "@mui/icons-material/Save";
 import {Address, Biometric, DateOfBirth, EditPersonInfoParameters, Names, NationalIDNumber, PersonInfoResponse,PersonInfoRequest, Phenotype, Origin, Sex } from "../../grpc/pb/message_and_service_pb"
 import { URLExistPath } from "../../constants/existUrlPath";
+import { AuthContext } from "../../store/auth_context";
 
 export interface UpdateUserFormInput {
   Prenom: string;
@@ -141,33 +142,15 @@ export default function UpdateUserForm() {
   const [showAlert, setShowAlert] = useState(false);
   const [showErrorAlert, setShowErrorAlert] = useState(false);
   const navigate = useNavigate();
-
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
   
   const navigateTo = (page: string, flag: string) => {
     navigate(page,{ state: { flag_to_page: flag } });
   };
 
-  const [role, setRole] = useState("");
-  const [phoneNumber, setPhoneNumber] = useState("");
-  const [prenom, setPrenom] = useState("");
-  const [user, setUser] = useState(null);
-  const [nom, setNom] = useState("");
-
-  useEffect(() => {
-    Auth.currentUserInfo()
-      .then((user) => {
-        setIsLoggedIn(true);
-        setRole(user.attributes['custom:role'])
-        setNom(user.attributes['custom:nom'])
-        setPrenom(user.attributes['custom:prenom'])
-        setPhoneNumber(user.attributes['custom:phonenumber'])
-      })
-      .catch((err) => {
-        setIsLoggedIn(false);
-        navigateTo(URLExistPath.SignInPage, "to_sign_in");
-      });
-  }, []);
+  const authContext = React.useContext(AuthContext);
+  
+  const [role, setRole] = useState(authContext.user.attributes['custom:role']);
+  const [isLoggedIn, setIsLoggedIn] = useState(authContext.isAuthenticated);
   
 
   const onSubmit = (data: UpdateUserFormInput) => {

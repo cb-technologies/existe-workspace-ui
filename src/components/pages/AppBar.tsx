@@ -63,12 +63,7 @@ function ResponsiveAppBar() {
   const navigate = useNavigate();
 
   
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [role, setRole] = useState("");
-  const [phoneNumber, setPhoneNumber] = useState("");
-  const [nom, setNom] = useState("");
-  const [prenom, setPrenom] = useState("");
-  const [user, setUser] = useState(null);
+  
 
   // useEffect(() => {
   //   console.log(isLoggedIn)
@@ -91,6 +86,8 @@ function ResponsiveAppBar() {
   // }, [isLoggedIn]);
 
   const authContext = React.useContext(AuthContext);
+
+  const [nom, setNom] = useState(authContext.user?.attributes['custom:nom']);
 
 
   // const signOut = async () => {
