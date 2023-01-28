@@ -21,6 +21,7 @@ import Container from '@mui/material/Container';
 import { useLocation } from "react-router-dom";
 import Alert from '@mui/material/Alert';
 import AlertTitle from '@mui/material/AlertTitle';
+import { Auth } from "aws-amplify";
 import { useNavigate } from "react-router-dom";
 import LoadingButton from '@mui/lab/LoadingButton';
 import SaveIcon from "@mui/icons-material/Save";
@@ -140,6 +141,33 @@ export default function UpdateUserForm() {
   const [showAlert, setShowAlert] = useState(false);
   const [showErrorAlert, setShowErrorAlert] = useState(false);
   const navigate = useNavigate();
+
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  
+  const navigateTo = (page: string, flag: string) => {
+    navigate(page,{ state: { flag_to_page: flag } });
+  };
+
+  const [role, setRole] = useState("");
+  const [phoneNumber, setPhoneNumber] = useState("");
+  const [prenom, setPrenom] = useState("");
+  const [user, setUser] = useState(null);
+  const [nom, setNom] = useState("");
+
+  useEffect(() => {
+    Auth.currentUserInfo()
+      .then((user) => {
+        setIsLoggedIn(true);
+        setRole(user.attributes['custom:role'])
+        setNom(user.attributes['custom:nom'])
+        setPrenom(user.attributes['custom:prenom'])
+        setPhoneNumber(user.attributes['custom:phonenumber'])
+      })
+      .catch((err) => {
+        setIsLoggedIn(false);
+        navigateTo(URLExistPath.SignInPage, "to_sign_in");
+      });
+  }, []);
   
 
   const onSubmit = (data: UpdateUserFormInput) => {
@@ -172,7 +200,9 @@ export default function UpdateUserForm() {
     };
 
   return (
-    <Container maxWidth="sm">
+    <div>
+      {isLoggedIn && (role === "Admin" || role === "Registrator") ? (
+        <Container maxWidth="sm">
       <Box
         component={"form"}
         onSubmit={handleSubmit(onSubmit)}
@@ -237,7 +267,15 @@ export default function UpdateUserForm() {
 
                 } 
     </Box>
-    </Container>
+      </Container>
+        ) : (
+        <Alert severity="error">
+                <AlertTitle>Accès refusé</AlertTitle>
+                "Désolé, vous n'êtes pas autorisé à accéder à cette page" — <strong>Accès refusé</strong>
+          </Alert>
+      )}
+    </div>
+    
     
   );
 }

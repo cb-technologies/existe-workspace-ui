@@ -16,7 +16,8 @@ import useHistoryState from '../../hooks/useHistoryState';
 import { URLExistPath } from '../../constants/existUrlPath';
 import { useNavigate } from 'react-router-dom';
 import { Auth } from 'aws-amplify';
-
+import Alert from '@mui/material/Alert';
+import AlertTitle from '@mui/material/AlertTitle';
 // import { TableHead, TableRow, Typography, Button } from '@mui/material';
 
 
@@ -225,7 +226,10 @@ export default function CustomizedTables() {
   }else {
     return(
       <div>
-      "Desole, vous n'avez pas acces a cette page."
+      <Alert severity="error">
+                <AlertTitle>Accès refusé</AlertTitle>
+                "Désolé, vous n'êtes pas autorisé à accéder à cette page" — <strong>Accès refusé</strong>
+          </Alert>
     </div>
     );
   }
