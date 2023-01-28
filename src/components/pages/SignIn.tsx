@@ -22,8 +22,9 @@ import { URLExistPath } from "../../constants/existUrlPath";
 import LoadingButton from "@mui/lab/LoadingButton";
 import SaveIcon from "@mui/icons-material/Save";
 import { ExistPrompts } from "../../constants/existPrompts";
-import { Auth } from 'aws-amplify';
+import { Auth } from "aws-amplify";
 import { AgentInfo } from "../../grpc/pb/message_and_service_pb";
+import { AuthContext } from "../../store/auth_context";
 
 interface SignInInput {
   Email: string;
@@ -39,20 +40,20 @@ const schema = yup.object().shape({
     .string()
     .required(ExistPrompts.EMPTY("Le mot de passe"))
     .min(8, ExistPrompts.MIN("Le mot de passe", 8))
-    .max(30,ExistPrompts.MAX("Le mot de passe", 30)),
+    .max(30, ExistPrompts.MAX("Le mot de passe", 30)),
 });
 
 const theme = createTheme();
 
-async function signIn(agentInfo : AgentSignInInfo) {
-  try {
-      const username = agentInfo.getEmail()
-      const password = agentInfo.getPassword()
-      const user = await Auth.signIn(username, password);
-  } catch (error) {
-      console.log('error signing in', error);
-  }
-}
+// async function signIn(agentInfo : AgentSignInInfo) {
+//   try {
+//       const username = agentInfo.getEmail()
+//       const password = agentInfo.getPassword()
+//       const user = await Auth.signIn(username, password);
+//   } catch (error) {
+//       console.log('error signing in', error);
+//   }
+// }
 
 export default function SignIn() {
   const {
@@ -70,32 +71,51 @@ export default function SignIn() {
   const [spinRegister, setSpinRegister] = useState(false);
   const navigate = useNavigate();
 
-  const onSubmit = (data: SignInInput) => {
+  const [wrongCred, setWrongCred] = useState(false);
+  const [authenticated, setAuthenticated] = useState(false);
+
+  const authContext = React.useContext(AuthContext);
+
+  const onSubmit = async (data: SignInInput) => {
     const agentSignInInfo: AgentSignInInfo = new AgentSignInInfo()
       .setEmail(data.Email)
       .setPassword(data.Password);
+    const email = agentSignInInfo.getEmail();
+    const password = agentSignInInfo.getPassword();
     setSpinRegister(true);
-    try {
-      const email = agentSignInInfo.getEmail();
-      const password = agentSignInInfo.getPassword();
-
-      Auth.signIn(email, password)
-        .then(user => {
-          console.log('sign in success!', user);
-          setSpinRegister(false);
-          navigate(URLExistPath.OrientationPage);
-        })
-        .catch(err => {
-          setSpinRegister(false);
-          console.log('error signing in:', err);
-          setError("Email", {message:ExistPrompts.WRONG_EMAIL_OR_PASSWORD})
-          setError("Password", {message:ExistPrompts.WRONG_EMAIL_OR_PASSWORD})
-        });
-    } catch (error) {
-      setSpinRegister(true);
-      setError("Email", {message:ExistPrompts.WRONG_EMAIL_OR_PASSWORD})
-      setError("Password", {message:ExistPrompts.WRONG_EMAIL_OR_PASSWORD})
+    await authContext.login(email, password);
+    setSpinRegister(false);
+    setWrongCred(authContext.wrongCredentials);
+    setAuthenticated(authContext.isAuthenticated);
+    if (wrongCred) {
+      console.log("wrong credentials");
+      setError("Email", { message: ExistPrompts.WRONG_EMAIL_OR_PASSWORD });
+      setError("Password", { message: ExistPrompts.WRONG_EMAIL_OR_PASSWORD });
     }
+    if (authenticated) {
+      navigate(URLExistPath.OrientationPage);
+    }
+    // try {
+    //   const email = agentSignInInfo.getEmail();
+    //   const password = agentSignInInfo.getPassword();
+
+    //   // Auth.signIn(email, password)
+    //   //   .then(user => {
+    //   //     console.log('sign in success!', user);
+    //   //     setSpinRegister(false);
+    //   //     navigate(URLExistPath.OrientationPage);
+    //   //   })
+    //   //   .catch(err => {
+    //   //     setSpinRegister(false);
+    //   //     console.log('error signing in:', err);
+    //   //     setError("Email", {message:ExistPrompts.WRONG_EMAIL_OR_PASSWORD})
+    //   //     setError("Password", {message:ExistPrompts.WRONG_EMAIL_OR_PASSWORD})
+    //   //   });
+    // } catch (error) {
+    //   setSpinRegister(true);
+    //   setError("Email", {message:ExistPrompts.WRONG_EMAIL_OR_PASSWORD})
+    //   setError("Password", {message:ExistPrompts.WRONG_EMAIL_OR_PASSWORD})
+    // }
   };
 
   return (

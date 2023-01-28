@@ -18,6 +18,7 @@ import { Auth } from 'aws-amplify';
 import { Navigate, useNavigate } from 'react-router-dom';
 import { URLExistPath } from "../../constants/existUrlPath";
 import { useEffect, useState } from 'react';
+import { AuthContext } from '../../store/auth_context';
 import {CssBaseline} from "@mui/material";
 
 const pages = [''];
@@ -43,10 +44,6 @@ const settings = ['Logout'];
 //     flag: "to_generate",
 //   },
 // ];
-
-
-
-
 function ResponsiveAppBar() {
   const [anchorElNav, setAnchorElNav] = React.useState<null | HTMLElement>(null);
   const [anchorElUser, setAnchorElUser] = React.useState<null | HTMLElement>(null);
@@ -65,9 +62,6 @@ function ResponsiveAppBar() {
 
   const navigate = useNavigate();
 
-  const navigateTo = (page: string, flag: string) => {
-    navigate(page,{ state: { flag_to_page: flag } });
-  };
   
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [role, setRole] = useState("");
@@ -76,73 +70,37 @@ function ResponsiveAppBar() {
   const [prenom, setPrenom] = useState("");
   const [user, setUser] = useState(null);
 
-  // Auth.currentAuthenticatedUser().then(user => setUser(user))
-  //   .catch(() => setUser(null));
-
-  // Auth.onAuthUIStateChange((nextAuthState, authData) => {
-  //     if (nextAuthState === 'signedIn') {
-  //       // the user is signed in
-  //       setUser(authData.user)
-  //     } else if (nextAuthState === 'signedOut') {
-  //       // the user is signed out
-  //       setUser(null)
-  //     }
-  // });
-
-  // Auth.currentAuthenticatedUser()
-  // .then(user => {
-  //   console.log(user)
-  //   setIsLoggedIn(true);
-  //   setRole(user.attributes['custom:role'])
-  //   setNom(user.attributes['custom:nom'])
-  //   setPrenom(user.attributes['custom:prenom'])
-  //   setPhoneNumber(user.attributes['custom:phonenumber'])
-  // })
-  // .catch(err => {
-  //   console.log(err)
-  //   console.log("Petage")
-  //   setIsLoggedIn(false);
-  //   navigateTo(URLExistPath.SignInPage, "to_sign_in");
-  // });
-
-  // Auth.onAuthStateChange(user => {
-  //   if (user) {
-  //     console.log('User is signed in')
-  //   } else {
-  //     console.log('User is signed out')
-  //   }
-  // })
-
-  useEffect(() => {
-    // console.log("arriviO yeba tseng")
-    // console.log(isLoggedIn)
-    async function checkAuth() {
-      try {
-        const user = await Auth.currentUserInfo();
-        //console.log("arriving")
-        setIsLoggedIn(true);
-        setRole(user.attributes['custom:role'])
-        setNom(user.attributes['custom:nom'])
-        setPrenom(user.attributes['custom:prenom'])
-        setPhoneNumber(user.attributes['custom:phonenumber'])
+  // useEffect(() => {
+  //   console.log(isLoggedIn)
+  //   async function checkAuth() {
+  //     try {
+  //       const user = await Auth.currentUserInfo();
+  //       setIsLoggedIn(true);
+  //       setRole(user.attributes['custom:role'])
+  //       setNom(user.attributes['custom:nom'])
+  //       setPrenom(user.attributes['custom:prenom'])
+  //       setPhoneNumber(user.attributes['custom:phonenumber'])
         
-      } catch {
-        console.log("Petage")
-        setIsLoggedIn(false);
-        navigateTo(URLExistPath.SignInPage, "to_sign_in");
-      }
-    }
-    checkAuth();
-  }, [isLoggedIn]);
+  //     } catch {
+  //       console.log("Petage")
+  //       setIsLoggedIn(false);
+  //       navigateTo(URLExistPath.SignInPage, "to_sign_in");
+  //     }
+  //   }
+  //   checkAuth();
+  // }, [isLoggedIn]);
 
-  const signOut = async () => {
-    try {
-      await Auth.signOut();
-      navigate(URLExistPath.HomePage);
-    } catch (error) {
-        console.log('error signing out: ', error);
-    }
-  };
+  const authContext = React.useContext(AuthContext);
+
+
+  // const signOut = async () => {
+  //   try {
+  //     await Auth.signOut();
+  //     navigate(URLExistPath.HomePage);
+  //   } catch (error) {
+  //       console.log('error signing out: ', error);
+  //   }
+  // };
 
   return (
     <AppBar position="static" color='transparent'>
@@ -186,7 +144,7 @@ function ResponsiveAppBar() {
 
           {/* in case loggedIn */}
           {<div>
-            {isLoggedIn?
+            {authContext.isAuthenticated?
             <Box sx={{ flexGrow: 0 }}>
             <Tooltip title="Open settings">
               <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
@@ -211,7 +169,7 @@ function ResponsiveAppBar() {
               onClose={handleCloseUserMenu}
             >
               {settings.map((setting) => (
-                <MenuItem key={setting} onClick={signOut}>
+                <MenuItem key={setting} onClick={authContext.logout}>
                   <Typography textAlign="center">{setting}</Typography>
                 </MenuItem>
               ))}
