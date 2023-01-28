@@ -15,6 +15,7 @@ import { UsersListType } from 'aws-sdk/clients/cognitoidentityserviceprovider';
 import useHistoryState from '../../hooks/useHistoryState';
 import { URLExistPath } from '../../constants/existUrlPath';
 import { useNavigate } from 'react-router-dom';
+import { Auth } from 'aws-amplify';
 
 // import { TableHead, TableRow, Typography, Button } from '@mui/material';
 
@@ -93,17 +94,40 @@ export default function CustomizedTables() {
 
   const [rows, setRows] = useState([createData('ntuala2@illinois.ed', 'CONFIRMED', '0819367845', 'Jan 8, 2023 5:22:53 PM', "Jan 8, 2023 4:56:26 PM")]);
   const [my_region, setRegion] = useState("eu-west-3")
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  //const navigate = useNavigate();
+  
+  const navigateTo = (page: string, flag: string) => {
+    navigate(page,{ state: { flag_to_page: flag } });
+  };
+
+  const [role, setRole] = useState("");
+  const [phoneNumber, setPhoneNumber] = useState("");
+  const [nom, setNom] = useState("");
+  const [prenom, setPrenom] = useState("");
+  
   useEffect(() => {
     console.log("Being refreshed")
     AWS.config.update({
       region: my_region,
       credentials: new AWS.Credentials('AKIAWUW6U5W6ZK7ONRM3', 'pCRg/LHoJ89b5VK2/s6J+KE7VwfviueChlxzPAFV')
     });
+    Auth.currentUserInfo()
+      .then((user) => {
+        setIsLoggedIn(true);
+        setRole(user.attributes['custom:role'])
+        setNom(user.attributes['custom:nom'])
+        setPrenom(user.attributes['custom:prenom'])
+        setPhoneNumber(user.attributes['custom:phonenumber'])
+      })
+      .catch((err) => {
+        setIsLoggedIn(false);
+        navigateTo(URLExistPath.SignInPage, "to_sign_in");
+      });
+
+
     getAllUsers().then(data => {
         if(data && data.Users) {
-            // console.log("Arriving")
-            // console.log(data.Users)
-            // setUsers(data.Users);
             const data_users = data.Users;
             var holder_array = [createData('ntuala2@illinois.ed', 'CONFIRMED', '0819367845', 'Jan 8, 2023 5:22:53 PM', "Jan 8, 2023 4:56:26 PM")]
             rows.splice(0, rows.length);
@@ -153,49 +177,57 @@ export default function CustomizedTables() {
 
 
 
-
-  return (
+  if (isLoggedIn && (role === "Admin")) {
+    return (
     
-    <TableContainer component={Paper}>
-      <Table sx={{ minWidth: 700 }} aria-label="customized table">
-        <TableHead>
-        <TableRow>
-            
-            {/* <StyledTableCell>
-                <Typography variant="h6">Title</Typography>
-            </StyledTableCell> */}
-            {/* <Button variant="contained" color="primary">
-                    Click me
-
-                </Button> */}
-            <StyledFirstRowCell>
-                <Button variant="outlined" color="primary" onClick={() => {navigate(URLExistPath.SignUpPage)}}>
-                    Add Agent
-                </Button>
-            </StyledFirstRowCell>
-      </TableRow>
+      <TableContainer component={Paper}>
+        <Table sx={{ minWidth: 700 }} aria-label="customized table">
+          <TableHead>
           <TableRow>
-            <StyledTableCell>Email</StyledTableCell>
-            <StyledTableCell align="right">Phone Number</StyledTableCell>
-            <StyledTableCell align="right">Status</StyledTableCell>
-            <StyledTableCell align="right">Updated</StyledTableCell>
-            <StyledTableCell align="right">Created</StyledTableCell>
-          </TableRow>
-        </TableHead>
-        <TableBody>
-          {rows.map((row) => (
-            <StyledTableRow key={row.email}>
-              <StyledTableCell component="th" scope="row">
-                {row.email}
-              </StyledTableCell>
-              <StyledTableCell align="right">{row.phoneNumber}</StyledTableCell>
-              <StyledTableCell align="right">{row.accountStatus}</StyledTableCell>
-              <StyledTableCell align="right">{row.updated}</StyledTableCell>
-              <StyledTableCell align="right">{row.created}</StyledTableCell>
-            </StyledTableRow>
-          ))}
-        </TableBody>
-      </Table>
-    </TableContainer>
-  );
+              
+              {/* <StyledTableCell>
+                  <Typography variant="h6">Title</Typography>
+              </StyledTableCell> */}
+              {/* <Button variant="contained" color="primary">
+                      Click me
+  
+                  </Button> */}
+              <StyledFirstRowCell>
+                  <Button variant="outlined" color="primary" onClick={() => {navigate(URLExistPath.SignUpPage)}}>
+                      Add Agent
+                  </Button>
+              </StyledFirstRowCell>
+        </TableRow>
+            <TableRow>
+              <StyledTableCell>Email</StyledTableCell>
+              <StyledTableCell align="right">Phone Number</StyledTableCell>
+              <StyledTableCell align="right">Status</StyledTableCell>
+              <StyledTableCell align="right">Updated</StyledTableCell>
+              <StyledTableCell align="right">Created</StyledTableCell>
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {rows.map((row) => (
+              <StyledTableRow key={row.email}>
+                <StyledTableCell component="th" scope="row">
+                  {row.email}
+                </StyledTableCell>
+                <StyledTableCell align="right">{row.phoneNumber}</StyledTableCell>
+                <StyledTableCell align="right">{row.accountStatus}</StyledTableCell>
+                <StyledTableCell align="right">{row.updated}</StyledTableCell>
+                <StyledTableCell align="right">{row.created}</StyledTableCell>
+              </StyledTableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </TableContainer>
+    );
+  }else {
+    return(
+      <div>
+      "Desole, vous n'avez pas acces a cette page."
+    </div>
+    );
+  }
+  
 }

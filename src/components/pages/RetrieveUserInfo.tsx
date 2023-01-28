@@ -208,6 +208,7 @@ export default function RetrieveUserInfo() {
   const [dataResposnse, setDataResponse] = useState<PersonInfoResponse>();
 
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [role, setRole] = useState("");
 
   // const navigate = useNavigate();
 
@@ -218,7 +219,8 @@ export default function RetrieveUserInfo() {
   useEffect(() => {
     async function checkAuth() {
       try {
-        const session = await Auth.currentSession();
+        const user = await Auth.currentUserInfo();
+        setRole(user.attributes['custom:role'])
         setIsLoggedIn(true);
       } catch {
         setIsLoggedIn(false);
@@ -237,7 +239,7 @@ export default function RetrieveUserInfo() {
     // console.log(data)
   };
 
-  if (isLoggedIn) {
+  if (isLoggedIn && (role === "Admin" || role === "Printer")) {
     return (
       <Container maxWidth="sm">
         <Box

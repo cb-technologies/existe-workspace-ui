@@ -113,12 +113,12 @@ function ResponsiveAppBar() {
   // })
 
   useEffect(() => {
-    console.log("arriviO yeba tseng")
-    console.log(isLoggedIn)
+    // console.log("arriviO yeba tseng")
+    // console.log(isLoggedIn)
     async function checkAuth() {
       try {
         const user = await Auth.currentUserInfo();
-        console.log("arriving")
+        //console.log("arriving")
         setIsLoggedIn(true);
         setRole(user.attributes['custom:role'])
         setNom(user.attributes['custom:nom'])
