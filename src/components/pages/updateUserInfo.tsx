@@ -6,22 +6,14 @@ import * as yup from "yup"; // to validate the form input
 import { useForm } from "react-hook-form"; // to handle the form's submission and error states
 import { yupResolver } from "@hookform/resolvers/yup";
 import Button from "@mui/material/Button";
-import { ExistCRUDClient } from "../../grpc/pb/Message_and_serviceServiceClientPb";
-import useHistoryState from "../../hooks/useHistoryState";
-import { updateUserInformation } from "../../utils/update_form";
 import AddressForm from "./AddressForm";
-import DateOfBirthForm from "./DateOfBirthForm";
 import NameForm from "./NameForm";
-import OriginForm from "./OriginForm";
 import PhenotypeForm from "./PhenotypeForm";
-import SexForm from "./SexForm";
-import { useRadioGroup } from "@mui/material";
 import { ExistService } from "../../store/exist_api_call";
 import Container from '@mui/material/Container';
 import { useLocation } from "react-router-dom";
 import Alert from '@mui/material/Alert';
 import AlertTitle from '@mui/material/AlertTitle';
-import { Auth } from "aws-amplify";
 import { useNavigate } from "react-router-dom";
 import LoadingButton from '@mui/lab/LoadingButton';
 import SaveIcon from "@mui/icons-material/Save";

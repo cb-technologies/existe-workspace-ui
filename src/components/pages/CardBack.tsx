@@ -97,28 +97,6 @@ export default function CardBack({ userInfo }: CarteGenerationProps) {
                             Cette carte est valide sur tout l’etendu du territoire national
                         </h5>
                     </div>
-                    <div className={css(styles.group)}>
-                        <img
-                            className={css(styles.decorator1)}
-                            src={require("../../assets/card_generation/a81eb3798df23fad4ab3f2960444f6be.png")}
-                            alt="alt text"
-                        />
-                        <img
-                            className={css(styles.decorator2)}
-                            src={require("../../assets/card_generation/ba635578f987477e7ff4a9b28ff89e2c.png")}
-                            alt="alt text"
-                        />
-                    </div>
-                    <div className={css(styles.col)}>
-                        <div className={css(styles.col__item)}>
-
-                            {qrCode}
-                        </div>
-                        <h5 className={css(styles.highlights11)}>
-                            Cette carte est valide sur tout l’etendu du territoire national
-                        </h5>
-                    </div>
-
                     <div
                         className={css(styles.content_box2)}
                         style={{
