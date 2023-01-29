@@ -267,20 +267,16 @@ export default function RetrieveUserInfo() {
           
           ExistService.retreiveUserBasedOnField(retreivePersonInfoParameters!, null)
           .then((userInfo) => {
-            (async () => { 
-              const userInfoObject = userInfo.toObject();
+            const userInfoObject = userInfo.toObject();
               setSpinGenerateCard(false);
               navigate(URLExistPath.GeneratedCardPage, {
               state: { cardInfo: userInfoObject },
             });
-            })();
           })
           .catch((error) => {
-            (async () => { 
-              setSpinGenerateCard(false);
+            setSpinGenerateCard(false);
               setShowErrorAlert(true);
             console.log("Error while generating card from QR Code", error);
-            })();
           });
         }
         catch (error) {
