@@ -14,10 +14,11 @@ import Checkbox from "@mui/material/Checkbox";
 import * as yup from "yup"; // to validate the form input
 import { useForm } from "react-hook-form"; // to handle the form's submission and error states
 import { yupResolver } from "@hookform/resolvers/yup";
+import SaveIcon from "@mui/icons-material/Save";
 import Button from "@mui/material/Button";
 import { URLExistPath } from "../../constants/existUrlPath";
-import Alert from '@mui/material/Alert';
-import AlertTitle from '@mui/material/AlertTitle';
+import Alert from "@mui/material/Alert";
+import AlertTitle from "@mui/material/AlertTitle";
 import {
   DateOfBirth,
   RetreivePersonInfoParameters,
@@ -30,7 +31,10 @@ import Container from "@mui/material/Container";
 import { useNavigate, useLocation } from "react-router-dom"; //import the package
 import { Auth } from "aws-amplify";
 import { AuthContext } from "../../store/auth_context";
-//import { useNavigate, useLocation } from "react-router-dom";
+import { decrypt } from "n-krypta";
+import { secret } from "../../constants/encryptionSecrets";
+import { EC2 } from "aws-sdk";
+import LoadingButton from "@mui/lab/LoadingButton";
 
 var globalDay: string;
 var globalMonth: string;
@@ -40,16 +44,18 @@ interface RetrieveFormInput {
   Prenom: string;
   Nom: string;
   PostNom: string;
+  QRCodeEncrypt: string;
 }
 
 const schema = yup.object().shape({
   Nom: yup.string().required("Nom non valide").min(2).max(30),
   Prenom: yup.string().required("Prenom non valide").min(2).max(30),
-  PostNom: yup
+  PostNom: yup.string().required("Postnom non valide").min(2).max(30),
+  QRCodeEncrypt: yup
     .string()
-    .required("Postnom non valide")
-    .min(2)
-    .max(30),
+    .required("QRCode Encrypted String")
+    .min(0)
+    .max(1000),
 });
 
 // @ts-ignore
@@ -104,7 +110,6 @@ function SexForm() {
 // @ts-ignore
 function DateOfBirthForm({ register }) {
   const [value, setValue] = React.useState<Dayjs | null>(null);
-  console.log("debug dob");
   return (
     <LocalizationProvider dateAdapter={AdapterDayjs}>
       <Stack spacing={1}>
@@ -158,34 +163,11 @@ export default function RetrieveUserInfo() {
   const navigate = useNavigate();
   const location = useLocation();
   const flag = location.state.flag_to_page;
+
   // @ts-ignore
-  //   function retreiveUser(data): PersonInfoResponse {
-
-
-  // useEffect(() => {
-  //   console.log("arriviO yeba tseng")
-  //   console.log(isLoggedIn)
-  //   async function checkAuth() {
-  //     try {
-  //       const user = await Auth.currentUserInfo();
-  //       console.log("arriving")
-  //       setIsLoggedIn(true);
-  //       setRole(user.attributes['custom:role'])
-  //       setNom(user.attributes['custom:nom'])
-  //       setPrenom(user.attributes['custom:prenom'])
-  //       setPhoneNumber(user.attributes['custom:phonenumber'])
-        
-  //     } catch {
-  //       console.log("Petage")
-  //       setIsLoggedIn(false);
-  //       navigateTo(URLExistPath.SignInPage, "to_sign_in");
-  //     }
-  //   }
-  //   checkAuth();
-  // }, [isLoggedIn]);
-
   function retreiveUser(data): PersonInfoResponse {
     var retreivePersonInfoParameters = retreivemapdata(data);
+    // var qrCodeStr =  retreiveQRCodemapdata(data);
     console.log("Person Parameter", retreivePersonInfoParameters);
 
     ExistService.retreiveUserBasedOnField(
@@ -193,8 +175,6 @@ export default function RetrieveUserInfo() {
       null
     ).then((userInfo) => {
       const userInfoObject = userInfo.toObject();
-      console.log("Petage", userInfo.getBiometrics()?.getPhotos_asB64());
-      console.log("AnotherPetage", userInfo.getBiometrics()?.getPhotoType());
       if (flag == "to_generate") {
         navigate(URLExistPath.GeneratedCardPage, {
           state: { cardInfo: userInfoObject },
@@ -209,25 +189,83 @@ export default function RetrieveUserInfo() {
 
   const [json, setJson] = useState<string>();
   const [dataResposnse, setDataResponse] = useState<PersonInfoResponse>();
-  
+
   const navigateTo = (page: string, flag: string) => {
-    navigate(page,{ state: { flag_to_page: flag } });
+    navigate(page, { state: { flag_to_page: flag } });
   };
 
-
   const authContext = React.useContext(AuthContext);
-  
-  const [role, setRole] = useState(authContext.user.attributes['custom:role']);
-  const [isLoggedIn, setIsLoggedIn] = useState(authContext.isAuthenticated);
 
-  
+  const [role, setRole] = useState(authContext.user.attributes["custom:role"]);
+  const [isLoggedIn, setIsLoggedIn] = useState(authContext.isAuthenticated);
 
   const onSubmit = (data: RetrieveFormInput) => {
     setJson(JSON.stringify(data));
     setDataResponse(retreiveUser(data));
   };
 
-  const [encryptionKey, setEncryptionKey] = useState('');
+  const [spinGenerateCard, setSpinGenerateCard] = useState(false);
+
+  const generateCardFromQRCode = (qrCodeEncryptedString: string) => {
+    console.log("The qr code str is ", qrCodeEncryptedString);
+    const decryptedString = decrypt(qrCodeEncryptedString, secret.QRCodeSecret);
+    const decryptedStringSplitBySlash = decryptedString.split("/");
+    const decryptedNames = decryptedStringSplitBySlash[0];
+
+    // Get Names first
+    const firstName = decryptedNames.split("$")[1];
+    const lastName = decryptedNames.split("$")[0];
+    const middleNames = decryptedNames.split("$")[2];
+
+    // Get Date of Birth
+    const dateOfBirth = decryptedStringSplitBySlash[1];
+    const day = dateOfBirth.split("$")[0];
+    const month = dateOfBirth.split("$")[1];
+    const year = dateOfBirth.split("$")[2];
+
+    // Get Sex
+    const sexe = decryptedStringSplitBySlash[2];
+
+    // Create Names object
+    var names = new Names().setNom(lastName);
+    names.setPrenom(firstName);
+    names.setMiddleNamesList([middleNames]);
+
+    // Create Date of Birth object
+    var dob = new DateOfBirth().setDay(day);
+    dob.setMonth(month);
+    dob.setYear(year);
+
+    // Create PersonInfoRetreiveParameters object
+    var retreivePersonInfoParameters = new RetreivePersonInfoParameters()
+      .setNames(names)
+      .setDateOfBirth(dob);
+
+    // Navigate to GeneratedCardPage
+    setSpinGenerateCard(true);
+    ExistService.retreiveUserBasedOnField(retreivePersonInfoParameters, null)
+      .then((userInfo) => {
+        const userInfoObject = userInfo.toObject();
+        setSpinGenerateCard(false);
+        navigate(URLExistPath.GeneratedCardPage, {
+          state: { cardInfo: userInfoObject },
+        });
+      })
+      .catch((error) => {
+        setSpinGenerateCard(false);
+        console.log("Error while generating card from QR Code", error);
+      });
+  };
+
+  const [encryptionKey, setEncryptionKey] = useState("");
+
+  // const onSubmitEncrypt = (data: RetrieveFormInput) => {
+  //   // setJson(JSON.stringify(data));
+  //   setJson(retreiveUserFromQRCode(data));
+  //   // console.log(dataResposnse);
+  //   // console.log(flag)
+  //   // console.log(data)
+  // };
 
   if (isLoggedIn && (role === "Admin" || role === "Registrator")) {
     return (
@@ -266,29 +304,54 @@ export default function RetrieveUserInfo() {
         <div>
           ----------------------------------------------------------------------------------------------------
         </div>
-  
-        <Box>
-          <Typography textAlign="center" variant="h6" component="h6" gutterBottom>
+        <Box
+        >
+          <Typography
+            textAlign="center"
+            variant="h6"
+            component="h6"
+            gutterBottom
+          >
             Entrez le QR code encrypté:
           </Typography>
-          <TextField fullWidth value={encryptionKey} onChange={(e) => setEncryptionKey(e.target.value)}></TextField>
-          <div>
-  
-          </div>
-          <Button sx={{mt: 1, ml: 1, mr: 20}} variant="contained" color="primary"> Générer la carte </Button>
-  
-          <Button sx={{mt: 1, ml: 1}}  variant="contained" color="primary"> Vérifier la carte </Button>
+          <TextField
+            fullWidth
+            value={encryptionKey}
+            onChange={(e) => setEncryptionKey(e.target.value)}
+          ></TextField>
+          <div></div>
+          {!spinGenerateCard ? (
+            <Button
+              fullWidth
+              variant="contained"
+              sx={{mt: 2}}
+              color="primary"
+              onClick={() => generateCardFromQRCode(encryptionKey)}
+            >
+            Vérifier la carte 
+            </Button>
+          ) : (
+            <LoadingButton
+              sx={{ mt: 1, ml: 1, mr: 20 }}
+              variant="contained"
+              color="primary"
+              loading
+              fullWidth
+              loadingPosition="center"
+            ></LoadingButton>
+          )}
         </Box>
       </Container>
     );
-  }else {
-    return(
+  } else {
+    return (
       <div>
-      <Alert severity="error">
-                <AlertTitle>Accès refusé</AlertTitle>
-                "Désolé, vous n'êtes pas autorisé à accéder à cette page" — <strong>Accès refusé</strong>
-          </Alert>
-    </div>
+        <Alert severity="error">
+          <AlertTitle>Accès refusé</AlertTitle>
+          "Désolé, vous n'êtes pas autorisé à accéder à cette page" —{" "}
+          <strong>Accès refusé</strong>
+        </Alert>
+      </div>
     );
-  }  
+  }
 }

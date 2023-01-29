@@ -68,6 +68,8 @@
   },
   "devDependencies": {
     "@types/google-protobuf": "^3.15.6",
-    "@types/react-scroll": "^1.8.5"
+    "@types/react-scroll": "^1.8.5",
+    "metro-react-native-babel-preset": "^0.74.1",
+    "react-native-dotenv": "^3.4.7"
   }
 }
