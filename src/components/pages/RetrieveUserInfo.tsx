@@ -152,6 +152,7 @@ function retreivemapdata(data) {
   return retreivePersonInfoParameters;
 }
 
+
 export default function RetrieveUserInfo() {
   const {
     register,
@@ -198,6 +199,7 @@ export default function RetrieveUserInfo() {
 
   const [role, setRole] = useState(authContext.user.attributes["custom:role"]);
   const [isLoggedIn, setIsLoggedIn] = useState(authContext.isAuthenticated);
+  const [showErrorAlert, setShowErrorAlert] = useState(false);
 
   const onSubmit = (data: RetrieveFormInput) => {
     setJson(JSON.stringify(data));
@@ -209,52 +211,83 @@ export default function RetrieveUserInfo() {
   const generateCardFromQRCode = (qrCodeEncryptedString: string) => {
     console.log("The qr code str is ", qrCodeEncryptedString);
     const decryptedString = decrypt(qrCodeEncryptedString, secret.QRCodeSecret);
-    const decryptedStringSplitBySlash = decryptedString.split("/");
-    const decryptedNames = decryptedStringSplitBySlash[0];
 
-    // Get Names first
-    const firstName = decryptedNames.split("$")[1];
-    const lastName = decryptedNames.split("$")[0];
-    const middleNames = decryptedNames.split("$")[2];
+    var firstName = ""
+    var lastName = ""
+    var middleNames = ""
 
-    // Get Date of Birth
-    const dateOfBirth = decryptedStringSplitBySlash[1];
-    const day = dateOfBirth.split("$")[0];
-    const month = dateOfBirth.split("$")[1];
-    const year = dateOfBirth.split("$")[2];
+    var day = ""
+    var month = ""
+    var year = ""
+    var retreivePersonInfoParameters = null
 
-    // Get Sex
-    const sexe = decryptedStringSplitBySlash[2];
+  
+    if (decryptedString.toString().includes("/") && decryptedString.toString().includes("/")) {
+      const decryptedStringSplitBySlash = decryptedString.split("/");
+      const decryptedNames = decryptedStringSplitBySlash[0];
 
-    // Create Names object
-    var names = new Names().setNom(lastName);
-    names.setPrenom(firstName);
-    names.setMiddleNamesList([middleNames]);
+      // Get Names first
+      firstName = decryptedNames.split("$")[1];
+      lastName = decryptedNames.split("$")[0];
+      middleNames = decryptedNames.split("$")[2];
 
-    // Create Date of Birth object
-    var dob = new DateOfBirth().setDay(day);
-    dob.setMonth(month);
-    dob.setYear(year);
+      // Get Date of Birth
+      const dateOfBirth = decryptedStringSplitBySlash[1];
+      day = dateOfBirth.split("$")[0];
+      month = dateOfBirth.split("$")[1];
+      year = dateOfBirth.split("$")[2];
 
-    // Create PersonInfoRetreiveParameters object
-    var retreivePersonInfoParameters = new RetreivePersonInfoParameters()
-      .setNames(names)
-      .setDateOfBirth(dob);
+      // Get Sex
+      const sexe = decryptedStringSplitBySlash[2];
+
+      // Create Names object
+      var names = new Names().setNom(lastName);
+      names.setPrenom(firstName);
+      names.setMiddleNamesList([middleNames]);
+
+      // Create Date of Birth object
+      var dob = new DateOfBirth().setDay(day);
+      dob.setMonth(month);
+      dob.setYear(year);
+
+      // Create PersonInfoRetreiveParameters object
+      retreivePersonInfoParameters = new RetreivePersonInfoParameters()
+        .setNames(names)
+        .setDateOfBirth(dob);
+    } 
+    
+
+    
 
     // Navigate to GeneratedCardPage
-    setSpinGenerateCard(true);
-    ExistService.retreiveUserBasedOnField(retreivePersonInfoParameters, null)
-      .then((userInfo) => {
-        const userInfoObject = userInfo.toObject();
-        setSpinGenerateCard(false);
-        navigate(URLExistPath.GeneratedCardPage, {
-          state: { cardInfo: userInfoObject },
-        });
-      })
-      .catch((error) => {
-        setSpinGenerateCard(false);
-        console.log("Error while generating card from QR Code", error);
-      });
+    if (retreivePersonInfoParameters != null) {
+        try { 
+          setSpinGenerateCard(true);
+          setShowErrorAlert(false);
+          
+          ExistService.retreiveUserBasedOnField(retreivePersonInfoParameters!, null)
+          .then((userInfo) => {
+            const userInfoObject = userInfo.toObject();
+              setSpinGenerateCard(false);
+              navigate(URLExistPath.GeneratedCardPage, {
+              state: { cardInfo: userInfoObject },
+            });
+          })
+          .catch((error) => {
+            setSpinGenerateCard(false);
+              setShowErrorAlert(true);
+            console.log("Error while generating card from QR Code", error);
+          });
+        }
+        catch (error) {
+          console.log(`try error ${error}`);
+          setShowErrorAlert(true);
+          }
+    } else {
+      setShowErrorAlert(true);
+    }
+    
+    
   };
 
   const [encryptionKey, setEncryptionKey] = useState("");
@@ -340,6 +373,12 @@ export default function RetrieveUserInfo() {
               loadingPosition="center"
             ></LoadingButton>
           )}
+          {showErrorAlert && (
+              <Alert severity="error">
+                <AlertTitle>La Carte n'est pas identifiée</AlertTitle>
+                La Carte n'est pas identifiée — <strong>Carte Invalide</strong>
+              </Alert>
+            )}
         </Box>
       </Container>
     );
