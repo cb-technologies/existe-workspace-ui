@@ -41,6 +41,10 @@ interface RetrieveFormInput {
   QRCodeEncrypt: string;
 }
 
+interface RetrieveQRCodeStrInput {
+  QRCodeEncrypt: string;
+}
+
 const schema = yup.object().shape({
   Nom: yup.string().required("Nom non valide").min(2).max(30),
   Prenom: yup.string().required("Prenom non valide").min(2).max(30),
@@ -207,10 +211,28 @@ export default function RetrieveUserInfo() {
     // console.log(data)
   };
 
+  // @ts-ignore
+function EncryptQRCodeForm({ register, errors }) {
   const [encryptionKey, setEncryptionKey] = useState('');
+  return (
+    <div>
+      <TextField
+        {...register("QR Code Encrypt")}
+        id="outlined-QRCodeEncrypt-input"
+        label="Encrypted QR Code"
+        helperText={errors.QRCodeEncrypt?.message}
+        error={!!errors.QRCodeEncrypt}
+        fullWidth
+        value={encryptionKey}
+        onChange={(e) => setEncryptionKey(e.target.value)}
+      />
+    </div>
+  );
+}
 
-  const onSubmitEncrypt = (data: RetrieveFormInput) => {
+  const onSubmitEncrypt = (data: RetrieveQRCodeStrInput) => {
     // setJson(JSON.stringify(data));
+    console.log("when onsubmitEncrypt code str is ",data)
     setJson(retreiveUserFromQRCode(data));
     // console.log(dataResposnse);
     // console.log(flag)
@@ -259,7 +281,8 @@ export default function RetrieveUserInfo() {
         <Typography textAlign="center" variant="h6" component="h6" gutterBottom>
           Entrez le QR code encrypté:
         </Typography>
-        <TextField fullWidth value={encryptionKey} onChange={(e) => setEncryptionKey(e.target.value)}></TextField>
+        <EncryptQRCodeForm register={register} errors={errors}></EncryptQRCodeForm>
+        {/* <TextField fullWidth value={encryptionKey} onChange={(e) => setEncryptionKey(e.target.value)}></TextField> */}
         <div>
 
         </div>
