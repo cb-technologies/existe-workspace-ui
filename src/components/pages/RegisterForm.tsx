@@ -37,8 +37,11 @@ import { zipCodeData } from "../../constants/zipCodeKinshasa";
 import { secret } from "../../constants/encryptionSecrets";
 import { FieldErrorsImpl } from "react-hook-form";
 import { SexEnum } from "../../grpc/pb/message_and_service_pb";
-import { Auth } from 'aws-amplify';
+import { Auth } from "aws-amplify";
+import { useNavigate } from "react-router-dom";
+import { URLExistPath } from "../../constants/existUrlPath";
 import { encrypt } from 'n-krypta';
+import { AuthContext } from "../../store/auth_context";
 
 var globalDay: string;
 var globalMonth: string;
@@ -695,17 +698,17 @@ export default function RegisterForm() {
   const [showAlert, setShowAlert] = useState(false);
   const [showErrorAlert, setShowErrorAlert] = useState(false);
 
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  
+  const navigate = useNavigate();
+  
+  const navigateTo = (page: string, flag: string) => {
+    navigate(page,{ state: { flag_to_page: flag } });
+  };
 
-  useEffect(() => {
-    Auth.currentAuthenticatedUser()
-      .then((user) => {
-        setIsLoggedIn(true);
-      })
-      .catch((err) => {
-        setIsLoggedIn(false);
-      });
-  }, []);
+  const authContext = React.useContext(AuthContext);
+  
+  const [role, setRole] = useState(authContext.user.attributes['custom:role']);
+  const [isLoggedIn, setIsLoggedIn] = useState(authContext.isAuthenticated);
 
   const {
     register,
@@ -773,7 +776,7 @@ export default function RegisterForm() {
 
   return (
     <div>
-      {isLoggedIn ? (
+      {isLoggedIn && (role === "Admin" || role === "Registrator") ? (
         <Container maxWidth="sm">
           <Box
             component={"form"}
@@ -855,7 +858,10 @@ export default function RegisterForm() {
           </Box>
         </Container>
       ) : (
-        "Cannot load this page"
+          <Alert severity="error">
+                <AlertTitle>Accès refusé</AlertTitle>
+                "Désolé, vous n'êtes pas autorisé à accéder à cette page" — <strong>Accès refusé</strong>
+          </Alert>
       )}
     </div>
   );

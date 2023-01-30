@@ -33,6 +33,7 @@ import { delay } from "./RegisterForm";
 import { Amplify, Auth } from 'aws-amplify';
 import awsconfig from '../../aws-exports';
 import { AgentRoles } from "../../constants/AgentRoles";
+import { AuthContext } from "../../store/auth_context";
 Amplify.configure(awsconfig);
 
 
@@ -119,6 +120,12 @@ export default function SignUp() {
 
   const [succcessful, setSuccessful] = useState(false);
   const [registrationComplete, setRegistrationComplete] = useState(false);
+
+  const authContext = React.useContext(AuthContext);
+  
+  const [role, setRRole] = useState(authContext.user.attributes['custom:role']);
+  const [isLoggedIn, setIsLoggedIn] = useState(authContext.isAuthenticated);
+
 
    const onSubmit = (data: AgentSignUpFormInput) => {
     const agentInfo: AgentInfo = new AgentInfo()
@@ -226,159 +233,171 @@ export default function SignUp() {
     }
   };
 
-  return (
-    <ThemeProvider theme={theme}>
-      <Container component="main" maxWidth="xs">
-        <CssBaseline />
-        <Box
-          sx={{
-            marginTop: 8,
-            display: "flex",
-            flexDirection: "column",
-            alignItems: "center",
-          }}
-        >
-          <Avatar sx={{ m: 1, bgcolor: "secondary.main" }}>
-            <PeopleAltIcon />
-          </Avatar>
-          <Typography component="h1" variant="h5">
-            Exist-Id Sign Up
-          </Typography>
+  if (isLoggedIn && role === "Admin") {
+    return (
+      <ThemeProvider theme={theme}>
+        <Container component="main" maxWidth="xs">
+          <CssBaseline />
           <Box
-            component="form"
-            onSubmit={handleSubmit(onSubmit)}
-            noValidate
-            sx={{ mt: 1 }}
+            sx={{
+              marginTop: 8,
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+            }}
           >
-            <TextField
-              {...register("Nom")}
-              variant="outlined"
-              margin="normal"
-              type="text"
-              label={"Nom"}
-              value={Nom}
-              onChange={(e) => setNom(e.target.value)}
-              helperText={errors.Nom?.message}
-              error={!!errors["Nom"]}
-              required
-              fullWidth
-            />
-            <TextField
-              {...register("Prenom")}
-              variant="outlined"
-              margin="normal"
-              type="text"
-              label={"Prenom"}
-              value={Prenom}
-              onChange={(e) => setPrenom(e.target.value)}
-              helperText={errors.Prenom?.message}
-              error={!!errors["Prenom"]}
-              required
-              fullWidth
-            />
-            <TextField
-              {...register("Email")}
-              variant="outlined"
-              margin="normal"
-              type="text"
-              label={"Email"}
-              value={Email}
-              onChange={(e) => setEmail(e.target.value)}
-              helperText={errors.Email?.message}
-              error={!!errors["Email"]}
-              required
-              fullWidth
-            />
-            <TextField
-              {...register("Password")}
-              variant="outlined"
-              margin="normal"
-              type="password"
-              label={"Password"}
-              value={Password}
-              onChange={(e) => setPassword(e.target.value)}
-              helperText={errors.Password?.message}
-              error={!!errors["Password"]}
-              required
-              fullWidth
-            />
-            <TextField
-              {...register("Phonenumber")}
-              variant="outlined"
-              margin="normal"
-              type="text"
-              label={"Phonenumber"}
-              value={PhoneNumber}
-              onChange={(e) => setPhoneNumber(e.target.value)}
-              helperText={errors.Phonenumber?.message}
-              error={!!errors["Phonenumber"]}
-              fullWidth
-            />
-            <TextField
-              {...register("Role")}
-              variant="outlined"
-              margin="normal"
-              select
-              // type="text"
-              label={"Role"}
-              value={Role}
-              onChange={(e) => setRole(e.target.value)}
-              helperText={errors.Role?.message}
-              error={!!errors["Role"]}
-              required
-              fullWidth
+            <Avatar sx={{ m: 1, bgcolor: "secondary.main" }}>
+              <PeopleAltIcon />
+            </Avatar>
+            <Typography component="h1" variant="h5">
+              Exist-Id Sign Up
+            </Typography>
+            <Box
+              component="form"
+              onSubmit={handleSubmit(onSubmit)}
+              noValidate
+              sx={{ mt: 1 }}
             >
-              {Object.getOwnPropertyNames(AgentRoles).map((value) => (
-                <MenuItem key={value} value={value}>
-                  {value}
-                </MenuItem>
-              ))}
-            </TextField>
-            {!spinRegister ? (
-              <Button
-                type="submit"
+              <TextField
+                {...register("Nom")}
+                variant="outlined"
+                margin="normal"
+                type="text"
+                label={"Nom"}
+                value={Nom}
+                onChange={(e) => setNom(e.target.value)}
+                helperText={errors.Nom?.message}
+                error={!!errors["Nom"]}
+                required
                 fullWidth
-                variant="contained"
-                sx={{ mt: 3, mb: 2 }}
-              >
-                S'enregister
-              </Button>
-            ) : (
-              <LoadingButton
-                loading
+              />
+              <TextField
+                {...register("Prenom")}
+                variant="outlined"
+                margin="normal"
+                type="text"
+                label={"Prenom"}
+                value={Prenom}
+                onChange={(e) => setPrenom(e.target.value)}
+                helperText={errors.Prenom?.message}
+                error={!!errors["Prenom"]}
+                required
                 fullWidth
-                loadingPosition="start"
-                startIcon={<SaveIcon />}
-                variant="contained"
-                sx={{ mt: 3, mb: 2 }}
+              />
+              <TextField
+                {...register("Email")}
+                variant="outlined"
+                margin="normal"
+                type="text"
+                label={"Email"}
+                value={Email}
+                onChange={(e) => setEmail(e.target.value)}
+                helperText={errors.Email?.message}
+                error={!!errors["Email"]}
+                required
+                fullWidth
+              />
+              <TextField
+                {...register("Password")}
+                variant="outlined"
+                margin="normal"
+                type="password"
+                label={"Password"}
+                value={Password}
+                onChange={(e) => setPassword(e.target.value)}
+                helperText={errors.Password?.message}
+                error={!!errors["Password"]}
+                required
+                fullWidth
+              />
+              <TextField
+                {...register("Phonenumber")}
+                variant="outlined"
+                margin="normal"
+                type="text"
+                label={"Phonenumber"}
+                value={PhoneNumber}
+                onChange={(e) => setPhoneNumber(e.target.value)}
+                helperText={errors.Phonenumber?.message}
+                error={!!errors["Phonenumber"]}
+                fullWidth
+              />
+              <TextField
+                {...register("Role")}
+                variant="outlined"
+                margin="normal"
+                select
+                // type="text"
+                label={"Role"}
+                value={Role}
+                onChange={(e) => setRole(e.target.value)}
+                helperText={errors.Role?.message}
+                error={!!errors["Role"]}
+                required
+                fullWidth
               >
-                S'enregister
-              </LoadingButton>
-            )}
-            {/* <Grid item>
-              <RouterLink to={URLExistPath.SignInPage}>
-                {"Deja enregistré? Connecter vous"}
-              </RouterLink>
-            </Grid> */}
-            {succcessful && (
-              <Alert severity="error">
-                <AlertTitle>Erreur!</AlertTitle>
-                Votre email est deja en utilisation, veuillez l'utiliser pour
-                vous connecter ou choisisez un autre email.
-              </Alert>
-            )}
-            {registrationComplete && (
-              <Alert severity="success">
-                <AlertTitle>Enregistrement reussit</AlertTitle>
-                Enregistrement reussit - <strong>ok!</strong>
-              </Alert>
-            )}
+                {Object.getOwnPropertyNames(AgentRoles).map((value) => (
+                  <MenuItem key={value} value={value}>
+                    {value}
+                  </MenuItem>
+                ))}
+              </TextField>
+              {!spinRegister ? (
+                <Button
+                  type="submit"
+                  fullWidth
+                  variant="contained"
+                  sx={{ mt: 3, mb: 2 }}
+                >
+                  S'enregister
+                </Button>
+              ) : (
+                <LoadingButton
+                  loading
+                  fullWidth
+                  loadingPosition="start"
+                  startIcon={<SaveIcon />}
+                  variant="contained"
+                  sx={{ mt: 3, mb: 2 }}
+                >
+                  S'enregister
+                </LoadingButton>
+              )}
+              {/* <Grid item>
+                <RouterLink to={URLExistPath.SignInPage}>
+                  {"Deja enregistré? Connecter vous"}
+                </RouterLink>
+              </Grid> */}
+              {succcessful && (
+                <Alert severity="error">
+                  <AlertTitle>Erreur!</AlertTitle>
+                  Votre email est deja en utilisation, veuillez l'utiliser pour
+                  vous connecter ou choisisez un autre email.
+                </Alert>
+              )}
+              {registrationComplete && (
+                <Alert severity="success">
+                  <AlertTitle>Enregistrement reussit</AlertTitle>
+                  Enregistrement reussit - <strong>ok!</strong>
+                </Alert>
+              )}
+            </Box>
           </Box>
-        </Box>
-        <Copyright sx={{ mt: 8, mb: 4 }} />
-      </Container>
-    </ThemeProvider>
-  );
+          <Copyright sx={{ mt: 8, mb: 4 }} />
+        </Container>
+      </ThemeProvider>
+    );
+  }else {
+    return(
+      <div>
+      <Alert severity="error">
+                <AlertTitle>Accès refusé</AlertTitle>
+                "Désolé, vous n'êtes pas autorisé à accéder à cette page" — <strong>Accès refusé</strong>
+          </Alert>
+    </div>
+    );
+  }
+  
 }
 
 function Copyright(props: any) {

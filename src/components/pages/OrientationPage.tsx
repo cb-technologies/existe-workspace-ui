@@ -21,6 +21,8 @@ import {
   useNavigate,
 } from "react-router-dom"; //import the package
 import { URLExistPath } from "../../constants/existUrlPath";
+import { AuthContext } from "../../store/auth_context";
+import { Alert, AlertTitle } from "@mui/material";
 
 const tiers = [
   {
@@ -69,24 +71,9 @@ function OrientationContent() {
     navigate(page,{ state: { flag_to_page: flag } });
   };
 
-  var state = {
-    isAuthenticated: false,
-  }
+  const authContext = React.useContext(AuthContext);
+  const [isLoggedIn, setIsLoggedIn] = useState(authContext.isAuthenticated);
 
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
-
-  useEffect(() => {
-    async function checkAuth() {
-      try {
-        const session = await Auth.currentSession();
-        setIsLoggedIn(true);
-      } catch {
-        setIsLoggedIn(false);
-        navigateTo(URLExistPath.SignInPage, "to_sign_in");
-      }
-    }
-    checkAuth();
-  }, []);
 
   if (isLoggedIn) {
     return (
@@ -165,10 +152,12 @@ function OrientationContent() {
   }else{
     return(
       <div>
-      'Cannot load this page'
+      <Alert severity="error">
+                <AlertTitle>Accès refusé</AlertTitle>
+                "Désolé, vous n'êtes pas autorisé à accéder à cette page" — <strong>Accès refusé</strong>
+          </Alert>
     </div>
     );
-    
   }
   
 }

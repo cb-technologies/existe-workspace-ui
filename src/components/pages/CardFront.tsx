@@ -1,7 +1,7 @@
 import React from "react";
-import { css } from "aphrodite/no-important";
+import {css} from "aphrodite/no-important";
 import cn from "classnames";
-import { PersonInfoResponse } from "../../grpc/pb/message_and_service_pb";
+import {PersonInfoResponse} from "../../grpc/pb/message_and_service_pb";
 import styles from "../styles/cardFrontStyle";
 
 
@@ -14,24 +14,8 @@ const SexMap = {
   2: "F"
 }
 function rebuildBase64Image(userInfo : PersonInfoResponse.AsObject) {
-  var base64String = userInfo.biometrics?.photoType! + "," + userInfo.biometrics?.photos!
-  return base64String
+    return userInfo.biometrics?.photoType! + "," + userInfo.biometrics?.photos!
 }
-const convertBackToImage = (imageBased64: any) => {
-  return new Promise((resolve, reject) => {
-    // const fileReader = new FileReader();
-    // fileReader.readAsDataURL(file);
-
-    // fileReader.onload = () => {
-    //   resolve(fileReader.result);
-    // };
-    // fileReader.onerror = (error) => {
-    //   reject(error);
-    // };
-
-  });
-};
-
 
 export default function CardFront({ userInfo }: CarteGenerationProps) {
   return (

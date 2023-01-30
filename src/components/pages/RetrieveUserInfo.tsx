@@ -1,6 +1,6 @@
 import * as React from "react";
 import Box from "@mui/material/Box";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Dayjs } from "dayjs";
 import TextField from "@mui/material/TextField";
 import Typography from "@mui/material/Typography";
@@ -14,9 +14,11 @@ import Checkbox from "@mui/material/Checkbox";
 import * as yup from "yup"; // to validate the form input
 import { useForm } from "react-hook-form"; // to handle the form's submission and error states
 import { yupResolver } from "@hookform/resolvers/yup";
+import SaveIcon from "@mui/icons-material/Save";
 import Button from "@mui/material/Button";
 import { URLExistPath } from "../../constants/existUrlPath";
-
+import Alert from "@mui/material/Alert";
+import AlertTitle from "@mui/material/AlertTitle";
 import {
   DateOfBirth,
   RetreivePersonInfoParameters,
@@ -26,9 +28,13 @@ import {
 import { ExistService } from "../../store/exist_api_call";
 import useHistoryState from "../../hooks/useHistoryState";
 import Container from "@mui/material/Container";
-import { useNavigate, useLocation } from "react-router-dom";
-import { decrypt } from 'n-krypta';
+import { useNavigate, useLocation } from "react-router-dom"; //import the package
+import { Auth } from "aws-amplify";
+import { AuthContext } from "../../store/auth_context";
+import { decrypt } from "n-krypta";
 import { secret } from "../../constants/encryptionSecrets";
+import { EC2 } from "aws-sdk";
+import LoadingButton from "@mui/lab/LoadingButton";
 
 var globalDay: string;
 var globalMonth: string;
@@ -41,19 +47,15 @@ interface RetrieveFormInput {
   QRCodeEncrypt: string;
 }
 
-interface RetrieveQRCodeStrInput {
-  QRCodeEncrypt: string;
-}
-
 const schema = yup.object().shape({
   Nom: yup.string().required("Nom non valide").min(2).max(30),
   Prenom: yup.string().required("Prenom non valide").min(2).max(30),
-  PostNom: yup
+  PostNom: yup.string().required("Postnom non valide").min(2).max(30),
+  QRCodeEncrypt: yup
     .string()
-    .required("Postnom non valide")
-    .min(2)
-    .max(30),
-  QRCodeEncrypt: yup.string().required("QRCode Encrypted String").min(0).max(1000),
+    .required("QRCode Encrypted String")
+    .min(0)
+    .max(1000),
 });
 
 // @ts-ignore
@@ -108,7 +110,6 @@ function SexForm() {
 // @ts-ignore
 function DateOfBirthForm({ register }) {
   const [value, setValue] = React.useState<Dayjs | null>(null);
-  console.log("debug dob");
   return (
     <LocalizationProvider dateAdapter={AdapterDayjs}>
       <Stack spacing={1}>
@@ -151,10 +152,6 @@ function retreivemapdata(data) {
   return retreivePersonInfoParameters;
 }
 
-function retreiveQRCodemapdata(data){
-  var QrCodeEncrypt = data.QRCodeEncrypt;
-  return QrCodeEncrypt;
-}
 
 export default function RetrieveUserInfo() {
   const {
@@ -167,8 +164,8 @@ export default function RetrieveUserInfo() {
   const navigate = useNavigate();
   const location = useLocation();
   const flag = location.state.flag_to_page;
+
   // @ts-ignore
-  //   function retreiveUser(data): PersonInfoResponse {
   function retreiveUser(data): PersonInfoResponse {
     var retreivePersonInfoParameters = retreivemapdata(data);
     // var qrCodeStr =  retreiveQRCodemapdata(data);
@@ -179,8 +176,6 @@ export default function RetrieveUserInfo() {
       null
     ).then((userInfo) => {
       const userInfoObject = userInfo.toObject();
-      console.log("Petage", userInfo.getBiometrics()?.getPhotos_asB64());
-      console.log("AnotherPetage", userInfo.getBiometrics()?.getPhotoType());
       if (flag == "to_generate") {
         navigate(URLExistPath.GeneratedCardPage, {
           state: { cardInfo: userInfoObject },
@@ -193,103 +188,209 @@ export default function RetrieveUserInfo() {
     });
   }
 
-  function retreiveUserFromQRCode(data) {
-    var qrCodeStr =  retreiveQRCodemapdata(data);
-    console.log("The qr code str is ", qrCodeStr);
-    return qrCodeStr
-
-  }
-
   const [json, setJson] = useState<string>();
   const [dataResposnse, setDataResponse] = useState<PersonInfoResponse>();
+
+  const navigateTo = (page: string, flag: string) => {
+    navigate(page, { state: { flag_to_page: flag } });
+  };
+
+  const authContext = React.useContext(AuthContext);
+
+  const [role, setRole] = useState(authContext.user.attributes["custom:role"]);
+  const [isLoggedIn, setIsLoggedIn] = useState(authContext.isAuthenticated);
+  const [showErrorAlert, setShowErrorAlert] = useState(false);
 
   const onSubmit = (data: RetrieveFormInput) => {
     setJson(JSON.stringify(data));
     setDataResponse(retreiveUser(data));
-    // console.log(dataResposnse);
-    // console.log(flag)
-    // console.log(data)
   };
 
-  // @ts-ignore
-function EncryptQRCodeForm({ register, errors }) {
-  const [encryptionKey, setEncryptionKey] = useState('');
-  return (
-    <div>
-      <TextField
-        {...register("QR Code Encrypt")}
-        id="outlined-QRCodeEncrypt-input"
-        label="Encrypted QR Code"
-        helperText={errors.QRCodeEncrypt?.message}
-        error={!!errors.QRCodeEncrypt}
-        fullWidth
-        value={encryptionKey}
-        onChange={(e) => setEncryptionKey(e.target.value)}
-      />
-    </div>
-  );
-}
+  const [spinGenerateCard, setSpinGenerateCard] = useState(false);
 
-  const onSubmitEncrypt = (data: RetrieveQRCodeStrInput) => {
-    // setJson(JSON.stringify(data));
-    console.log("when onsubmitEncrypt code str is ",data)
-    setJson(retreiveUserFromQRCode(data));
-    // console.log(dataResposnse);
-    // console.log(flag)
-    // console.log(data)
+  const generateCardFromQRCode = (qrCodeEncryptedString: string) => {
+    console.log("The qr code str is ", qrCodeEncryptedString);
+    const decryptedString = decrypt(qrCodeEncryptedString, secret.QRCodeSecret);
+
+    var firstName = ""
+    var lastName = ""
+    var middleNames = ""
+
+    var day = ""
+    var month = ""
+    var year = ""
+    var retreivePersonInfoParameters = null
+
+  
+    if (decryptedString.toString().includes("/") && decryptedString.toString().includes("/")) {
+      const decryptedStringSplitBySlash = decryptedString.split("/");
+      const decryptedNames = decryptedStringSplitBySlash[0];
+
+      // Get Names first
+      firstName = decryptedNames.split("$")[1];
+      lastName = decryptedNames.split("$")[0];
+      middleNames = decryptedNames.split("$")[2];
+
+      // Get Date of Birth
+      const dateOfBirth = decryptedStringSplitBySlash[1];
+      day = dateOfBirth.split("$")[0];
+      month = dateOfBirth.split("$")[1];
+      year = dateOfBirth.split("$")[2];
+
+      // Get Sex
+      const sexe = decryptedStringSplitBySlash[2];
+
+      // Create Names object
+      var names = new Names().setNom(lastName);
+      names.setPrenom(firstName);
+      names.setMiddleNamesList([middleNames]);
+
+      // Create Date of Birth object
+      var dob = new DateOfBirth().setDay(day);
+      dob.setMonth(month);
+      dob.setYear(year);
+
+      // Create PersonInfoRetreiveParameters object
+      retreivePersonInfoParameters = new RetreivePersonInfoParameters()
+        .setNames(names)
+        .setDateOfBirth(dob);
+    } 
+    
+
+    
+
+    // Navigate to GeneratedCardPage
+    if (retreivePersonInfoParameters != null) {
+        try { 
+          setSpinGenerateCard(true);
+          setShowErrorAlert(false);
+          
+          ExistService.retreiveUserBasedOnField(retreivePersonInfoParameters!, null)
+          .then((userInfo) => {
+            const userInfoObject = userInfo.toObject();
+              setSpinGenerateCard(false);
+              navigate(URLExistPath.GeneratedCardPage, {
+              state: { cardInfo: userInfoObject },
+            });
+          })
+          .catch((error) => {
+            setSpinGenerateCard(false);
+              setShowErrorAlert(true);
+            console.log("Error while generating card from QR Code", error);
+          });
+        }
+        catch (error) {
+          console.log(`try error ${error}`);
+          setShowErrorAlert(true);
+          }
+    } else {
+      setShowErrorAlert(true);
+    }
+    
+    
   };
 
+  const [encryptionKey, setEncryptionKey] = useState("");
 
-  return (
-    <Container maxWidth="sm">
-      <Box
-        component={"form"}
-        sx={{
-          "& .MuiTextField-root": { m: 1, width: "25ch" },
-        }}
-        noValidate
-        autoComplete={"off"}
-      >
-        <Typography variant="h1" gutterBottom></Typography>
-        <Typography variant="h6" component="h6" gutterBottom>
-          1. Retrouvez l'individu
-        </Typography>
-        <NameForm register={register} errors={errors}></NameForm>
-        <Typography variant="h6" component="h6" gutterBottom>
-          2. Entrez le Sexe l'individu
-        </Typography>
-        <SexForm></SexForm>
-        <Typography variant="h6" component="h6" gutterBottom>
-          3. Entrez la Date de Naissance de l'individu
-        </Typography>
-        <DateOfBirthForm register={register}></DateOfBirthForm>
-        <Button
-          fullWidth
-          variant="contained"
-          color="primary"
-          onClick={handleSubmit(onSubmit)}
+  // const onSubmitEncrypt = (data: RetrieveFormInput) => {
+  //   // setJson(JSON.stringify(data));
+  //   setJson(retreiveUserFromQRCode(data));
+  //   // console.log(dataResposnse);
+  //   // console.log(flag)
+  //   // console.log(data)
+  // };
+
+  if (isLoggedIn && (role === "Admin" || role === "Registrator")) {
+    return (
+      <Container maxWidth="sm">
+        <Box
+          component={"form"}
+          sx={{
+            "& .MuiTextField-root": { m: 1, width: "25ch" },
+          }}
+          noValidate
+          autoComplete={"off"}
         >
-          Retrouvez le citoyen
-          {/* <Route path="/updateUserInfo" element={<UpdateUserForm  UpdateUserFormProps ={dataResposnse} />} /> */}
-        </Button>
-      </Box>
-      <div>
-        ----------------------------------------------------------------------------------------------------
-      </div>
-
-      <Box>
-        <Typography textAlign="center" variant="h6" component="h6" gutterBottom>
-          Entrez le QR code encrypté:
-        </Typography>
-        <EncryptQRCodeForm register={register} errors={errors}></EncryptQRCodeForm>
-        {/* <TextField fullWidth value={encryptionKey} onChange={(e) => setEncryptionKey(e.target.value)}></TextField> */}
+          <Typography variant="h1" gutterBottom></Typography>
+          <Typography variant="h6" component="h6" gutterBottom>
+            1. Retrouvez l'individu
+          </Typography>
+          <NameForm register={register} errors={errors}></NameForm>
+          <Typography variant="h6" component="h6" gutterBottom>
+            2. Entrez le Sexe l'individu
+          </Typography>
+          <SexForm></SexForm>
+          <Typography variant="h6" component="h6" gutterBottom>
+            3. Entrez la Date de Naissance de l'individu
+          </Typography>
+          <DateOfBirthForm register={register}></DateOfBirthForm>
+          <Button
+            fullWidth
+            variant="contained"
+            color="primary"
+            onClick={handleSubmit(onSubmit)}
+          >
+            Retrouvez le citoyen
+            {/* <Route path="/updateUserInfo" element={<UpdateUserForm  UpdateUserFormProps ={dataResposnse} />} /> */}
+          </Button>
+        </Box>
         <div>
-
+          ----------------------------------------------------------------------------------------------------
         </div>
-        <Button sx={{mt: 1, ml: 1, mr: 20}} variant="contained" color="primary" onClick={handleSubmit(onSubmitEncrypt)}> Générer la carte </Button>
-
-        <Button sx={{mt: 1, ml: 1}}  variant="contained" color="primary"> Vérifier la carte </Button>
-      </Box>
-    </Container>
-  );
+        <Box
+        >
+          <Typography
+            textAlign="center"
+            variant="h6"
+            component="h6"
+            gutterBottom
+          >
+            Entrez le QR code encrypté:
+          </Typography>
+          <TextField
+            fullWidth
+            value={encryptionKey}
+            onChange={(e) => setEncryptionKey(e.target.value)}
+          ></TextField>
+          <div></div>
+          {!spinGenerateCard ? (
+            <Button
+              fullWidth
+              variant="contained"
+              sx={{mt: 2}}
+              color="primary"
+              onClick={() => generateCardFromQRCode(encryptionKey)}
+            >
+            Vérifier la carte 
+            </Button>
+          ) : (
+            <LoadingButton
+              sx={{ mt: 1, ml: 1, mr: 20 }}
+              variant="contained"
+              color="primary"
+              loading
+              fullWidth
+              loadingPosition="center"
+            ></LoadingButton>
+          )}
+          {showErrorAlert && (
+              <Alert severity="error">
+                <AlertTitle>La Carte n'est pas identifiée</AlertTitle>
+                La Carte n'est pas identifiée — <strong>Carte Invalide</strong>
+              </Alert>
+            )}
+        </Box>
+      </Container>
+    );
+  } else {
+    return (
+      <div>
+        <Alert severity="error">
+          <AlertTitle>Accès refusé</AlertTitle>
+          "Désolé, vous n'êtes pas autorisé à accéder à cette page" —{" "}
+          <strong>Accès refusé</strong>
+        </Alert>
+      </div>
+    );
+  }
 }
