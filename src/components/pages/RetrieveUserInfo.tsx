@@ -51,11 +51,6 @@ const schema = yup.object().shape({
   Nom: yup.string().required("Nom non valide").min(2).max(30),
   Prenom: yup.string().required("Prenom non valide").min(2).max(30),
   PostNom: yup.string().required("Postnom non valide").min(2).max(30),
-  QRCodeEncrypt: yup
-    .string()
-    .required("QRCode Encrypted String")
-    .min(0)
-    .max(1000),
 });
 
 // @ts-ignore
@@ -176,7 +171,7 @@ export default function RetrieveUserInfo() {
       null
     ).then((userInfo) => {
       const userInfoObject = userInfo.toObject();
-      if (flag == "to_generate") {
+      if (flag === "to_generate") {
         navigate(URLExistPath.GeneratedCardPage, {
           state: { cardInfo: userInfoObject },
         });
@@ -202,8 +197,7 @@ export default function RetrieveUserInfo() {
   const [showErrorAlert, setShowErrorAlert] = useState(false);
 
   const onSubmit = (data: RetrieveFormInput) => {
-    setJson(JSON.stringify(data));
-    setDataResponse(retreiveUser(data));
+    retreiveUser(data);
   };
 
   const [spinGenerateCard, setSpinGenerateCard] = useState(false);
@@ -292,13 +286,7 @@ export default function RetrieveUserInfo() {
 
   const [encryptionKey, setEncryptionKey] = useState("");
 
-  // const onSubmitEncrypt = (data: RetrieveFormInput) => {
-  //   // setJson(JSON.stringify(data));
-  //   setJson(retreiveUserFromQRCode(data));
-  //   // console.log(dataResposnse);
-  //   // console.log(flag)
-  //   // console.log(data)
-  // };
+
 
   if (isLoggedIn && (role === "Admin" || role === "Registrator")) {
     return (
@@ -383,7 +371,7 @@ export default function RetrieveUserInfo() {
       </Container>
     );
   } else {
-    return (
+      return (
       <div>
         <Alert severity="error">
           <AlertTitle>Accès refusé</AlertTitle>
