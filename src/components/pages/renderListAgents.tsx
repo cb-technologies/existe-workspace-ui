@@ -19,6 +19,7 @@ import { Auth } from 'aws-amplify';
 import Alert from '@mui/material/Alert';
 import AlertTitle from '@mui/material/AlertTitle';
 import { AuthContext } from '../../store/auth_context';
+import { delay } from './RegisterForm';
 // import { TableHead, TableRow, Typography, Button } from '@mui/material';
 
 
@@ -78,14 +79,22 @@ export default function CustomizedTables() {
     return { email, accountStatus, phoneNumber, updated, created };
   }
 
-  const cognito = new AWS.CognitoIdentityServiceProvider();
+
+  const my_region = "eu-west-3"
 
   AWS.config.update({
-      region: 'eu-west-3',
-      credentials: new AWS.Credentials('AKIAWUW6U5W6ZK7ONRM3', 'pCRg/LHoJ89b5VK2/s6J+KE7VwfviueChlxzPAFV')
-    });
+    region: my_region,
+    credentials: new AWS.Credentials('AKIAWUW6U5W6ZK7ONRM3', 'pCRg/LHoJ89b5VK2/s6J+KE7VwfviueChlxzPAFV')
+  });
 
-  function getAllUsers() {
+
+  const cognito = new AWS.CognitoIdentityServiceProvider();
+
+  async function getAllUsers() {
+
+    
+    // await delay(1500);
+  
       const params = {
         UserPoolId: 'eu-west-3_KTB7W3mWQ',
       //   Limit: 10
@@ -94,8 +103,9 @@ export default function CustomizedTables() {
       return cognito.listUsers(params).promise();
   }
 
-  const [rows, setRows] = useState([createData('ntuala2@illinois.ed', 'CONFIRMED', '0819367845', 'Jan 8, 2023 5:22:53 PM', "Jan 8, 2023 4:56:26 PM")]);
-  const [my_region, setRegion] = useState("eu-west-3")
+  const [rows, setRows] = useState([createData('', '', '', '', "")]);
+  //const [my_region, setRegion] = useState("eu-west-3")
+  
   //const navigate = useNavigate();
   
   const navigateTo = (page: string, flag: string) => {
@@ -108,16 +118,20 @@ export default function CustomizedTables() {
   const [isLoggedIn, setIsLoggedIn] = useState(authContext.isAuthenticated);
   
   useEffect(() => {
-    console.log("Being refreshed")
-    AWS.config.update({
-      region: my_region,
-      credentials: new AWS.Credentials('AKIAWUW6U5W6ZK7ONRM3', 'pCRg/LHoJ89b5VK2/s6J+KE7VwfviueChlxzPAFV')
-    });
+    // console.log("Being refreshed")
+    // AWS.config.update({
+    //   region: my_region,
+    //   credentials: new AWS.Credentials('AKIAWUW6U5W6ZK7ONRM3', 'pCRg/LHoJ89b5VK2/s6J+KE7VwfviueChlxzPAFV')
+    // });
 
-    getAllUsers().then(data => {
+    
+    getAllUsers().then(async data => {
+
+        // await delay(1500);
+
         if(data && data.Users) {
             const data_users = data.Users;
-            var holder_array = [createData('ntuala2@illinois.ed', 'CONFIRMED', '0819367845', 'Jan 8, 2023 5:22:53 PM', "Jan 8, 2023 4:56:26 PM")]
+            var holder_array = [createData('', '', '', '', "")]
             rows.splice(0, rows.length);
             holder_array.splice(0, holder_array.length);
 

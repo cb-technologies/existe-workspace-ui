@@ -25,6 +25,7 @@ import { ExistPrompts } from "../../constants/existPrompts";
 import { Auth } from "aws-amplify";
 import { AgentInfo } from "../../grpc/pb/message_and_service_pb";
 import { AuthContext } from "../../store/auth_context";
+import AWS from "aws-sdk";
 
 interface SignInInput {
   Email: string;
