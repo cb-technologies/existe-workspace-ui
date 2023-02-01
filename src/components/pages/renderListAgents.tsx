@@ -20,22 +20,9 @@ import Alert from '@mui/material/Alert';
 import AlertTitle from '@mui/material/AlertTitle';
 import { AuthContext } from '../../store/auth_context';
 import { delay } from './RegisterForm';
-// import { TableHead, TableRow, Typography, Button } from '@mui/material';
 
-
-
-
-
-//  rows = [
-//   createData('ntuala2@illinois.ed', 'CONFIRMED', '0819367845', 'Jan 8, 2023 5:22:53 PM', "Jan 8, 2023 4:56:26 PM"),
-// //   createData('Ice cream sandwich', 237, 9.0, 37, 4.3),
-// //   createData('Eclair', 262, 16.0, 24, 6.0),
-// //   createData('Cupcake', 305, 3.7, 67, 4.3),
-// //   createData('Gingerbread', 356, 16.0, 49, 3.9)
-// ];
 
 export default function CustomizedTables() {
-//   const [users, setUsers] = useState<UsersListType>();
 
   const navigate = useNavigate();
 
@@ -91,22 +78,14 @@ export default function CustomizedTables() {
   const cognito = new AWS.CognitoIdentityServiceProvider();
 
   async function getAllUsers() {
-
-    
-    // await delay(1500);
-  
       const params = {
         UserPoolId: 'eu-west-3_KTB7W3mWQ',
-      //   Limit: 10
       
       };
       return cognito.listUsers(params).promise();
   }
 
   const [rows, setRows] = useState([createData('', '', '', '', "")]);
-  //const [my_region, setRegion] = useState("eu-west-3")
-  
-  //const navigate = useNavigate();
   
   const navigateTo = (page: string, flag: string) => {
     navigate(page,{ state: { flag_to_page: flag } });
@@ -118,16 +97,8 @@ export default function CustomizedTables() {
   const [isLoggedIn, setIsLoggedIn] = useState(authContext.isAuthenticated);
   
   useEffect(() => {
-    // console.log("Being refreshed")
-    // AWS.config.update({
-    //   region: my_region,
-    //   credentials: new AWS.Credentials('AKIAWUW6U5W6ZK7ONRM3', 'pCRg/LHoJ89b5VK2/s6J+KE7VwfviueChlxzPAFV')
-    // });
 
-    
     getAllUsers().then(async data => {
-
-        // await delay(1500);
 
         if(data && data.Users) {
             const data_users = data.Users;
@@ -138,11 +109,7 @@ export default function CustomizedTables() {
             data_users.forEach( u_user =>
                 {
                     const updated =  u_user.UserLastModifiedDate ? u_user.UserLastModifiedDate.toString(): "Unknown"
-                    // if (u_user.UserLastModifiedDate) {
-                    //     updated = u_user.UserLastModifiedDate.toString()
-                    // }
-                    // console.log(typeof(updated));
-                    // console.log(typeof("updated"));
+                  
                     const created = u_user.UserCreateDate ? u_user.UserCreateDate.toString() : "Unkown"
                     const status = u_user.UserStatus ? u_user.UserStatus : "Unkown"
 
@@ -153,20 +120,13 @@ export default function CustomizedTables() {
                         }
                     }
                     )
-                    //console.log(user_email)
+                    
                     holder_array.push(createData(user_email, status, '0819367845', updated, created))
-                    //rows.push(createData(user_email, status, '0819367845', updated, created))
-                    //setRows([...rows, createData(user_email, status, '0819367845', updated, created)])
                 }
             );
             setRows(holder_array)
             console.log(rows.length);
         }
-
-        // setUsers(data.Users)
-
-
-
 
     }
     ).catch(
@@ -186,14 +146,6 @@ export default function CustomizedTables() {
         <Table sx={{ minWidth: 700 }} aria-label="customized table">
           <TableHead>
           <TableRow>
-              
-              {/* <StyledTableCell>
-                  <Typography variant="h6">Title</Typography>
-              </StyledTableCell> */}
-              {/* <Button variant="contained" color="primary">
-                      Click me
-  
-                  </Button> */}
               <StyledFirstRowCell>
                   <Button variant="outlined" color="primary" onClick={() => {navigate(URLExistPath.SignUpPage)}}>
                       Add Agent
