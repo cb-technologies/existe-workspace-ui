@@ -710,6 +710,13 @@ export default function RegisterForm() {
   const [role, setRole] = useState(authContext.user.attributes['custom:role']);
   const [isLoggedIn, setIsLoggedIn] = useState(authContext.isAuthenticated);
 
+  useEffect(()=> {
+    const storedUser = JSON.parse(localStorage.getItem('user')!);
+    if (storedUser) {
+      setIsLoggedIn(true);
+      authContext.setIsAuthenticatedAndUser(true, storedUser);
+    }
+  })
   const {
     register,
     handleSubmit,

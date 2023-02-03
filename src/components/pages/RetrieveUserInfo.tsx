@@ -196,6 +196,14 @@ export default function RetrieveUserInfo() {
   const [isLoggedIn, setIsLoggedIn] = useState(authContext.isAuthenticated);
   const [showErrorAlert, setShowErrorAlert] = useState(false);
 
+  useEffect(() => {
+    const storedUser = JSON.parse(localStorage.getItem('user')!);
+    if (storedUser) {
+      setIsLoggedIn(true);
+      authContext.setIsAuthenticatedAndUser(true, storedUser);
+    }
+  });
+
   const onSubmit = (data: RetrieveFormInput) => {
     retreiveUser(data);
   };

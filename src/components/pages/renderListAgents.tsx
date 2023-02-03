@@ -98,6 +98,12 @@ export default function CustomizedTables() {
   
   useEffect(() => {
 
+    const storedUser = JSON.parse(localStorage.getItem('user')!);
+    if (storedUser) {
+      setIsLoggedIn(true);
+      authContext.setIsAuthenticatedAndUser(true, storedUser);
+    }
+
     getAllUsers().then(async data => {
 
         if(data && data.Users) {

@@ -112,6 +112,11 @@ export default function SignUp() {
   const [Role, setRole] = useHistoryState("Role", "");
 
   React.useEffect(() => {
+    const storedUser = JSON.parse(localStorage.getItem('user')!);
+    if (storedUser) {
+      setIsLoggedIn(true);
+      authContext.setIsAuthenticatedAndUser(true, storedUser);
+    }
     reset();
   }, [Nom, Prenom, Email, Password, Role]);
 
