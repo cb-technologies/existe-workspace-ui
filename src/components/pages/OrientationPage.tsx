@@ -81,8 +81,9 @@ function OrientationContent() {
       setIsLoggedIn(true);
       setUser(storedUser);
       authContext.setIsAuthenticatedAndUser(true, storedUser);
+      console.log("Testing Debugging");
     }
-  });
+  }, []);
 
 
   if (isLoggedIn) {
