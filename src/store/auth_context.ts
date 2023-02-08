@@ -1,7 +1,7 @@
 import { createContext } from 'react';
 
 export interface AuthContextState {
-  isAuthenticated: boolean;
+  isAuthenticated: boolean | null;
   user: any;
 }
 
@@ -13,7 +13,7 @@ export interface AuthContextActions {
 export interface AuthContextProps extends AuthContextState, AuthContextActions {}
 
 export const AuthContext = createContext<AuthContextProps>({
-  isAuthenticated: false,
+  isAuthenticated: null,
   user: null,
   setIsAuthenticatedAndUser: () => {},
 });

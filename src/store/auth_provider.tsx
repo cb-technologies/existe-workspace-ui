@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   AuthContext,
   AuthContextState,
@@ -6,13 +6,14 @@ import {
 
 export default function AuthProvider(props: any) {
   const [authState, setAuthState] = useState<AuthContextState>({
-    isAuthenticated: false,
+    isAuthenticated: null,
     user: null,
   });
 
   function setIsAuthenticatedAndUser(isAuthenticated: boolean, user: any) {
-    setAuthState({ isAuthenticated, user });
+    setAuthState({isAuthenticated: isAuthenticated, user: user});
   }
+
 
   return (
     <AuthContext.Provider value={{ ...authState, setIsAuthenticatedAndUser}}>

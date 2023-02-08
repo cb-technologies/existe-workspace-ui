@@ -1,29 +1,27 @@
-import * as React from 'react';
-import { styled } from '@mui/material/styles';
-import Table from '@mui/material/Table';
-import TableBody from '@mui/material/TableBody';
-import TableCell, { tableCellClasses } from '@mui/material/TableCell';
-import TableContainer from '@mui/material/TableContainer';
-import TableHead from '@mui/material/TableHead';
-import TableRow from '@mui/material/TableRow';
-import Paper from '@mui/material/Paper';
-import { Typography } from '@mui/material';
-import {Button} from '@mui/material';
-import AWS from 'aws-sdk';
-import { useEffect, useState } from 'react';
-import { UsersListType } from 'aws-sdk/clients/cognitoidentityserviceprovider';
-import useHistoryState from '../../hooks/useHistoryState';
-import { URLExistPath } from '../../constants/existUrlPath';
-import { useNavigate } from 'react-router-dom';
-import { Auth } from 'aws-amplify';
-import Alert from '@mui/material/Alert';
-import AlertTitle from '@mui/material/AlertTitle';
-import { AuthContext } from '../../store/auth_context';
-import { delay } from './RegisterForm';
-
+import * as React from "react";
+import { styled } from "@mui/material/styles";
+import Table from "@mui/material/Table";
+import TableBody from "@mui/material/TableBody";
+import TableCell, { tableCellClasses } from "@mui/material/TableCell";
+import TableContainer from "@mui/material/TableContainer";
+import TableHead from "@mui/material/TableHead";
+import TableRow from "@mui/material/TableRow";
+import Paper from "@mui/material/Paper";
+import { Typography } from "@mui/material";
+import { Button } from "@mui/material";
+import AWS from "aws-sdk";
+import { useEffect, useState } from "react";
+import { UsersListType } from "aws-sdk/clients/cognitoidentityserviceprovider";
+import useHistoryState from "../../hooks/useHistoryState";
+import { URLExistPath } from "../../constants/existUrlPath";
+import { useNavigate } from "react-router-dom";
+import { Auth } from "aws-amplify";
+import Alert from "@mui/material/Alert";
+import AlertTitle from "@mui/material/AlertTitle";
+import { AuthContext } from "../../store/auth_context";
+import { delay } from "./RegisterForm";
 
 export default function CustomizedTables() {
-
   const navigate = useNavigate();
 
   const StyledTableCell = styled(TableCell)(({ theme }) => ({
@@ -35,129 +33,133 @@ export default function CustomizedTables() {
       fontSize: 14,
     },
   }));
-  
+
   const StyledFirstRowCell = styled(TableCell)(({ theme }) => ({
-      [`&.${tableCellClasses.head}`]: {
-        backgroundColor: theme.palette.common.white,
-        color: theme.palette.common.white,
-      },
-      [`&.${tableCellClasses.body}`]: {
-        fontSize: 14,
-      },
-    }));
-  
+    [`&.${tableCellClasses.head}`]: {
+      backgroundColor: theme.palette.common.white,
+      color: theme.palette.common.white,
+    },
+    [`&.${tableCellClasses.body}`]: {
+      fontSize: 14,
+    },
+  }));
+
   const StyledTableRow = styled(TableRow)(({ theme }) => ({
-    '&:nth-of-type(odd)': {
+    "&:nth-of-type(odd)": {
       backgroundColor: theme.palette.action.hover,
     },
     // hide last border
-    '&:last-child td, &:last-child th': {
+    "&:last-child td, &:last-child th": {
       border: 0,
     },
   }));
-  
+
   function createData(
     email: string,
     accountStatus: string,
     phoneNumber: string,
     updated: string,
-    created: string,
+    created: string
   ) {
     return { email, accountStatus, phoneNumber, updated, created };
   }
 
-
-  const my_region = "eu-west-3"
+  const my_region = "eu-west-3";
 
   AWS.config.update({
     region: my_region,
-    credentials: new AWS.Credentials('AKIAWUW6U5W6ZK7ONRM3', 'pCRg/LHoJ89b5VK2/s6J+KE7VwfviueChlxzPAFV')
+    credentials: new AWS.Credentials(
+      "AKIAWUW6U5W6ZK7ONRM3",
+      "pCRg/LHoJ89b5VK2/s6J+KE7VwfviueChlxzPAFV"
+    ),
   });
-
 
   const cognito = new AWS.CognitoIdentityServiceProvider();
 
   async function getAllUsers() {
-      const params = {
-        UserPoolId: 'eu-west-3_KTB7W3mWQ',
-      
-      };
-      return cognito.listUsers(params).promise();
+    const params = {
+      UserPoolId: "eu-west-3_KTB7W3mWQ",
+    };
+    return cognito.listUsers(params).promise();
   }
 
-  const [rows, setRows] = useState([createData('', '', '', '', "")]);
-  
+  const [rows, setRows] = useState([createData("", "", "", "", "")]);
+
   const navigateTo = (page: string, flag: string) => {
-    navigate(page,{ state: { flag_to_page: flag } });
+    navigate(page, { state: { flag_to_page: flag } });
   };
 
   const authContext = React.useContext(AuthContext);
-  
-  const [role, setRole] = useState(authContext.user.attributes['custom:role']);
-  const [isLoggedIn, setIsLoggedIn] = useState(authContext.isAuthenticated);
-  
-  useEffect(() => {
 
-    const storedUser = JSON.parse(localStorage.getItem('user')!);
+  const [role, setRole] = useState("undefined");
+  const [isLoggedIn, setIsLoggedIn] = useState(authContext.isAuthenticated);
+
+  useEffect(() => {
+    const storedUser = JSON.parse(localStorage.getItem("user")!);
+
     if (storedUser) {
       setIsLoggedIn(true);
+      setRole(storedUser.attributes["custom:role"]);
       authContext.setIsAuthenticatedAndUser(true, storedUser);
+    } else {
+      setRole(authContext.user.attributes["custom:role"]);
     }
 
-    getAllUsers().then(async data => {
+    getAllUsers()
+      .then(async (data) => {
+        if (data && data.Users) {
+          const data_users = data.Users;
+          var holder_array = [createData("", "", "", "", "")];
+          rows.splice(0, rows.length);
+          holder_array.splice(0, holder_array.length);
 
-        if(data && data.Users) {
-            const data_users = data.Users;
-            var holder_array = [createData('', '', '', '', "")]
-            rows.splice(0, rows.length);
-            holder_array.splice(0, holder_array.length);
+          data_users.forEach((u_user) => {
+            const updated = u_user.UserLastModifiedDate
+              ? u_user.UserLastModifiedDate.toString()
+              : "Unknown";
 
-            data_users.forEach( u_user =>
-                {
-                    const updated =  u_user.UserLastModifiedDate ? u_user.UserLastModifiedDate.toString(): "Unknown"
-                  
-                    const created = u_user.UserCreateDate ? u_user.UserCreateDate.toString() : "Unkown"
-                    const status = u_user.UserStatus ? u_user.UserStatus : "Unkown"
+            const created = u_user.UserCreateDate
+              ? u_user.UserCreateDate.toString()
+              : "Unkown";
+            const status = u_user.UserStatus ? u_user.UserStatus : "Unkown";
 
-                    var user_email = ""
-                    u_user.Attributes?.map( (attr, index) => {
-                        if (index === 2) {
-                            user_email = attr.Value ? attr.Value.toString() : "Unknown"
-                        }
-                    }
-                    )
-                    
-                    holder_array.push(createData(user_email, status, '0819367845', updated, created))
-                }
+            var user_email = "";
+            u_user.Attributes?.map((attr, index) => {
+              if (index === 2) {
+                user_email = attr.Value ? attr.Value.toString() : "Unknown";
+              }
+            });
+
+            holder_array.push(
+              createData(user_email, status, "0819367845", updated, created)
             );
-            setRows(holder_array)
-            console.log(rows.length);
+          });
+          setRows(holder_array);
         }
-
-    }
-    ).catch(
-        (error)=> {
-            console.error(error);
-
-        }
-    );
+      })
+      .catch((error) => {
+        console.error(error);
+      });
   }, []);
 
-
-
-  if (isLoggedIn && (role === "Admin")) {
+  if (isLoggedIn && role === "Admin") {
     return (
-    
       <TableContainer component={Paper}>
         <Table sx={{ minWidth: 700 }} aria-label="customized table">
           <TableHead>
-          <TableRow>
+            <TableRow>
               <StyledFirstRowCell>
-                  <Button variant="outlined" color="primary" onClick={() => {navigate(URLExistPath.SignUpPage)}}>
-                      Add Agent
-                  </Button>
+                <Button
+                  variant="outlined"
+                  color="primary"
+                  onClick={() => {
+                    navigate(URLExistPath.SignUpPage);
+                  }}
+                >
+                  Add Agent
+                </Button>
               </StyledFirstRowCell>
-        </TableRow>
+            </TableRow>
             <TableRow>
               <StyledTableCell>Email</StyledTableCell>
               <StyledTableCell align="right">Phone Number</StyledTableCell>
@@ -172,8 +174,12 @@ export default function CustomizedTables() {
                 <StyledTableCell component="th" scope="row">
                   {row.email}
                 </StyledTableCell>
-                <StyledTableCell align="right">{row.phoneNumber}</StyledTableCell>
-                <StyledTableCell align="right">{row.accountStatus}</StyledTableCell>
+                <StyledTableCell align="right">
+                  {row.phoneNumber}
+                </StyledTableCell>
+                <StyledTableCell align="right">
+                  {row.accountStatus}
+                </StyledTableCell>
                 <StyledTableCell align="right">{row.updated}</StyledTableCell>
                 <StyledTableCell align="right">{row.created}</StyledTableCell>
               </StyledTableRow>
@@ -182,15 +188,25 @@ export default function CustomizedTables() {
         </Table>
       </TableContainer>
     );
-  }else {
-    return(
+  } else if (!isLoggedIn) {
+    return (
       <div>
-      <Alert severity="error">
-                <AlertTitle>Accès refusé</AlertTitle>
-                "Désolé, vous n'êtes pas autorisé à accéder à cette page" — <strong>Accès refusé</strong>
-          </Alert>
-    </div>
+        <Alert severity="error">
+          <AlertTitle>Accès refusé</AlertTitle>
+          "Désolé, vous n'êtes pas autorisé à accéder à cette page" —{" "}
+          <strong>Accès refusé</strong>
+        </Alert>
+      </div>
+    );
+  } else {
+    return (
+      <div>
+        <Alert severity="error">
+          <AlertTitle>Chargement</AlertTitle>
+          "Quelques seconde la Page est entrain de charger" —{" "}
+          <strong>Loading</strong>
+        </Alert>
+      </div>
     );
   }
-  
 }
