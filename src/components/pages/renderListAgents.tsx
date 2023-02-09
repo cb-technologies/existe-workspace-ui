@@ -7,7 +7,7 @@ import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
-import { Typography } from "@mui/material";
+import { Avatar, Typography } from "@mui/material";
 import { Button } from "@mui/material";
 import AWS from "aws-sdk";
 import { useEffect, useState } from "react";
@@ -56,12 +56,14 @@ export default function CustomizedTables() {
 
   function createData(
     email: string,
-    accountStatus: string,
-    phoneNumber: string,
-    updated: string,
-    created: string
+    Nom: string,
+    Prenom: string,
+    NumeroCellulaire: string,
+    Role: string,
+    Status: string,
+    Verification: string
   ) {
-    return { email, accountStatus, phoneNumber, updated, created };
+    return { email, Nom, Prenom, NumeroCellulaire, Role,Status, Verification};
   }
 
   const my_region = "eu-west-3";
@@ -83,7 +85,7 @@ export default function CustomizedTables() {
     return cognito.listUsers(params).promise();
   }
 
-  const [rows, setRows] = useState([createData("", "", "", "", "")]);
+  const [rows, setRows] = useState([createData("", "", "", "", "", "", "")]);
 
   const navigateTo = (page: string, flag: string) => {
     navigate(page, { state: { flag_to_page: flag } });
@@ -109,11 +111,12 @@ export default function CustomizedTables() {
       .then(async (data) => {
         if (data && data.Users) {
           const data_users = data.Users;
-          var holder_array = [createData("", "", "", "", "")];
+          var holder_array = [createData("", "", "", "", "", "", "")];
           rows.splice(0, rows.length);
           holder_array.splice(0, holder_array.length);
 
           data_users.forEach((u_user) => {
+            console.log(u_user)
             const updated = u_user.UserLastModifiedDate
               ? u_user.UserLastModifiedDate.toString()
               : "Unknown";
@@ -121,17 +124,36 @@ export default function CustomizedTables() {
             const created = u_user.UserCreateDate
               ? u_user.UserCreateDate.toString()
               : "Unkown";
-            const status = u_user.UserStatus ? u_user.UserStatus : "Unkown";
 
             var user_email = "";
+            var user_nom = "";
+            var user_prenom = "";
+            var user_phone = "";
+            var user_role = "";
+            const user_status = u_user.UserStatus ? u_user.UserStatus : "Unkown";
+            var email_verified = ""
+
             u_user.Attributes?.map((attr, index) => {
-              if (index === 2) {
+              var attr_name = attr.Name.toString()
+              if (attr_name === "custom:prenom") {
+                user_prenom = attr.Value ? attr.Value.toString() : "Unknown";
+              }else if (attr_name === "custom:nom") {
+                user_nom = attr.Value ? attr.Value.toString() : "Unknown";
+              }else if (attr_name === "custom:role") {
+                user_role = attr.Value ? attr.Value.toString() : "Unknown";
+              }else if (attr_name === "custom:phonenumber") {
+                user_phone = attr.Value ? attr.Value.toString() : "Unknown";
+              }else if (attr_name === "custom:phonenumber") {
+                user_phone = attr.Value ? attr.Value.toString() : "Unknown";
+              }else if (attr_name === "email_verified") {
+                email_verified = attr.Value ? attr.Value.toString() : "Unknown";
+              }else if (attr_name === "email") {
                 user_email = attr.Value ? attr.Value.toString() : "Unknown";
               }
             });
 
             holder_array.push(
-              createData(user_email, status, "0819367845", updated, created)
+              createData(user_email, user_nom, user_prenom, user_phone, user_role,user_status, email_verified)
             );
           });
           setRows(holder_array);
@@ -161,27 +183,38 @@ export default function CustomizedTables() {
               </StyledFirstRowCell>
             </TableRow>
             <TableRow>
-              <StyledTableCell>Email</StyledTableCell>
-              <StyledTableCell align="right">Phone Number</StyledTableCell>
-              <StyledTableCell align="right">Status</StyledTableCell>
-              <StyledTableCell align="right">Updated</StyledTableCell>
-              <StyledTableCell align="right">Created</StyledTableCell>
+              
+              <StyledTableCell align="left">Nom</StyledTableCell>
+              {/* <StyledTableCell align="right">Prenom</StyledTableCell> */}
+              <StyledTableCell align="left">Email</StyledTableCell>
+              <StyledTableCell align="left">Numero Cellulaire</StyledTableCell>
+              <StyledTableCell align="left">Role</StyledTableCell>
+              <StyledTableCell align="left">Status</StyledTableCell>
+              <StyledTableCell align="left">Verifié</StyledTableCell>
             </TableRow>
           </TableHead>
           <TableBody>
             {rows.map((row) => (
               <StyledTableRow key={row.email}>
                 <StyledTableCell component="th" scope="row">
+                  <div style={{ display: "flex", alignItems: "center" }}>
+                    <Avatar style={{
+                      backgroundColor: row.Role === "Admin" ? "#7384E3" : row.Role === "Registrator" ? "#A6D4B5" : "#D4C4A6"
+                      }}>{row.Nom.substring(0, 1) + row.Prenom.substring(0, 1)}
+                    </Avatar>
+                    <span style={{ marginLeft: 8 }}>{row.Prenom + " " + row.Nom}</span>
+                  </div>
+                </StyledTableCell>
+                {/* <StyledTableCell align="right">
+                  {row.Nom}
+                </StyledTableCell> */}
+                <StyledTableCell align="left">
                   {row.email}
                 </StyledTableCell>
-                <StyledTableCell align="right">
-                  {row.phoneNumber}
-                </StyledTableCell>
-                <StyledTableCell align="right">
-                  {row.accountStatus}
-                </StyledTableCell>
-                <StyledTableCell align="right">{row.updated}</StyledTableCell>
-                <StyledTableCell align="right">{row.created}</StyledTableCell>
+                <StyledTableCell align="left">{row.NumeroCellulaire}</StyledTableCell>
+                <StyledTableCell align="left">{row.Role}</StyledTableCell>
+                <StyledTableCell align="left">{row.Status}</StyledTableCell>
+                <StyledTableCell align="left">{row.Verification}</StyledTableCell>
               </StyledTableRow>
             ))}
           </TableBody>
