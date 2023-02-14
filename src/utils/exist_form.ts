@@ -4,14 +4,16 @@ type AgentInfo =
     | "Prenom"
     | "Email"
     | "Password"
-    | "Role"; 
+    | "Role"
+    | "NationalId";
 
 export const AgentInfoRegisteringList: AgentInfo[] = [
     "Nom",
     "Prenom",
     "Email",
     "Password",
-    "Role"
+    "Role",
+    "NationalId"
 ]
 
 export interface AgentSignUpFormInput{
@@ -21,4 +23,5 @@ export interface AgentSignUpFormInput{
     Password: string;
     Phonenumber: string;
     Role: string; 
+    NationalId: string;
 }
