@@ -304,18 +304,18 @@ export default function RetrieveUserInfo() {
           <Typography variant="h3" gutterBottom>
             {flag === "to_generate"
               ? "Générer la carte"
-              : "Actualisation des informations"}
+              : "Actualiser les informations de l'individu"}
           </Typography>
           <Typography variant="h6" component="h6" gutterBottom>
             1. Noms
           </Typography>
           <NameForm register={register} errors={errors}></NameForm>
           <Typography variant="h6" component="h6" gutterBottom>
-            2. Entrez le Sexe l'individu
+            2. Entrer le Sexe l'individu
           </Typography>
           <SexForm></SexForm>
           <Typography variant="h6" component="h6" gutterBottom>
-            3. Entrez la Date de Naissance de l'individu
+            3. Entrer la Date de Naissance de l'individu
           </Typography>
           <DateOfBirthForm register={register}></DateOfBirthForm>
           {!spinRetrouver ? (
@@ -325,7 +325,7 @@ export default function RetrieveUserInfo() {
               color="primary"
               onClick={handleSubmit(onSubmit)}
             >
-              Retrouvez le citoyen
+              Retrouver le citoyen
               {/* <Route path="/updateUserInfo" element={<UpdateUserForm  UpdateUserFormProps ={dataResposnse} />} /> */}
             </Button>
           ) : (
@@ -358,7 +358,7 @@ export default function RetrieveUserInfo() {
             component="h6"
             gutterBottom
           >
-            Entrez le QR code encrypté:
+            Entrer le QR code encrypté:
           </Typography>
           <TextField
             fullWidth
