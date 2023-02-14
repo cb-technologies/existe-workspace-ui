@@ -16,7 +16,9 @@ import { URLExistPath } from "../../constants/existUrlPath";
 import { AuthContext } from "../../store/auth_context";
 import { Auth } from "aws-amplify";
 import { css } from "aphrodite/no-important";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { ExistService } from "../../store/exist_api_call";
+import { NationalIDNumber, PersonInfoResponse } from "../../grpc/pb/message_and_service_pb";
 
 function ResponsiveAppBar() {
   const [anchorElNav, setAnchorElNav] = React.useState<null | HTMLElement>(
@@ -41,19 +43,85 @@ function ResponsiveAppBar() {
   const pages = [""];
 
   const authContext = React.useContext(AuthContext);
+
+  // const nationalID = authContext.user.attributes["custom:nationalid"]
+  // const [nationalID] = useState("KN-433107452");
+
+
+  const [nationalID] = useState(authContext.user?.attributes["custom:nationalid"]);
+
+  const [nom] = useState(authContext.user?.attributes['custom:nom']);
+
+  const [m_userInfo, setUserInfo] = React.useState<any>() ;
+  // const [isLoggedIn, setIsLoggedIn] = useState(authContext.isAuthenticated);
+
+  // This function must be general cause it is called in different places
+  function rebuildBase64Image(userInfo : PersonInfoResponse.AsObject) {
+    //return "/static/images/avatar/1.jpg"
+    console.log(userInfo)
+    if (userInfo === undefined) {
+      return "/static/images/avatar/1.jpg"
+    }
+    return userInfo.biometrics?.photoType! + "," + userInfo.biometrics?.photos!
+  }
   
+  useEffect(() => {
+
+    // console.log("Arriving")
+    console.log(nationalID)
+    // console.log("Petage")
+    console.log(nom)
+
+
+    var db_nationalid = new NationalIDNumber().setId(nationalID)
+
+    ExistService.findPersonInfo(
+      db_nationalid,
+      null
+    ).then((userInfo) => {
+      const userInfoObject = userInfo.toObject() as PersonInfoResponse.AsObject;
+      console.log(userInfoObject)
+      setUserInfo(userInfoObject)
+    }).catch((error) => {
+      console.log("Double Petage", error);
+    });
+    // const storedUser = JSON.parse(localStorage.getItem('user')!);
+    // if (storedUser) {
+    //   setIsLoggedIn(true);
+    //   setUser(storedUser);
+    //   authContext.setIsAuthenticatedAndUser(true, storedUser);
+    //   console.log("Testing Debugging");
+    // }
+  }, [authContext.isAuthenticated, nationalID]);
+
+  
+  // @ts-ignore
+  function retreiveUser(data): PersonInfoResponse {
+    
+    // var qrCodeStr =  retreiveQRCodemapdata(data);
+    var db_nationalid = new NationalIDNumber().setId("KN-878400966")
+
+    ExistService.findPersonInfo(
+      db_nationalid,
+      null
+    ).then((userInfo) => {
+      const userInfoObject = userInfo.toObject() as PersonInfoResponse.AsObject;
+      setUserInfo(userInfoObject)
+    });
+  }
+
   const signOut = async () => {
     try {
       await Auth.signOut();
       authContext.setIsAuthenticatedAndUser(false, null);
-      localStorage.removeItem('user');
+      localStorage.clear();
       navigate(URLExistPath.HomePage);
     } catch (error) {
       console.log("error signing out: ", error);
     }
   };
 
-  const [nom] = useState(authContext.user?.attributes['custom:nom']);
+  
 
 
   const settingsTest = [
@@ -119,9 +187,10 @@ function ResponsiveAppBar() {
             <div>
               {authContext.isAuthenticated ? (
                 <Box sx={{ flexGrow: 0 }}>
-                  <Tooltip title="Open settings">
+                  <Tooltip title={nom}>
                     <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
-                      <Avatar src="/static/images/avatar/1.jpg" />
+                      <Avatar src={rebuildBase64Image(m_userInfo)} />
+
                     </IconButton>
                   </Tooltip>
                   <Menu

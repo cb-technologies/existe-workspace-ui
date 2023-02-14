@@ -7,7 +7,7 @@ import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
-import { Avatar, Typography } from "@mui/material";
+import { Avatar, Box, makeStyles, Typography } from "@mui/material";
 import { Button } from "@mui/material";
 import AWS from "aws-sdk";
 import { useEffect, useState } from "react";
@@ -20,6 +20,9 @@ import Alert from "@mui/material/Alert";
 import AlertTitle from "@mui/material/AlertTitle";
 import { AuthContext } from "../../store/auth_context";
 import { delay } from "./RegisterForm";
+import '../../utils/shine.css'
+import { NationalIDNumber, PersonInfoResponse } from "../../grpc/pb/message_and_service_pb";
+import { ExistService } from "../../store/exist_api_call";
 
 export default function CustomizedTables() {
   const navigate = useNavigate();
@@ -54,6 +57,18 @@ export default function CustomizedTables() {
     },
   }));
 
+  // This function must be general cause it is called in different places
+  function rebuildBase64Image(userInfo : PersonInfoResponse.AsObject) {
+    //return "/static/images/avatar/1.jpg"
+    console.log(userInfo)
+    if (userInfo === undefined) {
+
+      return "/static/images/avatar/1.jpg"
+    }
+    console.log("This instead is being called")
+    return userInfo.biometrics?.photoType! + "," + userInfo.biometrics?.photos!
+  }
+
   function createData(
     email: string,
     Nom: string,
@@ -61,12 +76,15 @@ export default function CustomizedTables() {
     NumeroCellulaire: string,
     Role: string,
     Status: string,
-    Verification: string
+    Verification: string,
+    Enabled : boolean,
+    Image: string
   ) {
-    return { email, Nom, Prenom, NumeroCellulaire, Role,Status, Verification};
+    return { email, Nom, Prenom, NumeroCellulaire, Role,Status, Verification, Enabled, Image};
   }
 
   const my_region = "eu-west-3";
+  const poolId = "eu-west-3_KTB7W3mWQ";
 
   AWS.config.update({
     region: my_region,
@@ -80,12 +98,62 @@ export default function CustomizedTables() {
 
   async function getAllUsers() {
     const params = {
-      UserPoolId: "eu-west-3_KTB7W3mWQ",
+      UserPoolId: poolId,
     };
     return cognito.listUsers(params).promise();
   }
 
-  const [rows, setRows] = useState([createData("", "", "", "", "", "", "")]);
+
+  const ableUser = async (username: any) => {
+    const params = {
+      UserPoolId: poolId,
+      Username: username,
+    };
+  
+    try {
+      await cognito.adminEnableUser(params).promise();
+      console.log(`User ${username} has been abled.`);
+      setLoading(true)
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  const disableUser = async (username: any) => {
+    const params = {
+      UserPoolId: poolId,
+      Username: username,
+    };
+  
+    try {
+      await cognito.adminDisableUser(params).promise();
+      console.log(`User ${username} has been disabled.`);
+      setLoading(true)
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  const deleteUser = async (username: any) => {
+    const params = {
+      UserPoolId: poolId,
+      Username: username,
+    };
+  
+    try {
+      const result = await cognito.adminDeleteUser(params).promise();
+      console.log(`User ${username} deleted from User Pool ${poolId}.`);
+      setLength(length-1)
+      return result;
+    } catch (error) {
+      console.error(error);
+      //throw error;
+    }
+  };
+
+
+
+  const [rows, setRows] = useState([createData("", "", "", "", "", "", "", false, "")]);
 
   const navigateTo = (page: string, flag: string) => {
     navigate(page, { state: { flag_to_page: flag } });
@@ -95,6 +163,54 @@ export default function CustomizedTables() {
 
   const [role, setRole] = useState("undefined");
   const [isLoggedIn, setIsLoggedIn] = useState(authContext.isAuthenticated);
+  const [loading, setLoading] = useState(false);
+  const [length, setLength] = useState(5)
+
+  const getBackgroundColor = (role: string) => {
+    switch (role) {
+      case 'Admin':
+        return {begin: '#FFD700',end: '#ffa600'};
+      case 'Printer':
+        return {begin: '#FFCD32', end: '#965A38'};
+      case 'Registrator':
+        return {begin: '#E6E8FA', end: '#BFC1C6'};
+      default:
+        return {begin: '#fff', end: '#fff'};
+    }
+  };
+  
+  interface OvalBoxProps {
+    text: string;
+    bgColor: {
+      begin: string;
+      end: string;
+    };
+  }
+
+  const OvalBox: React.FC<OvalBoxProps> = ({ text, bgColor }) => {
+    return (
+      <Box
+        component="span"
+        minWidth="fit-content"
+        minHeight="fit-content"
+        borderRadius="10px"
+        display="flex"
+        justifyContent="center"
+        alignItems="center"
+        style={{
+          background: `linear-gradient(to right, ${bgColor.begin}, ${bgColor.end})`,
+          backgroundSize: '200% 100%',
+          animation: 'shine 20s ease-in-out infinite',
+        }}
+      >
+        {text}
+      </Box>
+    );
+  };
+  
+  
+  
+  
 
   useEffect(() => {
     const storedUser = JSON.parse(localStorage.getItem("user")!);
@@ -108,10 +224,10 @@ export default function CustomizedTables() {
     }
 
     getAllUsers()
-      .then(async (data) => {
+      .then((data) => {
         if (data && data.Users) {
           const data_users = data.Users;
-          var holder_array = [createData("", "", "", "", "", "", "")];
+          var holder_array = [createData("", "", "", "", "", "", "",false, "")];
           rows.splice(0, rows.length);
           holder_array.splice(0, holder_array.length);
 
@@ -130,8 +246,10 @@ export default function CustomizedTables() {
             var user_prenom = "";
             var user_phone = "";
             var user_role = "";
+            var user_image = "";
             const user_status = u_user.UserStatus ? u_user.UserStatus : "Unkown";
             var email_verified = ""
+            const user_enabled = u_user.Enabled ? u_user.Enabled : false;
 
             u_user.Attributes?.map((attr, index) => {
               var attr_name = attr.Name.toString()
@@ -149,11 +267,26 @@ export default function CustomizedTables() {
                 email_verified = attr.Value ? attr.Value.toString() : "Unknown";
               }else if (attr_name === "email") {
                 user_email = attr.Value ? attr.Value.toString() : "Unknown";
+              }else if (attr_name === "custom:nationalid") {
+                var user_nationalid = attr.Value ? attr.Value.toString() : "Unknown";
+                var db_nationalid = new NationalIDNumber().setId(user_nationalid)
+                ExistService.findPersonInfo(
+                  db_nationalid,
+                  null
+                ).then((userInfo) => {
+                  const userInfoObject = userInfo.toObject() as PersonInfoResponse.AsObject;
+                  user_image = rebuildBase64Image(userInfoObject)
+                  //console.log(user_image)
+                  // console.log(userInfoObject)
+                  //setUserInfo(userInfoObject)
+                }).catch((error) => {
+                  console.log("Double Petage", error);
+                });
               }
             });
 
             holder_array.push(
-              createData(user_email, user_nom, user_prenom, user_phone, user_role,user_status, email_verified)
+              createData(user_email, user_nom, user_prenom, user_phone, user_role,user_status, email_verified, user_enabled, user_image)
             );
           });
           setRows(holder_array);
@@ -162,7 +295,8 @@ export default function CustomizedTables() {
       .catch((error) => {
         console.error(error);
       });
-  }, []);
+      setLoading(false)
+  }, [length, loading]);
 
   if (isLoggedIn && role === "Admin") {
     return (
@@ -185,12 +319,12 @@ export default function CustomizedTables() {
             <TableRow>
               
               <StyledTableCell align="left">Nom</StyledTableCell>
-              {/* <StyledTableCell align="right">Prenom</StyledTableCell> */}
               <StyledTableCell align="left">Email</StyledTableCell>
               <StyledTableCell align="left">Numero Cellulaire</StyledTableCell>
               <StyledTableCell align="left">Role</StyledTableCell>
               <StyledTableCell align="left">Status</StyledTableCell>
               <StyledTableCell align="left">Verifié</StyledTableCell>
+              <StyledTableCell align="left">Action</StyledTableCell>
             </TableRow>
           </TableHead>
           <TableBody>
@@ -198,23 +332,36 @@ export default function CustomizedTables() {
               <StyledTableRow key={row.email}>
                 <StyledTableCell component="th" scope="row">
                   <div style={{ display: "flex", alignItems: "center" }}>
-                    <Avatar style={{
-                      backgroundColor: row.Role === "Admin" ? "#7384E3" : row.Role === "Registrator" ? "#A6D4B5" : "#D4C4A6"
-                      }}>{row.Nom.substring(0, 1) + row.Prenom.substring(0, 1)}
+                    <Avatar src={row.Image}>
                     </Avatar>
                     <span style={{ marginLeft: 8 }}>{row.Prenom + " " + row.Nom}</span>
                   </div>
                 </StyledTableCell>
-                {/* <StyledTableCell align="right">
-                  {row.Nom}
-                </StyledTableCell> */}
                 <StyledTableCell align="left">
                   {row.email}
                 </StyledTableCell>
                 <StyledTableCell align="left">{row.NumeroCellulaire}</StyledTableCell>
-                <StyledTableCell align="left">{row.Role}</StyledTableCell>
+                <StyledTableCell align="left"><OvalBox text={row.Role} bgColor={getBackgroundColor(row.Role)} /></StyledTableCell>
                 <StyledTableCell align="left">{row.Status}</StyledTableCell>
                 <StyledTableCell align="left">{row.Verification}</StyledTableCell>
+                <StyledTableCell align="right" >
+                  {row.Enabled ? (
+                    <Button size="small" variant="outlined" color="primary" onClick={() => disableUser(row.email)}>
+                      Disable
+                    </Button>
+                  ) : (
+                    <Button size="small" variant="outlined" color="primary" onClick={() => ableUser(row.email)}>
+                      Enable
+                    </Button>
+                  )}
+                  {/* <Button size="small" variant="outlined" color="primary" style={{ marginLeft: 8 }}>
+                    Modify
+                  </Button> */}
+                  <Button size="small" variant="outlined" color="error" style={{ marginLeft: 8 }}
+                  onClick={() => deleteUser(row.email)}>
+                    Delete
+                  </Button>
+              </StyledTableCell>
               </StyledTableRow>
             ))}
           </TableBody>

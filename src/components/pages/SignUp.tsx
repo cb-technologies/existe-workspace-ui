@@ -110,6 +110,7 @@ export default function SignUp() {
   const [Password, setPassword] = useHistoryState("Password", "");
   const [PhoneNumber, setPhoneNumber] = useHistoryState("1234565", "");
   const [Role, setRole] = useHistoryState("Role", "");
+  const [NationalId, setNationalId] = useHistoryState("NationalId", "");
 
   React.useEffect(() => {
     const storedUser = JSON.parse(localStorage.getItem('user')!);
@@ -142,18 +143,6 @@ export default function SignUp() {
       .setRole(data.Role);
     setSpinRegister(true);
     try {
-      // const result = await signUp(agentInfo.getEmail(), agentInfo.getPassword())
-      // setSpinRegister(false);
-      // if (result == 1) {
-      //   setRegistrationComplete(true);
-      //   await delay(1500);
-      //   setRegistrationComplete(false);
-      //   navigate(URLExistPath.SignInPage);
-      // }else {
-      //   console.log("could not register user");
-      //   setSpinRegister(false);
-      //   setSuccessful(!succcessful);
-      // }
       const email = agentInfo.getEmail()
       const password = agentInfo.getPassword()
 
@@ -161,16 +150,17 @@ export default function SignUp() {
       let nom =  agentInfo.getNom()
       let prenom = agentInfo.getPrenom()
       let role =  agentInfo.getRole()
+      let nationalId = data.NationalId
 
       Auth.signUp({
         username : email,
         password,
         attributes: {
           email,
-          // ...customAttributes
           'custom:role': role,
           'custom:phonenumber': phonenumber,
           'custom:nom': nom,
+          'custom:nationalid': nationalId,
           'custom:prenom': prenom
         },
       })
@@ -284,6 +274,20 @@ export default function SignUp() {
                 error={!!errors["Phonenumber"]}
                 fullWidth
               />
+              <TextField
+                {...register("NationalId")}
+                variant="outlined"
+                margin="normal"
+                type="text"
+                label={"NationalId"}
+                value={NationalId}
+                onChange={(e) => setNationalId(e.target.value)}
+                helperText={errors.NationalId?.message}
+                error={!!errors["NationalId"]}
+                required
+                fullWidth
+              />
+
               <TextField
                 {...register("Role")}
                 variant="outlined"

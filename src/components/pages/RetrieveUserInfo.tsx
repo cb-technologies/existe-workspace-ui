@@ -140,6 +140,7 @@ function retreivemapdata(data) {
   var retreivePersonInfoParameters =
     new RetreivePersonInfoParameters().setNames(names);
   retreivePersonInfoParameters.setDateOfBirth(dob);
+  
   console.log("names are", names);
   console.log("date of birth ", dob);
   console.log("finaly the personInput is", retreivePersonInfoParameters);
