@@ -3,6 +3,7 @@ import {css} from "aphrodite/no-important";
 import cn from "classnames";
 import {PersonInfoResponse} from "../../grpc/pb/message_and_service_pb";
 import styles from "../styles/cardFrontStyle";
+import rebuildBase64Image from "../../constants/generalFunctions";
 
 
 type CarteGenerationProps = {
@@ -13,11 +14,12 @@ const SexMap = {
   1: "M",
   2: "F"
 }
-function rebuildBase64Image(userInfo : PersonInfoResponse.AsObject) {
-    return userInfo.biometrics?.photoType! + "," + userInfo.biometrics?.photos!
-}
+// function rebuildBase64Image(userInfo : PersonInfoResponse.AsObject) {
+//     return userInfo.biometrics?.photoType! + "," + userInfo.biometrics?.photos!
+// }
 
 export default function CardFront({ userInfo }: CarteGenerationProps) {
+
   return (
     <div className={cn(css(styles.root), "card-front-and-bac")}>
       <img
@@ -112,7 +114,6 @@ export default function CardFront({ userInfo }: CarteGenerationProps) {
       <div className={css(styles.group)}>
         <img
           className={css(styles.image2)}
-          // style={{ width: 250, height: 600 }}
           src={rebuildBase64Image(userInfo)}
           alt="alt text"
         />

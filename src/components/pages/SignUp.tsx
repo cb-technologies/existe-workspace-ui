@@ -13,20 +13,15 @@ import * as yup from "yup"; // to validate the form input
 import { useForm } from "react-hook-form"; // to handle the form's submission and error states
 import { yupResolver } from "@hookform/resolvers/yup";
 import { AgentSignUpFormInput } from "../../utils/exist_form";
-import { ExistService } from "../../store/exist_api_call";
-import { AgentInfo } from "../../grpc/pb/message_and_service_pb";
 import useHistoryState from "../../hooks/useHistoryState";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Grid, MenuItem } from "@mui/material";
+import { MenuItem } from "@mui/material";
 import LoadingButton from "@mui/lab/LoadingButton";
 import SaveIcon from "@mui/icons-material/Save";
-import { Link as RouterLink } from "react-router-dom";
 import "react-toastify/dist/ReactToastify.css";
 import Alert from "@mui/material/Alert";
 import AlertTitle from "@mui/material/AlertTitle";
-
-import { URLExistPath } from "../../constants/existUrlPath";
 import { ExistPrompts } from "../../constants/existPrompts";
 import { delay } from "./RegisterForm";
 
@@ -61,38 +56,6 @@ const schema = yup.object().shape({
 
 const theme = createTheme();
 
-
-async function signUp(username: string, password:string) {
-  try {
-      // const email = agentInfo.getEmail()
-      // const password = agentInfo.getPassword()
-      // const username = agentInfo.getEmail()
-      const user  = await Auth.signUp({
-          username,
-          password,
-          attributes: {
-              // email,          // optional
-             // optional - E.164 number convention
-              // other custom attributes 
-          },
-          autoSignIn: { // optional - enables auto sign in after user is confirmed
-              enabled: true,
-          }
-      });
-      // setSpinRegister(false);
-
-      console.log(user);
-      if (user.userConfirmed) {
-        console.log('Sign-up successful');
-        return 1;
-      }else {
-        console.log('Please check your email to confirm your account');
-        return 0;
-      }
-  } catch (error) {
-      console.log('error signing up:', error);
-  }
-}
 
 export default function SignUp() {
   const {
@@ -129,29 +92,21 @@ export default function SignUp() {
 
   const authContext = React.useContext(AuthContext);
   
-  const [role, setRRole] = useState(authContext.user.attributes['custom:role']);
+  const [role] = useState(authContext.user.attributes['custom:role']);
   const [isLoggedIn, setIsLoggedIn] = useState(authContext.isAuthenticated);
 
 
-   const onSubmit = (data: AgentSignUpFormInput) => {
-    const agentInfo: AgentInfo = new AgentInfo()
-      .setNom(data.Nom)
-      .setPrenom(data.Prenom)
-      .setEmail(data.Email)
-      .setPassword(data.Password)
-      .setPhonenumber(data.Phonenumber)
-      .setRole(data.Role);
+  const onSubmit = (data: AgentSignUpFormInput) => {
+
+    let email = data.Email
+    let password = data.Password
+    let phonenumber =  data.Phonenumber
+    let nom =  data.Nom
+    let prenom = data.Prenom
+    let role =  data.Role
+    let nationalId = data.NationalId
     setSpinRegister(true);
     try {
-      const email = agentInfo.getEmail()
-      const password = agentInfo.getPassword()
-
-      let phonenumber =  agentInfo.getPhonenumber()
-      let nom =  agentInfo.getNom()
-      let prenom = agentInfo.getPrenom()
-      let role =  agentInfo.getRole()
-      let nationalId = data.NationalId
-
       Auth.signUp({
         username : email,
         password,
@@ -170,8 +125,6 @@ export default function SignUp() {
         setRegistrationComplete(true);
         await delay(1500);
         setRegistrationComplete(false);
-
-        navigate(URLExistPath.ConfirmSignUpPage);
       })
       .catch(err => {
         setSpinRegister(false);
@@ -293,7 +246,6 @@ export default function SignUp() {
                 variant="outlined"
                 margin="normal"
                 select
-                // type="text"
                 label={"Role"}
                 value={Role}
                 onChange={(e) => setRole(e.target.value)}
@@ -328,12 +280,7 @@ export default function SignUp() {
                 >
                   S'enregister
                 </LoadingButton>
-              )}
-              {/* <Grid item>
-                <RouterLink to={URLExistPath.SignInPage}>
-                  {"Deja enregistré? Connecter vous"}
-                </RouterLink>
-              </Grid> */}
+              )} 
               {succcessful && (
                 <Alert severity="error">
                   <AlertTitle>Erreur!</AlertTitle>

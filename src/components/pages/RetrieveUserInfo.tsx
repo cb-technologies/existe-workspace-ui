@@ -14,7 +14,6 @@ import Checkbox from "@mui/material/Checkbox";
 import * as yup from "yup"; // to validate the form input
 import { useForm } from "react-hook-form"; // to handle the form's submission and error states
 import { yupResolver } from "@hookform/resolvers/yup";
-import SaveIcon from "@mui/icons-material/Save";
 import Button from "@mui/material/Button";
 import { URLExistPath } from "../../constants/existUrlPath";
 import Alert from "@mui/material/Alert";
@@ -29,11 +28,9 @@ import { ExistService } from "../../store/exist_api_call";
 import useHistoryState from "../../hooks/useHistoryState";
 import Container from "@mui/material/Container";
 import { useNavigate, useLocation } from "react-router-dom"; //import the package
-import { Auth } from "aws-amplify";
 import { AuthContext } from "../../store/auth_context";
 import { decrypt } from "n-krypta";
 import { secret } from "../../constants/encryptionSecrets";
-import { EC2 } from "aws-sdk";
 import LoadingButton from "@mui/lab/LoadingButton";
 
 var globalDay: string;
