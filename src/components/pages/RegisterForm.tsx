@@ -120,8 +120,40 @@ const schema = yup.object().shape({
   EyeColor: yup.string().required("Couleur des yeux non valide").min(2).max(30),
 });
 
-// @ts-ignore
-function NameForm({ register, errors }) {
+export type PartialErrorRegisterForm = Partial<
+  FieldErrorsImpl<{
+    Prenom: string;
+    Nom: string;
+    PostNom: string;
+
+    Ville: string;
+    Quartier: string;
+    Avenue: string;
+    Commune: string;
+    Numero: number;
+    CodePostal: string;
+    Reference: string;
+    ProvinceAddress: string;
+
+    Province: string;
+    ChefLieu: string;
+    Territoire: string;
+    Secteur: string;
+    Village: string;
+    LieuDeNaissance: string;
+
+    Taille: number;
+    Poids: number;
+    EyeColor: string;
+  }>
+>;
+
+type AddressPropsType = {
+  register: any;
+  errors: PartialErrorRegisterForm;
+};
+
+function NameForm({ register, errors }: AddressPropsType) {
   const [dfirstName, setDFirstName] = useHistoryState("FirstName", "");
   const [dLastName, setDLastName] = useHistoryState("LastName", "");
   const [dMiddleNames, setDMiddleNames] = useHistoryState("MiddleName", "");
@@ -212,38 +244,9 @@ function SexForm() {
   );
 }
 
-export type PartialErrorRegisterForm = Partial<
-  FieldErrorsImpl<{
-    Prenom: string;
-    Nom: string;
-    PostNom: string;
 
-    Ville: string;
-    Quartier: string;
-    Avenue: string;
-    Commune: string;
-    Numero: number;
-    CodePostal: string;
-    Reference: string;
-    ProvinceAddress: string;
 
-    Province: string;
-    ChefLieu: string;
-    Territoire: string;
-    Secteur: string;
-    Village: string;
-    LieuDeNaissance: string;
 
-    Taille: number;
-    Poids: number;
-    EyeColor: string;
-  }>
->;
-
-type AddressPropsType = {
-  register: any;
-  errors: PartialErrorRegisterForm;
-};
 export function DynamicAddressForm({ register, errors }: AddressPropsType) {
   const [selectedProvince, setProvince] = useHistoryState(
     "SelectedProvince",
@@ -405,8 +408,7 @@ export function DynamicAddressForm({ register, errors }: AddressPropsType) {
   );
 }
 
-// @ts-ignore
-function OriginForm({ register, errors }) {
+function OriginForm({ register, errors }: AddressPropsType) {
   const [dProvince, setDProvince] = useHistoryState("Province", "");
   const [dChefLieu, setDChefLieu] = useHistoryState("ChefLieu", "");
   const [dTerritoire, setDTerritoire] = useHistoryState("Territoire", "");
@@ -796,37 +798,37 @@ export default function RegisterForm() {
           >
             <Typography variant="h1" gutterBottom></Typography>
             <Typography variant="h3" gutterBottom>
-              Enregistrez l'individu
+              Enregistrer l'individu
             </Typography>
             <Typography variant="h6" component="h6" gutterBottom>
-              1. Entrez les Noms de l'individu
+              1. Entrer les Noms de l'individu
             </Typography>
             <NameForm register={register} errors={errors}></NameForm>
             <Typography variant="h6" component="h6" gutterBottom>
-              2. Entrez le Sexe l'individu
+              2. Entrer le Sexe l'individu
             </Typography>
             <SexForm></SexForm>
             <Typography variant="h6" component="h6" gutterBottom>
-              3. Entrez la Date de Naissance de l'individu
+              3. Entrer la Date de Naissance de l'individu
             </Typography>
             <DateOfBirthForm register={register}></DateOfBirthForm>
             <Typography variant="h6" component="h6" gutterBottom>
-              4. Entrez l'Adresse de l'individu
+              4. Entrer l'Adresse de l'individu
             </Typography>
             <DynamicAddressForm
               register={register}
               errors={errors}
             ></DynamicAddressForm>
             <Typography variant="h6" component="h6" gutterBottom>
-              5. Entrez les Origines de l'individu
+              5. Entrer les Origines de l'individu
             </Typography>
             <OriginForm register={register} errors={errors}></OriginForm>
             <Typography variant="h6" component="h6" gutterBottom>
-              6. Entrez les Phénotypes de l'individu
+              6. Entrer les Phénotypes de l'individu
             </Typography>
             <PhenotypeForm register={register} errors={errors}></PhenotypeForm>
             <Typography variant="h6" component="h6" gutterBottom>
-              7. Importez la photo de l'individu
+              7. Importer la photo de l'individu
             </Typography>
             <PhotoForm></PhotoForm>
             {!spinRegister ? (
@@ -836,7 +838,7 @@ export default function RegisterForm() {
                 variant="contained"
                 sx={{ mt: 3, mb: 2 }}
               >
-                Enregistrez l'individu
+                Enregistrer l'individu
               </Button>
             ) : (
               <LoadingButton
@@ -847,7 +849,7 @@ export default function RegisterForm() {
                 variant="contained"
                 sx={{ mt: 3, mb: 2 }}
               >
-                Enregistrez l'individu
+                Enregistrer l'individu
               </LoadingButton>
             )}
             {showAlert && (

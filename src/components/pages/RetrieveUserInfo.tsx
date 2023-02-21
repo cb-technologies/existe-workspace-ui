@@ -145,7 +145,6 @@ function retreivemapdata(data) {
   return retreivePersonInfoParameters;
 }
 
-
 export default function RetrieveUserInfo() {
   const {
     register,
@@ -158,44 +157,40 @@ export default function RetrieveUserInfo() {
   const location = useLocation();
   const flag = location.state.flag_to_page;
 
+  const authContext = React.useContext(AuthContext);
+  const [spinRetrouver, setSpinRetrouver] = useState(false);
+  const [role, setRole] = useState(authContext.user.attributes["custom:role"]);
+  const [isLoggedIn, setIsLoggedIn] = useState(authContext.isAuthenticated);
+  const [showErrorQRCodeAlert, setShowErrorQRCodeAlert] = useState(false);
+  const [showErrorRetrouverAlert, setShowErrorRetrouverAlert] = useState(false);
+
   // @ts-ignore
   function retreiveUser(data): PersonInfoResponse {
     var retreivePersonInfoParameters = retreivemapdata(data);
-    // var qrCodeStr =  retreiveQRCodemapdata(data);
-    console.log("Person Parameter", retreivePersonInfoParameters);
 
-    ExistService.retreiveUserBasedOnField(
-      retreivePersonInfoParameters,
-      null
-    ).then((userInfo) => {
-      const userInfoObject = userInfo.toObject();
-      if (flag === "to_generate") {
-        navigate(URLExistPath.GeneratedCardPage, {
-          state: { cardInfo: userInfoObject },
-        });
-      } else {
-        navigate(URLExistPath.UpdateUserInfoForm, {
-          state: { cardInfo: userInfoObject },
-        });
-      }
-    });
+    ExistService.retreiveUserBasedOnField(retreivePersonInfoParameters, null)
+      .then((userInfo) => {
+        const userInfoObject = userInfo.toObject();
+        if (flag === "to_generate") {
+          setSpinRetrouver(false);
+          navigate(URLExistPath.GeneratedCardPage, {
+            state: { cardInfo: userInfoObject },
+          });
+        } else {
+          setSpinRetrouver(false);
+          navigate(URLExistPath.UpdateUserInfoForm, {
+            state: { cardInfo: userInfoObject },
+          });
+        }
+      })
+      .catch((error) => {
+        setSpinRetrouver(false);
+        setShowErrorRetrouverAlert(true);
+      });
   }
 
-  const [json, setJson] = useState<string>();
-  const [dataResposnse, setDataResponse] = useState<PersonInfoResponse>();
-
-  const navigateTo = (page: string, flag: string) => {
-    navigate(page, { state: { flag_to_page: flag } });
-  };
-
-  const authContext = React.useContext(AuthContext);
-
-  const [role, setRole] = useState(authContext.user.attributes["custom:role"]);
-  const [isLoggedIn, setIsLoggedIn] = useState(authContext.isAuthenticated);
-  const [showErrorAlert, setShowErrorAlert] = useState(false);
-
   useEffect(() => {
-    const storedUser = JSON.parse(localStorage.getItem('user')!);
+    const storedUser = JSON.parse(localStorage.getItem("user")!);
     if (storedUser) {
       setIsLoggedIn(true);
       authContext.setIsAuthenticatedAndUser(true, storedUser);
@@ -203,6 +198,7 @@ export default function RetrieveUserInfo() {
   });
 
   const onSubmit = (data: RetrieveFormInput) => {
+    setSpinRetrouver(true);
     retreiveUser(data);
   };
 
@@ -212,17 +208,19 @@ export default function RetrieveUserInfo() {
     console.log("The qr code str is ", qrCodeEncryptedString);
     const decryptedString = decrypt(qrCodeEncryptedString, secret.QRCodeSecret);
 
-    var firstName = ""
-    var lastName = ""
-    var middleNames = ""
+    var firstName = "";
+    var lastName = "";
+    var middleNames = "";
 
-    var day = ""
-    var month = ""
-    var year = ""
-    var retreivePersonInfoParameters = null
+    var day = "";
+    var month = "";
+    var year = "";
+    var retreivePersonInfoParameters = null;
 
-  
-    if (decryptedString.toString().includes("/") && decryptedString.toString().includes("/")) {
+    if (
+      decryptedString.toString().includes("/") &&
+      decryptedString.toString().includes("/")
+    ) {
       const decryptedStringSplitBySlash = decryptedString.split("/");
       const decryptedNames = decryptedStringSplitBySlash[0];
 
@@ -254,45 +252,39 @@ export default function RetrieveUserInfo() {
       retreivePersonInfoParameters = new RetreivePersonInfoParameters()
         .setNames(names)
         .setDateOfBirth(dob);
-    } 
-    
-
-    
+    }
 
     // Navigate to GeneratedCardPage
     if (retreivePersonInfoParameters != null) {
-        try { 
-          setSpinGenerateCard(true);
-          setShowErrorAlert(false);
-          
-          ExistService.retreiveUserBasedOnField(retreivePersonInfoParameters!, null)
+      try {
+        setSpinGenerateCard(true);
+
+        ExistService.retreiveUserBasedOnField(
+          retreivePersonInfoParameters!,
+          null
+        )
           .then((userInfo) => {
             const userInfoObject = userInfo.toObject();
-              setSpinGenerateCard(false);
-              navigate(URLExistPath.GeneratedCardPage, {
+            setSpinGenerateCard(false);
+            navigate(URLExistPath.GeneratedCardPage, {
               state: { cardInfo: userInfoObject },
             });
           })
           .catch((error) => {
             setSpinGenerateCard(false);
-              setShowErrorAlert(true);
+            setShowErrorQRCodeAlert(true);
             console.log("Error while generating card from QR Code", error);
           });
-        }
-        catch (error) {
-          console.log(`try error ${error}`);
-          setShowErrorAlert(true);
-          }
+      } catch (error) {
+        console.log(`try error ${error}`);
+        setShowErrorQRCodeAlert(true);
+      }
     } else {
-      setShowErrorAlert(true);
+      setShowErrorQRCodeAlert(true);
     }
-    
-    
   };
 
   const [encryptionKey, setEncryptionKey] = useState("");
-
-
 
   if (isLoggedIn && (role === "Admin" || role === "Registrator")) {
     return (
@@ -306,56 +298,32 @@ export default function RetrieveUserInfo() {
           autoComplete={"off"}
         >
           <Typography variant="h1" gutterBottom></Typography>
+          <Typography variant="h3" gutterBottom>
+            {flag === "to_generate"
+              ? "Générer la carte"
+              : "Actualiser les informations de l'individu"}
+          </Typography>
           <Typography variant="h6" component="h6" gutterBottom>
-            1. Retrouvez l'individu
+            1. Noms
           </Typography>
           <NameForm register={register} errors={errors}></NameForm>
           <Typography variant="h6" component="h6" gutterBottom>
-            2. Entrez le Sexe l'individu
+            2. Entrer le Sexe l'individu
           </Typography>
           <SexForm></SexForm>
           <Typography variant="h6" component="h6" gutterBottom>
-            3. Entrez la Date de Naissance de l'individu
+            3. Entrer la Date de Naissance de l'individu
           </Typography>
           <DateOfBirthForm register={register}></DateOfBirthForm>
-          <Button
-            fullWidth
-            variant="contained"
-            color="primary"
-            onClick={handleSubmit(onSubmit)}
-          >
-            Retrouvez le citoyen
-            {/* <Route path="/updateUserInfo" element={<UpdateUserForm  UpdateUserFormProps ={dataResposnse} />} /> */}
-          </Button>
-        </Box>
-        <div>
-          ----------------------------------------------------------------------------------------------------
-        </div>
-        <Box
-        >
-          <Typography
-            textAlign="center"
-            variant="h6"
-            component="h6"
-            gutterBottom
-          >
-            Entrez le QR code encrypté:
-          </Typography>
-          <TextField
-            fullWidth
-            value={encryptionKey}
-            onChange={(e) => setEncryptionKey(e.target.value)}
-          ></TextField>
-          <div></div>
-          {!spinGenerateCard ? (
+          {!spinRetrouver ? (
             <Button
               fullWidth
               variant="contained"
-              sx={{mt: 2}}
               color="primary"
-              onClick={() => generateCardFromQRCode(encryptionKey)}
+              onClick={handleSubmit(onSubmit)}
             >
-            Vérifier la carte 
+              Retrouver le citoyen
+              {/* <Route path="/updateUserInfo" element={<UpdateUserForm  UpdateUserFormProps ={dataResposnse} />} /> */}
             </Button>
           ) : (
             <LoadingButton
@@ -367,17 +335,65 @@ export default function RetrieveUserInfo() {
               loadingPosition="center"
             ></LoadingButton>
           )}
-          {showErrorAlert && (
-              <Alert severity="error">
-                <AlertTitle>La Carte n'est pas identifiée</AlertTitle>
-                La Carte n'est pas identifiée — <strong>Carte Invalide</strong>
-              </Alert>
-            )}
+          {showErrorRetrouverAlert && (
+            <Alert severity="error">
+              <AlertTitle>
+                Personne non existante
+              </AlertTitle>
+              Cette personne n'existe pas dans la base de donnée—{" "}
+              <strong>Verifier les informations entrées</strong>
+            </Alert>
+          )}
+        </Box>
+        <div>
+          ----------------------------------------------------------------------------------------------------
+        </div>
+        <Box>
+          <Typography
+            textAlign="center"
+            variant="h6"
+            component="h6"
+            gutterBottom
+          >
+            Entrer le QR code encrypté:
+          </Typography>
+          <TextField
+            fullWidth
+            value={encryptionKey}
+            onChange={(e) => setEncryptionKey(e.target.value)}
+          ></TextField>
+          <div></div>
+          {!spinGenerateCard ? (
+            <Button
+              fullWidth
+              variant="contained"
+              sx={{ mt: 2 }}
+              color="primary"
+              onClick={() => generateCardFromQRCode(encryptionKey)}
+            >
+              Vérifier la carte
+            </Button>
+          ) : (
+            <LoadingButton
+              sx={{ mt: 1, ml: 1, mr: 20 }}
+              variant="contained"
+              color="primary"
+              loading
+              fullWidth
+              loadingPosition="center"
+            ></LoadingButton>
+          )}
+          {showErrorQRCodeAlert && (
+            <Alert severity="error">
+              <AlertTitle>Personne non existante</AlertTitle>
+              Ce code QR ne correspond à aucune personne — <strong>Code QR Invalide</strong>
+            </Alert>
+          )}
         </Box>
       </Container>
     );
   } else {
-      return (
+    return (
       <div>
         <Alert severity="error">
           <AlertTitle>Accès refusé</AlertTitle>
