@@ -798,7 +798,7 @@ export default function RegisterForm() {
           >
             <Typography variant="h1" gutterBottom></Typography>
             <Typography variant="h3" gutterBottom>
-              Enregistrer l'individu
+              ENREGISTRER L'INDIVIDU
             </Typography>
             <Typography variant="h6" component="h6" gutterBottom>
               1. Entrer les Noms de l'individu
