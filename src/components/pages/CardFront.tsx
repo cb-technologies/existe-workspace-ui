@@ -3,7 +3,7 @@ import {css} from "aphrodite/no-important";
 import cn from "classnames";
 import {PersonInfoResponse} from "../../grpc/pb/message_and_service_pb";
 import styles from "../styles/cardFrontStyle";
-import rebuildBase64Image from "../../constants/generalFunctions";
+import {rebuildBase64Image} from "../../constants/generalFunctions";
 
 
 type CarteGenerationProps = {

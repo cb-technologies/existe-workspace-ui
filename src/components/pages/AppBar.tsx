@@ -44,21 +44,14 @@ function ResponsiveAppBar() {
 
   const authContext = React.useContext(AuthContext);
 
-  // const nationalID = authContext.user.attributes["custom:nationalid"]
-  // const [nationalID] = useState("KN-433107452");
-
 
   const [nationalID] = useState(authContext.user?.attributes["custom:nationalid"]);
 
   const [nom] = useState(authContext.user?.attributes['custom:nom']);
 
   const [m_userInfo, setUserInfo] = React.useState<any>() ;
-  // const [isLoggedIn, setIsLoggedIn] = useState(authContext.isAuthenticated);
-
-  // This function must be general cause it is called in different places
+ 
   function rebuildBase64Image(userInfo : PersonInfoResponse.AsObject) {
-    //return "/static/images/avatar/1.jpg"
-    console.log(userInfo)
     if (userInfo === undefined) {
       return "/static/images/avatar/1.jpg"
     }
@@ -66,12 +59,6 @@ function ResponsiveAppBar() {
   }
   
   useEffect(() => {
-
-    // console.log("Arriving")
-    console.log(nationalID)
-    // console.log("Petage")
-    console.log(nom)
-
 
     var db_nationalid = new NationalIDNumber().setId(nationalID)
 
@@ -85,20 +72,12 @@ function ResponsiveAppBar() {
     }).catch((error) => {
       console.log("Double Petage", error);
     });
-    // const storedUser = JSON.parse(localStorage.getItem('user')!);
-    // if (storedUser) {
-    //   setIsLoggedIn(true);
-    //   setUser(storedUser);
-    //   authContext.setIsAuthenticatedAndUser(true, storedUser);
-    //   console.log("Testing Debugging");
-    // }
-  }, [authContext.isAuthenticated, nationalID]);
+  }, [authContext.isAuthenticated]);
 
   
   // @ts-ignore
   function retreiveUser(data): PersonInfoResponse {
     
-    // var qrCodeStr =  retreiveQRCodemapdata(data);
     var db_nationalid = new NationalIDNumber().setId("KN-878400966")
 
     ExistService.findPersonInfo(

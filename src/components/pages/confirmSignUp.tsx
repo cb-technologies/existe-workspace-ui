@@ -148,40 +148,8 @@ export default function VerifyCode() {
               >
                 Verifier Code
               </Button>
-            {/* <Button
-                type="submit"
-                fullWidth
-                onSubmit={handleSubmit(resendSubmit)}
-                variant="contained"
-                sx={{ mt: 3, mb: 2 }}
-                >
-                Resend Code
-            </Button> */}
-            {/* {!spinRegister ? (
-              <Button
-                type="submit"
-                fullWidth
-                variant="contained"
-                sx={{ mt: 3, mb: 2 }}
-              >
-                Verifier Code
-              </Button>
-            ) : (
-              <LoadingButton
-                loading
-                fullWidth
-                loadingPosition="start"
-                startIcon={<SaveIcon />}
-                variant="contained"
-                sx={{ mt: 3, mb: 2 }}
-              >
-                Se connecter
-              </LoadingButton>
-            )} */}
             <Stack>
-              {/* <RouterLink to={URLExistPath.UndefinedPage}>
-                Mot de passe oublié?
-              </RouterLink> */}
+      
               <RouterLink to={URLExistPath.SignUpPage}>
                 {"Code non recu? Renvoyer le code"}
               </RouterLink>
