@@ -7,22 +7,17 @@ import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
-import { Avatar, Box, makeStyles, Typography } from "@mui/material";
+import { Box} from "@mui/material";
 import { Button } from "@mui/material";
 import AWS from "aws-sdk";
 import { useEffect, useState } from "react";
-import { UsersListType } from "aws-sdk/clients/cognitoidentityserviceprovider";
-import useHistoryState from "../../hooks/useHistoryState";
 import { URLExistPath } from "../../constants/existUrlPath";
 import { useNavigate } from "react-router-dom";
-import { Auth } from "aws-amplify";
 import Alert from "@mui/material/Alert";
 import AlertTitle from "@mui/material/AlertTitle";
 import { AuthContext } from "../../store/auth_context";
-import { delay } from "./RegisterForm";
 import '../../utils/shine.css'
-import { NationalIDNumber, PersonInfoResponse } from "../../grpc/pb/message_and_service_pb";
-import { ExistService } from "../../store/exist_api_call";
+import { AWS_ACCESS_KEY, AWS_POOL_ID, AWS_REGION, AWS_SECRET_ACCESS } from "../../constants/awsCognitoSettings";
 
 export default function CustomizedTables() {
   const navigate = useNavigate();
@@ -57,17 +52,6 @@ export default function CustomizedTables() {
     },
   }));
 
-  // This function must be general cause it is called in different places
-  function rebuildBase64Image(userInfo : PersonInfoResponse.AsObject) {
-    //return "/static/images/avatar/1.jpg"
-    console.log(userInfo)
-    if (userInfo === undefined) {
-
-      return "/static/images/avatar/1.jpg"
-    }
-    console.log("This instead is being called")
-    return userInfo.biometrics?.photoType! + "," + userInfo.biometrics?.photos!
-  }
 
   function createData(
     email: string,
@@ -83,14 +67,11 @@ export default function CustomizedTables() {
     return { email, Nom, Prenom, NumeroCellulaire, Role,Status, Verification, Enabled, Image};
   }
 
-  const my_region = "eu-west-3";
-  const poolId = "eu-west-3_KTB7W3mWQ";
-
   AWS.config.update({
-    region: my_region,
+    region: AWS_REGION,
     credentials: new AWS.Credentials(
-      "AKIAWUW6U5W6ZK7ONRM3",
-      "pCRg/LHoJ89b5VK2/s6J+KE7VwfviueChlxzPAFV"
+      AWS_ACCESS_KEY,
+      AWS_SECRET_ACCESS
     ),
   });
 
@@ -98,7 +79,7 @@ export default function CustomizedTables() {
 
   async function getAllUsers() {
     const params = {
-      UserPoolId: poolId,
+      UserPoolId: AWS_POOL_ID,
     };
     return cognito.listUsers(params).promise();
   }
@@ -106,7 +87,7 @@ export default function CustomizedTables() {
 
   const ableUser = async (username: any) => {
     const params = {
-      UserPoolId: poolId,
+      UserPoolId: AWS_POOL_ID,
       Username: username,
     };
   
@@ -121,7 +102,7 @@ export default function CustomizedTables() {
 
   const disableUser = async (username: any) => {
     const params = {
-      UserPoolId: poolId,
+      UserPoolId: AWS_POOL_ID,
       Username: username,
     };
   
@@ -136,28 +117,23 @@ export default function CustomizedTables() {
 
   const deleteUser = async (username: any) => {
     const params = {
-      UserPoolId: poolId,
+      UserPoolId: AWS_POOL_ID,
       Username: username,
     };
   
     try {
       const result = await cognito.adminDeleteUser(params).promise();
-      console.log(`User ${username} deleted from User Pool ${poolId}.`);
+      console.log(`User ${username} deleted from User Pool ${AWS_POOL_ID}.`);
       setLength(length-1)
       return result;
     } catch (error) {
       console.error(error);
-      //throw error;
     }
   };
 
 
 
   const [rows, setRows] = useState([createData("", "", "", "", "", "", "", false, "")]);
-
-  const navigateTo = (page: string, flag: string) => {
-    navigate(page, { state: { flag_to_page: flag } });
-  };
 
   const authContext = React.useContext(AuthContext);
 
@@ -208,13 +184,8 @@ export default function CustomizedTables() {
     );
   };
   
-  
-  
-  
-
   useEffect(() => {
     const storedUser = JSON.parse(localStorage.getItem("user")!);
-
     if (storedUser) {
       setIsLoggedIn(true);
       setRole(storedUser.attributes["custom:role"]);
@@ -267,21 +238,6 @@ export default function CustomizedTables() {
                 email_verified = attr.Value ? attr.Value.toString() : "Unknown";
               }else if (attr_name === "email") {
                 user_email = attr.Value ? attr.Value.toString() : "Unknown";
-              }else if (attr_name === "custom:nationalid") {
-                var user_nationalid = attr.Value ? attr.Value.toString() : "Unknown";
-                var db_nationalid = new NationalIDNumber().setId(user_nationalid)
-                ExistService.findPersonInfo(
-                  db_nationalid,
-                  null
-                ).then((userInfo) => {
-                  const userInfoObject = userInfo.toObject() as PersonInfoResponse.AsObject;
-                  user_image = rebuildBase64Image(userInfoObject)
-                  //console.log(user_image)
-                  // console.log(userInfoObject)
-                  //setUserInfo(userInfoObject)
-                }).catch((error) => {
-                  console.log("Double Petage", error);
-                });
               }
             });
 
@@ -332,8 +288,6 @@ export default function CustomizedTables() {
               <StyledTableRow key={row.email}>
                 <StyledTableCell component="th" scope="row">
                   <div style={{ display: "flex", alignItems: "center" }}>
-                    <Avatar src={row.Image}>
-                    </Avatar>
                     <span style={{ marginLeft: 8 }}>{row.Prenom + " " + row.Nom}</span>
                   </div>
                 </StyledTableCell>
@@ -354,9 +308,6 @@ export default function CustomizedTables() {
                       Enable
                     </Button>
                   )}
-                  {/* <Button size="small" variant="outlined" color="primary" style={{ marginLeft: 8 }}>
-                    Modify
-                  </Button> */}
                   <Button size="small" variant="outlined" color="error" style={{ marginLeft: 8 }}
                   onClick={() => deleteUser(row.email)}>
                     Delete

@@ -54,7 +54,6 @@ export default function CardBack({ userInfo }: CarteGenerationProps) {
                         src={require("../../assets/card_generation/9b7a198a28de8feae8d977a364964327.png")}
                         alt="alt text"
                     />
-                    {/* <h5 className={css(styles.highlights1_box)}> */}
                     <h5>
                         <div className={css(styles.highlights1)}>
                             <span className={css(styles.highlights1_span0)}>Existe LLC </span>

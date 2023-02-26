@@ -19,6 +19,7 @@ import { css } from "aphrodite/no-important";
 import { useEffect, useState } from "react";
 import { ExistService } from "../../store/exist_api_call";
 import { NationalIDNumber, PersonInfoResponse } from "../../grpc/pb/message_and_service_pb";
+import { rebuildBase64Image } from "../../constants/generalFunctions";
 
 function ResponsiveAppBar() {
   const [anchorElNav, setAnchorElNav] = React.useState<null | HTMLElement>(
@@ -49,19 +50,8 @@ function ResponsiveAppBar() {
   const [nom] = useState(authContext.user?.attributes['custom:nom']);
 
   const [m_userInfo, setUserInfo] = React.useState<any>() ;
-
-  // This function must be general cause it is called in different places
-  function rebuildBase64Image(userInfo : PersonInfoResponse.AsObject) {
-    //return "/static/images/avatar/1.jpg"
-    if (userInfo === undefined) {
-      return "/static/images/avatar/1.jpg"
-    }
-    return userInfo.biometrics?.photoType! + "," + userInfo.biometrics?.photos!
-  }
   
   useEffect(() => {
-    console.log(nationalID)
-    console.log(nom)
 
     var db_nationalid = new NationalIDNumber().setId(nationalID)
 
