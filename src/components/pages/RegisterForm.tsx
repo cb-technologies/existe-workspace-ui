@@ -304,7 +304,7 @@ export function DynamicAddressForm({ register, errors }: AddressPropsType) {
         {...register("Commune")}
       select
       value={selectedCommune}
-      label="Commune"
+      label="Commune/Territoire"
       onChange={(e) => {
                 handleCommuneChange(e)
               }}
@@ -324,7 +324,7 @@ export function DynamicAddressForm({ register, errors }: AddressPropsType) {
         value={selectedQuartier}
         helperText={errors.Quartier?.message}
         error={!!errors.Quartier}
-        label="Quartier"
+        label="Quartier/Secteur"
         onChange={(e) => {
                 handleQuartierChange(e)
               }}
