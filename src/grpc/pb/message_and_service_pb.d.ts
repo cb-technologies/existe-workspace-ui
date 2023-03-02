@@ -465,6 +465,11 @@ export class RetreivePersonInfoParameters extends jspb.Message {
   hasDateOfBirth(): boolean;
   clearDateOfBirth(): RetreivePersonInfoParameters;
 
+  getSex(): Sex | undefined;
+  setSex(value?: Sex): RetreivePersonInfoParameters;
+  hasSex(): boolean;
+  clearSex(): RetreivePersonInfoParameters;
+
   serializeBinary(): Uint8Array;
   toObject(includeInstance?: boolean): RetreivePersonInfoParameters.AsObject;
   static toObject(includeInstance: boolean, msg: RetreivePersonInfoParameters): RetreivePersonInfoParameters.AsObject;
@@ -477,6 +482,7 @@ export namespace RetreivePersonInfoParameters {
   export type AsObject = {
     names?: Names.AsObject,
     dateOfBirth?: DateOfBirth.AsObject,
+    sex?: Sex.AsObject,
   }
 }
 

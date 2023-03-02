@@ -23,6 +23,7 @@ import {
   RetreivePersonInfoParameters,
   Names,
   PersonInfoResponse,
+  Sex
 } from "../../grpc/pb/message_and_service_pb";
 import { ExistService } from "../../store/exist_api_call";
 import useHistoryState from "../../hooks/useHistoryState";
@@ -32,10 +33,12 @@ import { AuthContext } from "../../store/auth_context";
 import { decrypt } from "n-krypta";
 import { secret } from "../../constants/encryptionSecrets";
 import LoadingButton from "@mui/lab/LoadingButton";
+import { SexEnum } from "../../grpc/pb/message_and_service_pb";
 
 var globalDay: string;
 var globalMonth: string;
 var globalYear: string;
+var globalSex = SexEnum.UNKNOWN;
 
 interface RetrieveFormInput {
   Prenom: string;
@@ -90,11 +93,53 @@ function NameForm({ register, errors }) {
 }
 
 function SexForm() {
+  const [checkedHomme, setCheckedHomme] = useHistoryState("Homme", false);
+  const [checkedFemme, setCheckedFemme] = useHistoryState("Femme", false);
+
+  const [disabledHomme, setDisabledHomme] = useHistoryState(
+    "HommeDisabled",
+    false
+  );
+  const [disabledFemme, setDisabledFemme] = useHistoryState(
+    "FemmeDisabled",
+    false
+  );
+
+  const handleChangeHomme = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setCheckedHomme(event.target.checked);
+    setDisabledFemme(event.target.checked);
+    globalSex = SexEnum.HOMME;
+  };
+
+  const handleChangeFemme = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setCheckedFemme(event.target.checked);
+    setDisabledHomme(event.target.checked);
+    globalSex = SexEnum.FEMME;
+  };
+
   return (
     <FormGroup>
       <div>
-        <FormControlLabel control={<Checkbox />} label="Homme" />
-        <FormControlLabel control={<Checkbox />} label="Femme" />
+        <FormControlLabel
+          control={
+            <Checkbox
+              checked={checkedHomme}
+              onChange={handleChangeHomme}
+              disabled={disabledHomme}
+            />
+          }
+          label="Homme"
+        />
+        <FormControlLabel
+          control={
+            <Checkbox
+              checked={checkedFemme}
+              onChange={handleChangeFemme}
+              disabled={disabledFemme}
+            />
+          }
+          label="Femme"
+        />
       </div>
     </FormGroup>
   );
@@ -128,6 +173,7 @@ function DateOfBirthForm({ register }) {
 
 // @ts-ignore
 function retreivemapdata(data) {
+  var sex = new Sex().setSex(globalSex)
   var names = new Names().setNom(data.Nom);
   names.setPrenom(data.Prenom);
   names.setMiddleNamesList([data.PostNom]);
@@ -137,6 +183,7 @@ function retreivemapdata(data) {
   var retreivePersonInfoParameters =
     new RetreivePersonInfoParameters().setNames(names);
   retreivePersonInfoParameters.setDateOfBirth(dob);
+  retreivePersonInfoParameters.setSex(sex);
   
   console.log("names are", names);
   console.log("date of birth ", dob);
@@ -163,7 +210,7 @@ export default function RetrieveUserInfo() {
   const [isLoggedIn, setIsLoggedIn] = useState(authContext.isAuthenticated);
   const [showErrorQRCodeAlert, setShowErrorQRCodeAlert] = useState(false);
   const [showErrorRetrouverAlert, setShowErrorRetrouverAlert] = useState(false);
-
+  const [sexFormselectedValue, setsexFormsetSelectedValue] = useState('');
   // @ts-ignore
   function retreiveUser(data): PersonInfoResponse {
     var retreivePersonInfoParameters = retreivemapdata(data);
@@ -201,6 +248,21 @@ export default function RetrieveUserInfo() {
     setSpinRetrouver(true);
     retreiveUser(data);
   };
+
+  // const handleValueChange = (event) => {
+  //   const selectedValue = event.target.value;
+  //   if (selectedValue === 'Homme') {
+  //     message = 'You selected Man';
+  //   } else if (selectedValue === 'Femme') {
+  //     message = 'You selected Woman';
+    
+  //   sexFormselectedValue(selectedValue);
+  //   // handleData(selectedValue);
+  // };
+
+  // const handSexFormChange = (event) => {
+  //   setSelectedValue(event.target.value);
+  // };
 
   const [spinGenerateCard, setSpinGenerateCard] = useState(false);
 

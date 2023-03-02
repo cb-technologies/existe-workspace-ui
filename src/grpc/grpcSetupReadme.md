@@ -15,6 +15,8 @@ or simply
 
 ```
 brew install protoc-gen-grpc-web
+npm install -g protoc-gen-js
+
 ```
 
 ## 2. Generating the different files
