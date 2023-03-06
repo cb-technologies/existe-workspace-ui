@@ -246,7 +246,7 @@ const styles = StyleSheet.create({
     color: "rgb(65,92,189)",
     letterSpacing: "0px",
     position: "relative",
-    margin: "1px 0px 0px",
+    margin: "8px 0px 0px",
   },
   content_box11: {
     display: "flex",
