@@ -122,8 +122,8 @@ export default function CardFront({ userInfo }: CarteGenerationProps) {
           <div className={css(styles.col1)}>
             <h5 className={css(styles.highlights)}>
               Date de Naiss/ Date of birth
+              <p className={css(styles.highlights3)}> {`${userInfo.dateOfBirth?.day}-${userInfo.dateOfBirth?.month}-${userInfo.dateOfBirth?.year}`} </p>
             </h5>
-            <h4 className={css(styles.highlights3)}>{`${userInfo.dateOfBirth?.day}-${userInfo.dateOfBirth?.month}-${userInfo.dateOfBirth?.year}`}</h4>
           </div>
 
           <div className={css(styles.content_box11)}>
