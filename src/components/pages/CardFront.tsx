@@ -152,8 +152,9 @@ export default function CardFront({ userInfo }: CarteGenerationProps) {
             <div className={css(styles.row1)}>
               <div className={css(styles.text)}>AD:</div>
               <p className={css(styles.desc)}>
-                Av {userInfo?.address?.avenue} {userInfo?.address?.number},{" "}
-                {userInfo?.address?.quartier}, {userInfo?.address?.commune},{" "}
+                Av {userInfo?.address?.avenue} {userInfo?.address?.number} {" "}<br />
+                Q: {userInfo?.address?.quartier} Ref {userInfo?.address?.reference}<br />
+                C: {userInfo?.address?.commune}, {userInfo?.address?.ville},{" "}<br />
                 <span style={{ fontSize: 20, color: "black", fontWeight: "bold" }}>
                   {userInfo?.address?.zipCode}
                 </span>
