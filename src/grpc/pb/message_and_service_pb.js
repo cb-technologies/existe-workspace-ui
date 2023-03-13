@@ -13,7 +13,13 @@
 
 var jspb = require('google-protobuf');
 var goog = jspb;
-var global = (function() { return this || window || global || self || Function('return this')(); }).call(null);
+var global =
+    (typeof globalThis !== 'undefined' && globalThis) ||
+    (typeof window !== 'undefined' && window) ||
+    (typeof global !== 'undefined' && global) ||
+    (typeof self !== 'undefined' && self) ||
+    (function () { return this; }).call(null) ||
+    Function('return this')();
 
 goog.exportSymbol('proto.pb.Address', null, global);
 goog.exportSymbol('proto.pb.AgentInfo', null, global);
@@ -3937,7 +3943,8 @@ proto.pb.RetreivePersonInfoParameters.prototype.toObject = function(opt_includeI
 proto.pb.RetreivePersonInfoParameters.toObject = function(includeInstance, msg) {
   var f, obj = {
     names: (f = msg.getNames()) && proto.pb.Names.toObject(includeInstance, f),
-    dateOfBirth: (f = msg.getDateOfBirth()) && proto.pb.DateOfBirth.toObject(includeInstance, f)
+    dateOfBirth: (f = msg.getDateOfBirth()) && proto.pb.DateOfBirth.toObject(includeInstance, f),
+    sex: (f = msg.getSex()) && proto.pb.Sex.toObject(includeInstance, f)
   };
 
   if (includeInstance) {
@@ -3984,6 +3991,11 @@ proto.pb.RetreivePersonInfoParameters.deserializeBinaryFromReader = function(msg
       reader.readMessage(value,proto.pb.DateOfBirth.deserializeBinaryFromReader);
       msg.setDateOfBirth(value);
       break;
+    case 3:
+      var value = new proto.pb.Sex;
+      reader.readMessage(value,proto.pb.Sex.deserializeBinaryFromReader);
+      msg.setSex(value);
+      break;
     default:
       reader.skipField();
       break;
@@ -4027,6 +4039,14 @@ proto.pb.RetreivePersonInfoParameters.serializeBinaryToWriter = function(message
       2,
       f,
       proto.pb.DateOfBirth.serializeBinaryToWriter
+    );
+  }
+  f = message.getSex();
+  if (f != null) {
+    writer.writeMessage(
+      3,
+      f,
+      proto.pb.Sex.serializeBinaryToWriter
     );
   }
 };
@@ -4103,6 +4123,43 @@ proto.pb.RetreivePersonInfoParameters.prototype.clearDateOfBirth = function() {
  */
 proto.pb.RetreivePersonInfoParameters.prototype.hasDateOfBirth = function() {
   return jspb.Message.getField(this, 2) != null;
+};
+
+
+/**
+ * optional Sex sex = 3;
+ * @return {?proto.pb.Sex}
+ */
+proto.pb.RetreivePersonInfoParameters.prototype.getSex = function() {
+  return /** @type{?proto.pb.Sex} */ (
+    jspb.Message.getWrapperField(this, proto.pb.Sex, 3));
+};
+
+
+/**
+ * @param {?proto.pb.Sex|undefined} value
+ * @return {!proto.pb.RetreivePersonInfoParameters} returns this
+*/
+proto.pb.RetreivePersonInfoParameters.prototype.setSex = function(value) {
+  return jspb.Message.setWrapperField(this, 3, value);
+};
+
+
+/**
+ * Clears the message field making it undefined.
+ * @return {!proto.pb.RetreivePersonInfoParameters} returns this
+ */
+proto.pb.RetreivePersonInfoParameters.prototype.clearSex = function() {
+  return this.setSex(undefined);
+};
+
+
+/**
+ * Returns whether this field is set.
+ * @return {boolean}
+ */
+proto.pb.RetreivePersonInfoParameters.prototype.hasSex = function() {
+  return jspb.Message.getField(this, 3) != null;
 };
 
 

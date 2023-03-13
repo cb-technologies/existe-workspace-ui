@@ -99,7 +99,7 @@ export default function CardFront({ userInfo }: CarteGenerationProps) {
         <div className={css(styles.row__spacer)} />
 
         <div className={css(styles.col)}>
-          <h1 className={css(styles.big_title)}>
+          <h1  className={css(styles.big_title)}>
             République Démocratique Du Congo{" "}
           </h1>
 
@@ -122,7 +122,7 @@ export default function CardFront({ userInfo }: CarteGenerationProps) {
           <div className={css(styles.col1)}>
             <h5 className={css(styles.highlights)}>
               Date de Naiss/ Date of birth
-              <p className={css(styles.highlights3)}> {`${userInfo.dateOfBirth?.day}-${userInfo.dateOfBirth?.month}-${userInfo.dateOfBirth?.year}`} </p>
+              <p className={css(styles.highlights3)}> {`${userInfo.dateOfBirth?.day}/${userInfo.dateOfBirth?.month}/${userInfo.dateOfBirth?.year}`} </p>
             </h5>
           </div>
 
@@ -152,11 +152,15 @@ export default function CardFront({ userInfo }: CarteGenerationProps) {
             <div className={css(styles.row1)}>
               <div className={css(styles.text)}>AD:</div>
               <p className={css(styles.desc)}>
-                Av {userInfo?.address?.avenue} {userInfo?.address?.number},{" "}
-                {userInfo?.address?.quartier}, {userInfo?.address?.commune},{" "}
-                <span style={{ fontSize: 20, color: "black", fontWeight: "bold" }}>
+                Av {userInfo?.address?.avenue} {userInfo?.address?.number} {" "}<br />
+                Q: {userInfo?.address?.quartier} Ref {userInfo?.address?.reference}<br />
+                C: {userInfo?.address?.commune}, {userInfo?.address?.ville},{" "}<br />
+                Province: {userInfo?.address?.province}, CP:<span style={{ fontSize: 20, color: "black", fontWeight: "bold" }}>
                   {userInfo?.address?.zipCode}
-                </span>
+                </span><br />
+                {/* <span style={{ fontSize: 20, color: "black", fontWeight: "bold" }}>
+                  {userInfo?.address?.zipCode}
+                </span> */}
               </p>
             </div>
 
@@ -170,12 +174,12 @@ export default function CardFront({ userInfo }: CarteGenerationProps) {
             <div className={css(styles.col5)}>
               <div className={css(styles.row2)}>
                 <div className={css(styles.info)}>ISS:</div>
-                <div className={css(styles.info2)}>{`${userInfo.cardValidity?.issuedate?.day}-${userInfo.cardValidity?.issuedate?.month}-${userInfo.cardValidity?.issuedate?.year}`}</div>
+                <div className={css(styles.info2)}>{`${userInfo.cardValidity?.issuedate?.day}/${userInfo.cardValidity?.issuedate?.month}/${userInfo.cardValidity?.issuedate?.year}`}</div>
               </div>
 
               <div className={css(styles.row2)}>
                 <div className={css(styles.info1)}>EXP:</div>
-                <div className={css(styles.info21)}>{`${userInfo.cardValidity?.expirationdate?.day}-${userInfo.cardValidity?.expirationdate?.month}-${userInfo.cardValidity?.expirationdate?.year}`}</div>
+                <div className={css(styles.info21)}>{`${userInfo.cardValidity?.expirationdate?.day}/${userInfo.cardValidity?.expirationdate?.month}/${userInfo.cardValidity?.expirationdate?.year}`}</div>
               </div>
             </div>
           </div>
