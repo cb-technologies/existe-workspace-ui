@@ -333,7 +333,7 @@ export default function CustomizedTables() {
     return (
       <div>
         <Alert severity="error">
-          <AlertTitle>Chargement</AlertTitle>
+          <AlertTitle>Accès refusé</AlertTitle>
           "Quelques seconde la Page est entrain de charger" —{" "}
           <strong>Loading</strong>
         </Alert>
