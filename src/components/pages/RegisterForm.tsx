@@ -409,28 +409,52 @@ export function DynamicAddressForm({ register, errors }: AddressPropsType) {
 }
 
 function OriginForm({ register, errors }: AddressPropsType) {
+
   const [dProvince, setDProvince] = useHistoryState("Province", "");
   const [dChefLieu, setDChefLieu] = useHistoryState("ChefLieu", "");
   const [dTerritoire, setDTerritoire] = useHistoryState("Territoire", "");
   const [dSecteur, setDSecteur] = useHistoryState("Secteur", "");
   const [dVillage, setDVillage] = useHistoryState("Village", "");
-  const [dLieuDeNaissance, setdDieuDeNaissance] = useHistoryState(
-    "LieuDeNaissance",
-    ""
-  );
+  const [dLieuDeNaissance, setdDieuDeNaissance] = useHistoryState("LieuDeNaissance", "");
+  
+
+   const handleProvinceChange = (e: any) => {
+    setDProvince(e.target.value)
+    setDTerritoire("")
+    setDSecteur("")
+  }
+
+  const handleCommuneChange = (e: any) => {
+    setDTerritoire(e.target.value)
+    setDSecteur("")
+  }
+  
+  const handleQuartierChange = (e: any) => {
+    setDSecteur(e.target.value)
+
+  }
 
   return (
     <div>
       <TextField
         {...register("Province")}
-        id="outlined-province-input"
-        label="Province"
+        select
+        value={dProvince}
         helperText={errors.Province?.message}
         error={!!errors.Province}
         required
-        value={dProvince}
-        onChange={(e) => setDProvince(e.target.value)}
-      />
+        onChange={(e) => {
+          handleProvinceChange(e)
+        }}
+      label="Province"
+      id="outlined-province-input"
+    >
+      {zipCodeData && Object.getOwnPropertyNames(zipCodeData!).map((value) => (
+        <MenuItem key={value} value={value}>
+          {value}
+        </MenuItem>
+      ))}
+      </TextField>
       <TextField
         {...register("ChefLieu")}
         id="outlined-cheflieu-input"
@@ -443,24 +467,49 @@ function OriginForm({ register, errors }: AddressPropsType) {
       />
       <TextField
         {...register("Territoire")}
+        select
+        value={dTerritoire}
         id="outlined-territoire-input"
         label="Territoire"
         helperText={errors.Territoire?.message}
         error={!!errors.Territoire}
         required
-        value={dTerritoire}
-        onChange={(e) => setDTerritoire(e.target.value)}
-      />
+        onChange={(e) => {
+                handleCommuneChange(e)
+              }}
+    >
+      {dProvince &&
+        Object.getOwnPropertyNames(zipCodeData![dProvince]!).map(
+          (value) => (
+            <MenuItem key={value} value={value}>
+              {value}
+            </MenuItem>
+          )
+        )}
+      </TextField>
       <TextField
         {...register("Secteur")}
+        select
         id="outlined-secteur-input"
         label="Secteur"
         helperText={errors.Secteur?.message}
         error={!!errors.Secteur}
         required
         value={dSecteur}
-        onChange={(e) => setDSecteur(e.target.value)}
-      />
+        onChange={(e) => {
+                handleQuartierChange(e)
+              }}
+      >
+        {dTerritoire &&
+          dProvince &&
+          Object.getOwnPropertyNames(
+            zipCodeData![dProvince]![dTerritoire]!
+          ).map((value) => (
+            <MenuItem key={value} value={value}>
+              {value}
+            </MenuItem>
+          ))}
+      </TextField>
       <TextField
         {...register("Village")}
         id="outlined-village-input"
