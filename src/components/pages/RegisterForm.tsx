@@ -470,7 +470,7 @@ function OriginForm({ register, errors }: AddressPropsType) {
         select
         value={dTerritoire}
         id="outlined-territoire-input"
-        label="Commune/Territoire"
+        label="Territoire"
         helperText={errors.Territoire?.message}
         error={!!errors.Territoire}
         required
@@ -491,7 +491,7 @@ function OriginForm({ register, errors }: AddressPropsType) {
         {...register("Secteur")}
         select
         id="outlined-secteur-input"
-        label="Quartier/Secteur"
+        label="Secteur"
         helperText={errors.Secteur?.message}
         error={!!errors.Secteur}
         required
